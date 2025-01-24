@@ -46,30 +46,44 @@ export default function HomePage() {
     const imageUrl = URL.createObjectURL(image);
 
     return (
-      <Box pos="relative">
-        <Image ref={imageRef} src={imageUrl} alt="Uploaded image" />
+      <Container
+        size={CONFIG.layout.containerSize}
+        px={0}
+        h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`}
+      >
+        <Flex h="100%" justify="center" align="center" p="xl">
+          <Box pos="relative" h="100%">
+            <Image
+              ref={imageRef}
+              src={imageUrl}
+              alt="Uploaded image"
+              fit="contain"
+              h="100%"
+              w="auto"
+            />
 
-        {imageSize &&
-          rectangles.map((rect, index) => {
-            // Scale factors
-            const scaleX = imageSize.width / originalWidth;
-            const scaleY = imageSize.height / originalHeight;
-
-            return (
-              <Box
-                key={index}
-                style={{
-                  position: 'absolute',
-                  top: rect.y * scaleY,
-                  left: rect.x * scaleX,
-                  width: rect.width * scaleX,
-                  height: rect.height * scaleY,
-                  border: '1px solid red',
-                }}
-              />
-            );
-          })}
-      </Box>
+            {imageSize &&
+              rectangles.map((rect, index) => {
+                const scaleX = imageSize.width / originalWidth;
+                const scaleY = imageSize.height / originalHeight;
+                return (
+                  <Box
+                    key={index}
+                    style={{
+                      position: 'absolute',
+                      top: rect.y * scaleY,
+                      left: rect.x * scaleX,
+                      width: rect.width * scaleX,
+                      height: rect.height * scaleY,
+                      backdropFilter: 'blur(10px)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    }}
+                  />
+                );
+              })}
+          </Box>
+        </Flex>
+      </Container>
     );
   }
 

@@ -25,6 +25,7 @@ export default function HomePage() {
   const [currentRect, setCurrentRect] = useState<Rectangle | null>(null);
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -38,25 +39,28 @@ export default function HomePage() {
     const y = e.clientY - rect.top;
 
     setIsDrawing(true);
+    setStartPoint({ x, y });
     setCurrentRect({ id: crypto.randomUUID(), x, y, width: 0, height: 0 });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawing || !currentRect || !imageRef.current) return;
+    if (!isDrawing || !startPoint || !imageRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const currentX = e.clientX - rect.left;
+    const currentY = e.clientY - rect.top;
+
+    // Calculate dimensions based on start point and current point
+    const width = Math.abs(currentX - startPoint.x);
+    const height = Math.abs(currentY - startPoint.y);
+
+    // Determine the top-left position based on drag direction
+    const x = currentX < startPoint.x ? currentX : startPoint.x;
+    const y = currentY < startPoint.y ? currentY : startPoint.y;
 
     setCurrentRect((prev) => {
       if (!prev) return null;
-      return {
-        ...prev,
-        x: Math.min(x, prev.x),
-        y: Math.min(y, prev.y),
-        width: Math.abs(x - prev.x),
-        height: Math.abs(y - prev.y),
-      };
+      return { ...prev, x, y, width, height };
     });
   };
 
@@ -66,6 +70,7 @@ export default function HomePage() {
     }
     setIsDrawing(false);
     setCurrentRect(null);
+    setStartPoint(null);
   };
 
   // Get displayed image size after it loads

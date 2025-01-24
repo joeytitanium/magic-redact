@@ -1,0 +1,6 @@
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .frosted-glass {
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    backdrop-filter: saturate(180%) blur(10px);
+  }
+}

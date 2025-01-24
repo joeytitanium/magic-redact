@@ -1,7 +1,7 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { Box, Button, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconDownload, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import classes from './page.module.css';
 
 type Rectangle = {
+  id: string;
   x: number;
   y: number;
   width: number;
@@ -22,9 +23,14 @@ export default function HomePage() {
   const [rectangles, setRectangles] = useState<Rectangle[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentRect, setCurrentRect] = useState<Rectangle | null>(null);
+  const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+
     if (!imageRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
@@ -32,7 +38,7 @@ export default function HomePage() {
     const y = e.clientY - rect.top;
 
     setIsDrawing(true);
-    setCurrentRect({ x, y, width: 0, height: 0 });
+    setCurrentRect({ id: crypto.randomUUID(), x, y, width: 0, height: 0 });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -45,6 +51,7 @@ export default function HomePage() {
     setCurrentRect((prev) => {
       if (!prev) return null;
       return {
+        ...prev,
         x: Math.min(x, prev.x),
         y: Math.min(y, prev.y),
         width: Math.abs(x - prev.x),
@@ -112,6 +119,11 @@ export default function HomePage() {
     }
   };
 
+  const handleDeleteRect = (id: string) => {
+    setRectangles((prev) => prev.filter((rect) => rect.id !== id));
+    setHoveredRectId(null);
+  };
+
   if (image) {
     const imageUrl = URL.createObjectURL(image);
 
@@ -148,19 +160,39 @@ export default function HomePage() {
                 objectFit: 'contain',
               }}
             />
-            {rectangles.map((rect, index) => (
+            {rectangles.map((rect) => (
               <Box
-                key={index}
+                key={rect.id}
                 style={{
                   position: 'absolute',
                   top: rect.y,
                   left: rect.x,
                   width: rect.width,
                   height: rect.height,
-                  backgroundColor: 'rgba(0, 0, 0, 1)',
+                  backgroundColor:
+                    hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 1)',
                   border: '1px solid black',
+                  transition: 'all 0.2s ease',
+                  zIndex: hoveredRectId === rect.id ? 10 : 1,
                 }}
-              />
+                onMouseEnter={() => setHoveredRectId(rect.id)}
+                onMouseLeave={() => setHoveredRectId(null)}
+              >
+                {hoveredRectId === rect.id && (
+                  <ActionIcon
+                    variant="filled"
+                    color="red"
+                    size="sm"
+                    radius="xl"
+                    pos="absolute"
+                    top={-10}
+                    right={-10}
+                    onClick={() => handleDeleteRect(rect.id)}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                )}
+              </Box>
             ))}
             {currentRect && (
               <Box

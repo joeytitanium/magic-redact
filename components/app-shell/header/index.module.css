@@ -1,0 +1,19 @@
+.header {
+  height: 100%;
+  margin-bottom: rem(120px);
+
+  @mixin smaller-than $mantine-breakpoint-sm {
+    background-color: var(--mantine-color-body);
+  }
+}
+
+.link[data-active='true'] {
+  /* font-weight: bold; */
+  color: var(--mantine-color-highlight-5) !important;
+}
+
+.menuItem {
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-8));
+  }
+}

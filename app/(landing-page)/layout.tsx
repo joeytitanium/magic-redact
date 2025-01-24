@@ -1,11 +1,12 @@
+import { AppShell } from '@/components/app-shell';
 import { Providers } from '@/components/providers';
 import { ColorSchemeScript } from '@mantine/core';
 import { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Titanium',
-  description: 'Mantine component blocks',
+  title: 'Pixelate',
+  description: 'Auto-blur your images',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );

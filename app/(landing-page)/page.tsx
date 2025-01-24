@@ -210,12 +210,13 @@ export default function HomePage() {
           </Box>
         </Flex>
         <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
-          <Flex justify="center" align="center" h="100%">
+          <Flex justify="center" align="start" h="100%">
             <Button
-              leftSection={<IconDownload size={14} />}
+              className={classes.downloadButton}
+              leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
               onClick={onDownload}
               radius="xl"
-              size="xl"
+              size="lg"
             >
               Download
             </Button>

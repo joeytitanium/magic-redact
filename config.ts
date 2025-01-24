@@ -44,7 +44,7 @@ export const CONFIG: {
   },
   layout: {
     headerHeight: 60,
-    footerHeight: 70,
+    footerHeight: 65,
     mobileBreakpoint: 'lg',
     containerSize: 'xl',
     zIndex: {},

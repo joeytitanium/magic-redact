@@ -10,22 +10,26 @@ import '@mantine/notifications/styles.css';
 import { resolver, theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 import dynamic from 'next/dynamic';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PHProvider } from './posthog';
 
 const PostHogPageView = dynamic(() => import('./posthog-page-view'), {
   ssr: false,
 });
 
-export const Providers = ({ children }: { children: ReactNode }) => (
-  // <ErrorBoundary>
-  <PHProvider>
-    <PostHogPageView />
-    <MantineProvider theme={theme} cssVariablesResolver={resolver}>
-      <Notifications position="top-center" />
-      {children}
-    </MantineProvider>
-  </PHProvider>
-  // </ErrorBoundary>
-);
+export const Providers = ({ children }: { children: ReactNode }) => {
+  const [queryClient] = useState(() => new QueryClient());
+  return (
+    // <ErrorBoundary>
+    <PHProvider>
+      <PostHogPageView />
+      <MantineProvider theme={theme} cssVariablesResolver={resolver}>
+        <Notifications position="top-center" />
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </MantineProvider>
+    </PHProvider>
+    // </ErrorBoundary>
+  );
+};

@@ -1,14 +1,15 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { ActionIcon, Box, Button, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Card, Container, Flex, Image, Stack, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconDownload, IconPhoto, IconUpload, IconWand, IconX } from '@tabler/icons-react';
 
-import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rectangle } from '@/types/rectangle';
+import { useAnalyzeImage } from '@/hooks/use-analyze-image';
+import { Rectangle } from '@/types/rectangle';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { notifications } from '@mantine/notifications';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import classes from './page.module.css';
 
 type Rect = Rectangle & { id: string };
@@ -22,8 +23,13 @@ export default function HomePage() {
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState<Rect[]>([]);
+
+  const {
+    mutate: analyzeImageData,
+    data: analysisResults,
+    isPending: isAnalyzing,
+  } = useAnalyzeImage();
+
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
       return;
@@ -70,74 +76,16 @@ export default function HomePage() {
     setStartPoint(null);
   };
 
-  // Get displayed image size after it loads
-  useEffect(() => {
-    if (imageRef.current) {
-      const viewport = {
-        width: window.innerWidth * 0.9, // 90% of viewport width
-        height: window.innerHeight * 0.8, // 80% of viewport height
-      };
-
-      const imgElement = imageRef.current.querySelector('img');
-      if (imgElement) {
-        const { naturalWidth } = imgElement;
-        const { naturalHeight } = imgElement;
-
-        // Calculate scaling to fit within viewport
-        const scaleX = viewport.width / naturalWidth;
-        const scaleY = viewport.height / naturalHeight;
-        const scale = Math.min(scaleX, scaleY);
-
-        // Set new dimensions maintaining aspect ratio
-        setImageSize({
-          width: naturalWidth * scale,
-          height: naturalHeight * scale,
-        });
-      }
-    }
-  }, [image]);
-
   const onAnalyzeImage = async () => {
     if (!image) return;
 
     try {
-      setIsAnalyzing(true);
-
       const reader = new FileReader();
       reader.readAsDataURL(image);
 
       reader.onload = async () => {
         const base64Image = reader.result as string;
-
-        const response = await fetch('/api/analyze-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            imageUrl: base64Image,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to analyze image');
-        }
-
-        const rawResponse = await response.json();
-        const parsedResponse = ANALYZE_IMAGE_RESPONSE_SCHEMA.safeParse(rawResponse);
-        if (!parsedResponse.success) {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to analyze image. Please try again.',
-            color: 'red',
-          });
-          throw new Error('Failed to parse response');
-        }
-
-        console.log(`🔫 parsed: ${JSON.stringify(parsedResponse, null, '\t')}`);
-        setAnalysisResults(
-          parsedResponse.data.rectangles.map((rect) => ({ ...rect, id: crypto.randomUUID() }))
-        );
+        void analyzeImageData({ imageUrl: base64Image });
       };
     } catch (error) {
       notifications.show({
@@ -145,8 +93,6 @@ export default function HomePage() {
         message: 'Failed to analyze image',
         color: 'red',
       });
-    } finally {
-      setIsAnalyzing(false);
     }
   };
 
@@ -200,8 +146,6 @@ export default function HomePage() {
             pos="relative"
             id="node"
             style={{
-              maxWidth: '90vw',
-              maxHeight: `calc(80vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`,
               width: imageSize?.width ?? 'auto',
               height: imageSize?.height ?? 'auto',
               cursor: 'crosshair',
@@ -211,17 +155,8 @@ export default function HomePage() {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            <Image
-              src={imageUrl}
-              alt="Uploaded image"
-              fit="contain"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-              }}
-            />
-            {[...rectangles, ...analysisResults].map((rect) => (
+            <Image src={imageUrl} bg="blue" alt="Uploaded image" />
+            {[...rectangles, ...(analysisResults ?? [])].map((rect) => (
               <Box
                 key={rect.id}
                 style={{
@@ -232,7 +167,6 @@ export default function HomePage() {
                   height: rect.height,
                   backgroundColor:
                     hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 1)',
-                  border: '1px solid green',
                   transition: 'all 0.2s ease',
                   zIndex: hoveredRectId === rect.id ? 10 : 1,
                 }}
@@ -271,7 +205,7 @@ export default function HomePage() {
           </Box>
         </Flex>
         <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
-          <Flex justify="center" align="start" h="100%" gap="xs">
+          <Flex justify="center" align="center" h="100%" gap="xs">
             <Button
               className={classes.downloadButton}
               leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
@@ -286,6 +220,7 @@ export default function HomePage() {
               onClick={onAnalyzeImage}
               radius="xl"
               size="xl"
+              loading={isAnalyzing}
             >
               <IconWand />
             </ActionIcon>
@@ -305,13 +240,34 @@ export default function HomePage() {
         <Card className={classes.dropzone} p="xl" radius="lg" withBorder>
           <Dropzone
             className={classes.dropzone}
-            onDrop={(files) => setImage(files[0])}
+            onDrop={(files) => {
+              setImage(files[0]);
+
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const img: HTMLImageElement = document.createElement('img');
+                img.onload = () => {
+                  setImageSize({
+                    width: img.width,
+                    height: img.height,
+                  });
+                };
+                img.src = e.target?.result as string;
+              };
+              reader.readAsDataURL(files[0]);
+            }}
             onReject={(files) => console.log('rejected files', files)}
             maxSize={5 * 1024 ** 2}
             maw={800}
             accept={IMAGE_MIME_TYPE}
           >
-            <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+            <Stack
+              justify="center"
+              align="center"
+              gap="xl"
+              mih={220}
+              style={{ pointerEvents: 'none' }}
+            >
               <Dropzone.Accept>
                 <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
               </Dropzone.Accept>
@@ -323,14 +279,14 @@ export default function HomePage() {
               </Dropzone.Idle>
 
               <div>
-                <Text size="xl" inline>
-                  Drag images here or click to select files
+                <Text size="xl" fw="bold" ta="center" inline>
+                  Drag image here or click to select a file
                 </Text>
-                <Text size="sm" c="dimmed" inline mt={7}>
-                  Attach as many files as you like, each file should not exceed 5mb
+                <Text c="dimmed" ta="center" mt="xs">
+                  File should not exceed 5mb
                 </Text>
               </div>
-            </Group>
+            </Stack>
           </Dropzone>
         </Card>
       </Flex>

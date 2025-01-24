@@ -13,3 +13,4 @@ export type Rectangle = z.infer<typeof RECTANGLE_SCHEMA>;
 export const ANALYZE_IMAGE_RESPONSE_SCHEMA = z.object({
   rectangles: z.array(RECTANGLE_SCHEMA),
 });
+export type AnalyzeImageResponse = z.infer<typeof ANALYZE_IMAGE_RESPONSE_SCHEMA>;

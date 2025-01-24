@@ -19,26 +19,53 @@ type Rectangle = {
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
+  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [currentRect, setCurrentRect] = useState<Rectangle | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
-  // Original image dimensions
-  const originalWidth = 1096;
-  const originalHeight = 1388;
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageRef.current) return;
 
-  // Rectangles in original dimensions
-  const rectangles: Rectangle[] = [
-    { x: 54, y: 724, width: 36, height: 19 },
-    { x: 90, y: 724, width: 270, height: 23 },
-    { x: 54, y: 780, width: 306, height: 23 },
-    { x: 56, y: 836, width: 64, height: 19 },
-    { x: 128, y: 836, width: 288, height: 19 },
-  ];
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsDrawing(true);
+    setCurrentRect({ x, y, width: 0, height: 0 });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDrawing || !currentRect || !imageRef.current) return;
+
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setCurrentRect((prev) => {
+      if (!prev) return null;
+      return {
+        x: Math.min(x, prev.x),
+        y: Math.min(y, prev.y),
+        width: Math.abs(x - prev.x),
+        height: Math.abs(y - prev.y),
+      };
+    });
+  };
+
+  const handleMouseUp = () => {
+    if (currentRect && currentRect.width > 5 && currentRect.height > 5) {
+      setRectangles((prev) => [...prev, currentRect]);
+    }
+    setIsDrawing(false);
+    setCurrentRect(null);
+  };
 
   // Get displayed image size after it loads
   useEffect(() => {
     if (imageRef.current) {
       const viewport = {
-        width: window.innerWidth * 0.95, // 90% of viewport width
+        width: window.innerWidth * 0.9, // 90% of viewport width
         height: window.innerHeight * 0.8, // 80% of viewport height
       };
 
@@ -100,11 +127,16 @@ export default function HomePage() {
             pos="relative"
             id="node"
             style={{
-              maxWidth: '95vw',
+              maxWidth: '90vw',
               maxHeight: '80vh',
               width: imageSize?.width ?? 'auto',
               height: imageSize?.height ?? 'auto',
+              cursor: 'crosshair',
             }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           >
             <Image
               src={imageUrl}
@@ -116,25 +148,33 @@ export default function HomePage() {
                 objectFit: 'contain',
               }}
             />
-            {imageSize &&
-              rectangles.map((rect, index) => {
-                const scaleX = imageSize.width / originalWidth;
-                const scaleY = imageSize.height / originalHeight;
-                return (
-                  <Box
-                    id="node"
-                    key={index}
-                    style={{
-                      position: 'absolute',
-                      top: rect.y * scaleY,
-                      left: rect.x * scaleX,
-                      width: rect.width * scaleX,
-                      height: rect.height * scaleY,
-                      backgroundColor: 'black',
-                    }}
-                  />
-                );
-              })}
+            {rectangles.map((rect, index) => (
+              <Box
+                key={index}
+                style={{
+                  position: 'absolute',
+                  top: rect.y,
+                  left: rect.x,
+                  width: rect.width,
+                  height: rect.height,
+                  backgroundColor: 'rgba(0, 0, 0, 1)',
+                  border: '1px solid black',
+                }}
+              />
+            ))}
+            {currentRect && (
+              <Box
+                style={{
+                  position: 'absolute',
+                  top: currentRect.y,
+                  left: currentRect.x,
+                  width: currentRect.width,
+                  height: currentRect.height,
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid black',
+                }}
+              />
+            )}
           </Box>
         </Flex>
         <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>

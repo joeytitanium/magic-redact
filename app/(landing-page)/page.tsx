@@ -3,30 +3,27 @@
 import { CONFIG } from '@/config';
 import { ActionIcon, Box, Button, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconDownload, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconDownload, IconPhoto, IconUpload, IconWand, IconX } from '@tabler/icons-react';
 
+import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rectangle } from '@/types/rectangle';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
+import { notifications } from '@mantine/notifications';
 import { useEffect, useRef, useState } from 'react';
 import classes from './page.module.css';
 
-type Rectangle = {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+type Rect = Rectangle & { id: string };
 
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+  const [rectangles, setRectangles] = useState<Rect[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentRect, setCurrentRect] = useState<Rectangle | null>(null);
+  const [currentRect, setCurrentRect] = useState<Rect | null>(null);
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<Rect[]>([]);
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
       return;
@@ -100,6 +97,59 @@ export default function HomePage() {
     }
   }, [image]);
 
+  const onAnalyzeImage = async () => {
+    if (!image) return;
+
+    try {
+      setIsAnalyzing(true);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+
+      reader.onload = async () => {
+        const base64Image = reader.result as string;
+
+        const response = await fetch('/api/analyze-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageUrl: base64Image,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to analyze image');
+        }
+
+        const rawResponse = await response.json();
+        const parsedResponse = ANALYZE_IMAGE_RESPONSE_SCHEMA.safeParse(rawResponse);
+        if (!parsedResponse.success) {
+          notifications.show({
+            title: 'Error',
+            message: 'Failed to analyze image. Please try again.',
+            color: 'red',
+          });
+          throw new Error('Failed to parse response');
+        }
+
+        console.log(`🔫 parsed: ${JSON.stringify(parsedResponse, null, '\t')}`);
+        setAnalysisResults(
+          parsedResponse.data.rectangles.map((rect) => ({ ...rect, id: crypto.randomUUID() }))
+        );
+      };
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to analyze image',
+        color: 'red',
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const onDownload = async () => {
     // if (loading) return;
     // setLoading(true);
@@ -145,6 +195,7 @@ export default function HomePage() {
           mih={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
         >
           <Box
+            bg="red"
             ref={imageRef}
             pos="relative"
             id="node"
@@ -170,7 +221,7 @@ export default function HomePage() {
                 objectFit: 'contain',
               }}
             />
-            {rectangles.map((rect) => (
+            {[...rectangles, ...analysisResults].map((rect) => (
               <Box
                 key={rect.id}
                 style={{
@@ -181,7 +232,7 @@ export default function HomePage() {
                   height: rect.height,
                   backgroundColor:
                     hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 1)',
-                  border: '1px solid black',
+                  border: '1px solid green',
                   transition: 'all 0.2s ease',
                   zIndex: hoveredRectId === rect.id ? 10 : 1,
                 }}
@@ -220,7 +271,7 @@ export default function HomePage() {
           </Box>
         </Flex>
         <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
-          <Flex justify="center" align="start" h="100%">
+          <Flex justify="center" align="start" h="100%" gap="xs">
             <Button
               className={classes.downloadButton}
               leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
@@ -230,6 +281,14 @@ export default function HomePage() {
             >
               Download
             </Button>
+            <ActionIcon
+              className={classes.downloadButton}
+              onClick={onAnalyzeImage}
+              radius="xl"
+              size="xl"
+            >
+              <IconWand />
+            </ActionIcon>
           </Flex>
         </Box>
       </Container>

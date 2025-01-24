@@ -1,9 +1,11 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { Box, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
+import { Box, Button, Card, Container, Flex, Group, Image, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconDownload, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+
+import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { useEffect, useRef, useState } from 'react';
 import classes from './page.module.css';
 
@@ -17,7 +19,7 @@ type Rectangle = {
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   // Original image dimensions
   const originalWidth = 1096;
@@ -35,12 +37,53 @@ export default function HomePage() {
   // Get displayed image size after it loads
   useEffect(() => {
     if (imageRef.current) {
-      setImageSize({
-        width: imageRef.current.clientWidth,
-        height: imageRef.current.clientHeight,
-      });
+      const viewport = {
+        width: window.innerWidth * 0.95, // 90% of viewport width
+        height: window.innerHeight * 0.8, // 80% of viewport height
+      };
+
+      const imgElement = imageRef.current.querySelector('img');
+      if (imgElement) {
+        const { naturalWidth } = imgElement;
+        const { naturalHeight } = imgElement;
+
+        // Calculate scaling to fit within viewport
+        const scaleX = viewport.width / naturalWidth;
+        const scaleY = viewport.height / naturalHeight;
+        const scale = Math.min(scaleX, scaleY);
+
+        // Set new dimensions maintaining aspect ratio
+        setImageSize({
+          width: naturalWidth * scale,
+          height: naturalHeight * scale,
+        });
+      }
     }
   }, [image]);
+
+  const onDownload = async () => {
+    // if (loading) return;
+    // setLoading(true);
+
+    const node = document.getElementById('node');
+    if (!node) {
+      // TODO: Alert
+      console.error('No element found');
+      return;
+    }
+
+    try {
+      const url = await nodeToImageUrl({ node });
+      const link = document.createElement('a');
+      link.download = 'screenshot.png';
+      link.href = url;
+      link.click();
+    } catch (err) {
+      console.error('Error generating image:', err);
+    } finally {
+      // setLoading(false);
+    }
+  };
 
   if (image) {
     const imageUrl = URL.createObjectURL(image);
@@ -52,22 +95,34 @@ export default function HomePage() {
         h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`}
       >
         <Flex h="100%" justify="center" align="center" p="xl">
-          <Box pos="relative" h="100%">
+          <Box
+            ref={imageRef}
+            pos="relative"
+            id="node"
+            style={{
+              maxWidth: '95vw',
+              maxHeight: '80vh',
+              width: imageSize?.width ?? 'auto',
+              height: imageSize?.height ?? 'auto',
+            }}
+          >
             <Image
-              ref={imageRef}
               src={imageUrl}
               alt="Uploaded image"
               fit="contain"
-              h="100%"
-              w="auto"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
             />
-
             {imageSize &&
               rectangles.map((rect, index) => {
                 const scaleX = imageSize.width / originalWidth;
                 const scaleY = imageSize.height / originalHeight;
                 return (
                   <Box
+                    id="node"
                     key={index}
                     style={{
                       position: 'absolute',
@@ -75,14 +130,25 @@ export default function HomePage() {
                       left: rect.x * scaleX,
                       width: rect.width * scaleX,
                       height: rect.height * scaleY,
-                      backdropFilter: 'blur(10px)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      backgroundColor: 'black',
                     }}
                   />
                 );
               })}
           </Box>
         </Flex>
+        <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
+          <Flex justify="center" align="center" h="100%">
+            <Button
+              leftSection={<IconDownload size={14} />}
+              onClick={onDownload}
+              radius="xl"
+              size="xl"
+            >
+              Download
+            </Button>
+          </Flex>
+        </Box>
       </Container>
     );
   }

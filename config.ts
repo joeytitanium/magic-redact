@@ -14,6 +14,7 @@ export const CONFIG: {
   };
   layout: {
     headerHeight: number;
+    footerHeight: number;
     mobileBreakpoint: MantineSize;
     containerSize: MantineSize;
     zIndex: {};
@@ -43,6 +44,7 @@ export const CONFIG: {
   },
   layout: {
     headerHeight: 60,
+    footerHeight: 70,
     mobileBreakpoint: 'lg',
     containerSize: 'xl',
     zIndex: {},

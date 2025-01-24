@@ -136,16 +136,21 @@ export default function HomePage() {
       <Container
         size={CONFIG.layout.containerSize}
         px={0}
-        h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`}
+        h={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
       >
-        <Flex h="100%" justify="center" align="center" p="xl">
+        <Flex
+          h="100%"
+          justify="center"
+          align="center"
+          mih={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
+        >
           <Box
             ref={imageRef}
             pos="relative"
             id="node"
             style={{
               maxWidth: '90vw',
-              maxHeight: '80vh',
+              maxHeight: `calc(80vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`,
               width: imageSize?.width ?? 'auto',
               height: imageSize?.height ?? 'auto',
               cursor: 'crosshair',

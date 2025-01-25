@@ -23,6 +23,7 @@ export default function HomePage() {
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const {
     mutate: analyzeImageData,
@@ -97,8 +98,8 @@ export default function HomePage() {
   };
 
   const onDownload = async () => {
-    // if (loading) return;
-    // setLoading(true);
+    if (isDownloading) return;
+    setIsDownloading(true);
 
     const node = document.getElementById('node');
     if (!node) {
@@ -116,7 +117,7 @@ export default function HomePage() {
     } catch (err) {
       console.error('Error generating image:', err);
     } finally {
-      // setLoading(false);
+      setIsDownloading(false);
     }
   };
 
@@ -204,7 +205,7 @@ export default function HomePage() {
             )}
           </Box>
         </Flex>
-        <Box pos="absolute" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
+        <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Flex justify="center" align="center" h="100%" gap="xs">
             <Button
               className={classes.downloadButton}

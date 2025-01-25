@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { detectTextWithGoogleVision } from './google-vision';
+import { uploadToS3 } from './upload-to-s3';
 
 const INPUT_SCHEMA = z.object({
   imageUrl: z.string().url(),
@@ -25,11 +26,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: inputResult.error.message }, { status: 400 });
     }
     const { imageUrl } = inputResult.data;
+    const s3ImageUrl = await uploadToS3(imageUrl);
+    // console.log(`🔫 s3ImageUrl: ${s3ImageUrl}`);
 
-    const ocrResults = await detectTextWithGoogleVision(
-      'https://www.pa.gov/content/dam/copapwp-pagov/en/dmv/images/driver-services/realid/sample-real-id-images/real%20id-compliant%20non-commercial%20driver%27s%20license%20-%20mid-renewal%20cycle.jpg'
-    );
+    const ocrResults = await detectTextWithGoogleVision(s3ImageUrl);
     // console.log(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`);
+    if (ocrResults.length === 0) {
+      return NextResponse.json({ error: 'No text detected' }, { status: 400 });
+    }
 
     const ocrMapped = {
       rectangles: ocrResults.map((x) => ({

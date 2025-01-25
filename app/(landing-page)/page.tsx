@@ -216,7 +216,9 @@ export default function HomePage() {
               Download
             </Button>
             <ActionIcon
-              className={classes.downloadButton}
+              variant="filled"
+              w={50}
+              h={50}
               onClick={onAnalyzeImage}
               radius="xl"
               size="xl"
@@ -275,7 +277,7 @@ export default function HomePage() {
                 <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
               </Dropzone.Reject>
               <Dropzone.Idle>
-                <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                <IconPhoto size={52} stroke={1.5} />
               </Dropzone.Idle>
 
               <div>

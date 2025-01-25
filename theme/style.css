@@ -1,3 +1,52 @@
+.titanium-spotlight-action {
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-9)
+    ) !important;
+  }
+
+  &[data-selected] {
+    background-color: light-dark(
+      var(--mantine-color-black),
+      var(--mantine-color-dark-8)
+    ) !important;
+  }
+}
+
+.graph-paper {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-black));
+  background-size: 8px 8px;
+  background-image: linear-gradient(
+      to right,
+      light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-8)) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-8)) 1px,
+      transparent 1px
+    );
+}
+/* 
+.graph-paper {
+  background-color: light-dark(
+    var(--mantine-color-white),
+    var(--mantine-color-black)
+  );
+  background-size: 8px 8px;
+  background-image: linear-gradient(
+      to right,
+      light-dark(#f5f5f5, #1a1a1a) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      light-dark(#f5f5f5, #1a1a1a) 1px,
+      transparent 1px
+    );
+} */
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .frosted-glass {
     -webkit-backdrop-filter: saturate(180%) blur(10px);

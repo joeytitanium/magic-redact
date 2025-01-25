@@ -7,11 +7,12 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 
-import { resolver, theme } from '@/theme';
+import { shadcnTheme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 import dynamic from 'next/dynamic';
 import { useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
+import { cssVariableResolver } from '@/theme/css-variable-resolver';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PHProvider } from './posthog';
 
@@ -25,7 +26,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
     // <ErrorBoundary>
     <PHProvider>
       <PostHogPageView />
-      <MantineProvider theme={theme} cssVariablesResolver={resolver}>
+      <MantineProvider theme={shadcnTheme} cssVariablesResolver={cssVariableResolver}>
         <Notifications position="top-center" />
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </MantineProvider>

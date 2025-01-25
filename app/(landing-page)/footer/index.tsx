@@ -1,5 +1,5 @@
 import { CONFIG } from '@/config';
-import { ActionIcon, Button, Flex, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Flex, FlexProps, Group, Tooltip } from '@mantine/core';
 import { IconDownload, IconTrash, IconWand } from '@tabler/icons-react';
 
 export const Footer = ({
@@ -7,13 +7,14 @@ export const Footer = ({
   onReset,
   onAnalyzeImage,
   isAnalyzing,
-}: {
+  ...flexProps
+}: FlexProps & {
   onDownload: () => void;
   onReset: () => void;
   onAnalyzeImage: () => void;
   isAnalyzing: boolean;
 }) => (
-  <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg">
+  <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg" {...flexProps}>
     {/* Dummy Button */}
     <Button
       leftSection={<IconDownload size={CONFIG.icon.size.sm} />}

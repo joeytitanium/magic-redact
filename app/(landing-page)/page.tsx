@@ -5,15 +5,15 @@ import { ActionIcon, Box, Card, Container, Flex, Image, Stack, Text } from '@man
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
+import { imageCoordinates, scaledRects } from '@/app/utils/image-coordinates';
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
-import { Rectangle } from '@/types/rectangle';
+import { Rect } from '@/types/rectangle';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
+import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useRef, useState } from 'react';
 import { Footer } from './footer';
 import classes from './page.module.css';
-
-type Rect = Rectangle & { id: string };
 
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
@@ -25,6 +25,8 @@ export default function HomePage() {
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const { height: viewportHeight, width: viewportWidth } = useViewportSize();
 
   const {
     mutate: analyzeImageData,
@@ -45,6 +47,14 @@ export default function HomePage() {
     setStartPoint(null);
     resetAnalyzing();
   };
+
+  const coordinates = imageCoordinates({
+    imageSize: imageSize ?? { width: 0, height: 0 },
+    viewportSize: { width: viewportWidth, height: viewportHeight },
+    headerHeight: CONFIG.layout.headerHeight,
+    footerHeight: CONFIG.layout.footerHeight,
+  });
+  console.log(`🔫 : ${JSON.stringify(coordinates, null, '\t')}`);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -141,84 +151,78 @@ export default function HomePage() {
     setHoveredRectId(null);
   };
 
+  const r = scaledRects({
+    rects: rectangles,
+    scaledImageSize: { width: coordinates.width, height: coordinates.height },
+    originalImageSize: imageSize ?? { width: 0, height: 0 },
+  });
+
   if (image) {
     const imageUrl = URL.createObjectURL(image);
 
     return (
-      <Container
-        size={CONFIG.layout.containerSize}
-        px={0}
-        h={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
-      >
-        <Flex
-          h="100%"
-          justify="center"
-          align="center"
-          mih={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
+      <>
+        <Box
+          ref={imageRef}
+          pos="fixed"
+          id="node"
+          top={coordinates.y}
+          left={coordinates.x}
+          w={coordinates.width}
+          h={coordinates.height}
+          style={{ cursor: 'crosshair' }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
-          <Box
-            ref={imageRef}
-            pos="relative"
-            id="node"
-            style={{
-              width: imageSize?.width ?? 'auto',
-              height: imageSize?.height ?? 'auto',
-              cursor: 'crosshair',
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
-            <Image src={imageUrl} bg="blue" alt="Uploaded image" />
-            {rectangles.map((rect) => (
-              <Box
-                key={rect.id}
-                style={{
-                  position: 'absolute',
-                  top: rect.y,
-                  left: rect.x,
-                  width: rect.width,
-                  height: rect.height,
-                  backgroundColor:
-                    hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 1)',
-                  transition: 'all 0.2s ease',
-                  zIndex: hoveredRectId === rect.id ? 10 : 1,
-                }}
-                onMouseEnter={() => setHoveredRectId(rect.id)}
-                onMouseLeave={() => setHoveredRectId(null)}
-              >
-                {hoveredRectId === rect.id && (
-                  <ActionIcon
-                    variant="filled"
-                    color="red"
-                    size="sm"
-                    radius="xl"
-                    pos="absolute"
-                    top={-10}
-                    right={-10}
-                    onClick={() => handleDeleteRect(rect.id)}
-                  >
-                    <IconX size={14} />
-                  </ActionIcon>
-                )}
-              </Box>
-            ))}
-            {currentRect && (
-              <Box
-                style={{
-                  position: 'absolute',
-                  top: currentRect.y,
-                  left: currentRect.x,
-                  width: currentRect.width,
-                  height: currentRect.height,
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid black',
-                }}
-              />
-            )}
-          </Box>
-        </Flex>
+          <Image src={imageUrl} bg="blue" alt="Uploaded image" />
+          {r.map((rect) => (
+            <Box
+              key={rect.id}
+              style={{
+                position: 'absolute',
+                top: rect.y,
+                left: rect.x,
+                width: rect.width,
+                height: rect.height,
+                backgroundColor: hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'green',
+                transition: 'all 0.2s ease',
+                zIndex: hoveredRectId === rect.id ? 10 : 1,
+              }}
+              onMouseEnter={() => setHoveredRectId(rect.id)}
+              onMouseLeave={() => setHoveredRectId(null)}
+            >
+              {hoveredRectId === rect.id && (
+                <ActionIcon
+                  variant="filled"
+                  color="red"
+                  size="sm"
+                  radius="xl"
+                  pos="absolute"
+                  top={-10}
+                  right={-10}
+                  onClick={() => handleDeleteRect(rect.id)}
+                >
+                  <IconX size={14} />
+                </ActionIcon>
+              )}
+            </Box>
+          ))}
+          {currentRect && (
+            <Box
+              style={{
+                position: 'absolute',
+                top: currentRect.y,
+                left: currentRect.x,
+                width: currentRect.width,
+                height: currentRect.height,
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                border: '1px solid black',
+              }}
+            />
+          )}
+        </Box>
         <Box
           pos="fixed"
           left={0}
@@ -234,7 +238,7 @@ export default function HomePage() {
             isAnalyzing={isAnalyzing}
           />
         </Box>
-      </Container>
+      </>
     );
   }
 

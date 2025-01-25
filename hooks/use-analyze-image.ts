@@ -1,6 +1,6 @@
 import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rectangle } from '@/types/rectangle';
 import { notifications } from '@mantine/notifications';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
 type Variables = {
   imageUrl: string;
@@ -10,7 +10,7 @@ type Rect = Rectangle & { id: string };
 
 type Response = Rect[];
 
-export const useAnalyzeImage = () =>
+export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Variables>) =>
   useMutation<Response, Error, Variables>({
     mutationFn: async (args) => {
       const response = await fetch('/api/analyze-image', {
@@ -35,4 +35,5 @@ export const useAnalyzeImage = () =>
         color: 'red',
       });
     },
+    ...options,
   });

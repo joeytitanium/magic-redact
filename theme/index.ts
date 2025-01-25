@@ -43,19 +43,19 @@ const zincColors: MantineColorsTuple = [
   '#09090b',
   '#71717A',
 ];
-const zincReverseColors: MantineColorsTuple = [
-  '#fafafa',
-  '#f4f4f5',
-  '#e4e4e7',
-  '#d4d4d8',
-  '#a1a1aa',
-  '#52525b',
-  '#3f3f46',
-  '#27272a',
-  '#18181b',
-  '#09090b',
-  '#71717A',
-].reverse();
+// const zincReverseColors: MantineColorsTuple = [
+//   '#fafafa',
+//   '#f4f4f5',
+//   '#e4e4e7',
+//   '#d4d4d8',
+//   '#a1a1aa',
+//   '#52525b',
+//   '#3f3f46',
+//   '#27272a',
+//   '#18181b',
+//   '#09090b',
+//   '#71717A',
+// ].reverse();
 
 const slateColors: MantineColorsTuple = [
   '#f8fafc',

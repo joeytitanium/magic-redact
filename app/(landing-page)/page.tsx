@@ -25,11 +25,11 @@ export default function HomePage() {
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const {
-    mutate: analyzeImageData,
-    data: analysisResults,
-    isPending: isAnalyzing,
-  } = useAnalyzeImage();
+  const { mutate: analyzeImageData, isPending: isAnalyzing } = useAnalyzeImage({
+    onSuccess: (data) => {
+      setRectangles((prev) => [...prev, ...data]);
+    },
+  });
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -157,7 +157,7 @@ export default function HomePage() {
             onMouseLeave={handleMouseUp}
           >
             <Image src={imageUrl} bg="blue" alt="Uploaded image" />
-            {[...rectangles, ...(analysisResults ?? [])].map((rect) => (
+            {rectangles.map((rect) => (
               <Box
                 key={rect.id}
                 style={{

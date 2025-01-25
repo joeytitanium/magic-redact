@@ -1,9 +1,28 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { ActionIcon, Box, Button, Card, Container, Flex, Image, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Group,
+  Image,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconDownload, IconPhoto, IconUpload, IconWand, IconX } from '@tabler/icons-react';
+import {
+  IconDownload,
+  IconPhoto,
+  IconTrash,
+  IconUpload,
+  IconWand,
+  IconX,
+} from '@tabler/icons-react';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { Rectangle } from '@/types/rectangle';
@@ -25,11 +44,25 @@ export default function HomePage() {
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const { mutate: analyzeImageData, isPending: isAnalyzing } = useAnalyzeImage({
+  const {
+    mutate: analyzeImageData,
+    isPending: isAnalyzing,
+    reset: resetAnalyzing,
+  } = useAnalyzeImage({
     onSuccess: (data) => {
       setRectangles((prev) => [...prev, ...data]);
     },
   });
+
+  const onReset = () => {
+    setImage(null);
+    setImageSize(null);
+    setRectangles([]);
+    setCurrentRect(null);
+    setHoveredRectId(null);
+    setStartPoint(null);
+    resetAnalyzing();
+  };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -142,7 +175,6 @@ export default function HomePage() {
           mih={`calc(100vh - ${CONFIG.layout.headerHeight}px - ${CONFIG.layout.footerHeight}px)`}
         >
           <Box
-            bg="red"
             ref={imageRef}
             pos="relative"
             id="node"
@@ -205,28 +237,53 @@ export default function HomePage() {
             )}
           </Box>
         </Flex>
-        <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
-          <Flex justify="center" align="center" h="100%" gap="xs">
+        <Box
+          pos="fixed"
+          left={0}
+          right={0}
+          bottom={0}
+          h={CONFIG.layout.footerHeight}
+          className="frosted-glass"
+        >
+          <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg">
+            {/* Dummy Button */}
             <Button
               className={classes.downloadButton}
               leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
               onClick={onDownload}
-              radius="xl"
-              size="lg"
+              radius="md"
+              size="md"
+              style={{ visibility: 'hidden' }}
             >
               Download
             </Button>
-            <ActionIcon
-              variant="filled"
-              w={50}
-              h={50}
-              onClick={onAnalyzeImage}
-              radius="xl"
-              size="xl"
-              loading={isAnalyzing}
+            <Group>
+              <Tooltip label="Reset Image" arrowSize={8} withArrow>
+                <ActionIcon variant="filled" onClick={onReset} radius="xl" size="xl">
+                  <IconTrash />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label="Censor" arrowSize={8} withArrow>
+                <ActionIcon
+                  variant="filled"
+                  onClick={onAnalyzeImage}
+                  radius="xl"
+                  size="xl"
+                  loading={isAnalyzing}
+                >
+                  <IconWand />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+            <Button
+              className={classes.downloadButton}
+              leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
+              onClick={onDownload}
+              radius="md"
+              size="md"
             >
-              <IconWand />
-            </ActionIcon>
+              Download
+            </Button>
           </Flex>
         </Box>
       </Container>

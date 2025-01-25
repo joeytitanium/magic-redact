@@ -1,34 +1,16 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Card,
-  Container,
-  Flex,
-  Group,
-  Image,
-  Stack,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Box, Card, Container, Flex, Image, Stack, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import {
-  IconDownload,
-  IconPhoto,
-  IconTrash,
-  IconUpload,
-  IconWand,
-  IconX,
-} from '@tabler/icons-react';
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { Rectangle } from '@/types/rectangle';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { notifications } from '@mantine/notifications';
 import { useRef, useState } from 'react';
+import { Footer } from './footer';
 import classes from './page.module.css';
 
 type Rect = Rectangle & { id: string };
@@ -245,46 +227,12 @@ export default function HomePage() {
           h={CONFIG.layout.footerHeight}
           className="frosted-glass"
         >
-          <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg">
-            {/* Dummy Button */}
-            <Button
-              className={classes.downloadButton}
-              leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
-              onClick={onDownload}
-              radius="md"
-              size="md"
-              style={{ visibility: 'hidden' }}
-            >
-              Download
-            </Button>
-            <Group>
-              <Tooltip label="Reset Image" arrowSize={8} withArrow>
-                <ActionIcon variant="filled" onClick={onReset} radius="xl" size="xl">
-                  <IconTrash />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label="Censor" arrowSize={8} withArrow>
-                <ActionIcon
-                  variant="filled"
-                  onClick={onAnalyzeImage}
-                  radius="xl"
-                  size="xl"
-                  loading={isAnalyzing}
-                >
-                  <IconWand />
-                </ActionIcon>
-              </Tooltip>
-            </Group>
-            <Button
-              className={classes.downloadButton}
-              leftSection={<IconDownload size={CONFIG.icon.size.sm} />}
-              onClick={onDownload}
-              radius="md"
-              size="md"
-            >
-              Download
-            </Button>
-          </Flex>
+          <Footer
+            onDownload={onDownload}
+            onReset={onReset}
+            onAnalyzeImage={onAnalyzeImage}
+            isAnalyzing={isAnalyzing}
+          />
         </Box>
       </Container>
     );

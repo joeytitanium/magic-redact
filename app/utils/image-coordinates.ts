@@ -18,23 +18,35 @@ export const imageCoordinates = ({
   const imageScale = imageSize.width / imageSize.height;
 
   if (isPortrait) {
-    const height = viewportSize.height - headerHeight - footerHeight - margin * 2;
-    const width = height * imageScale;
+    const availableWidth = viewportSize.width - margin * 2;
+    let height = viewportSize.height - headerHeight - footerHeight - margin * 2;
+    let width = height * imageScale;
+
+    if (width > availableWidth) {
+      width = availableWidth;
+      height = width / imageScale;
+    }
 
     return {
       x: viewportSize.width / 2 - width / 2,
-      y: headerHeight + margin,
+      y: viewportSize.height / 2 - height / 2,
       width,
       height,
     };
   }
 
-  const width = viewportSize.width - margin * 2;
-  const height = width * imageScale;
+  const availableHeight = viewportSize.height - headerHeight - footerHeight - margin * 2;
+  let width = viewportSize.width - margin * 2;
+  let height = width / imageScale;
+
+  if (height > availableHeight) {
+    height = availableHeight;
+    width = height * imageScale;
+  }
 
   return {
     x: viewportSize.width / 2 - width / 2,
-    y: headerHeight + margin,
+    y: viewportSize.height / 2 - height / 2,
     width,
     height,
   };

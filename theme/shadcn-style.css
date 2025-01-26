@@ -206,11 +206,8 @@
 }
 
 /* Slider */
-[data-mantine-color-scheme='light'],
-[data-mantine-color-scheme='dark'] {
-  .mantine-Slider-root {
-    --slider-track-bg: var(--mantine-color-secondary-outline-hover);
-  }
+.mantine-Slider-root {
+  --slider-track-bg: var(--mantine-color-secondary-outline-hover);
 }
 
 .mantine-Slider-root {

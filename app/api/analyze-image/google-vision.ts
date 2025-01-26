@@ -46,7 +46,6 @@ export async function detectTextWithGoogleVision(imageUrl: string): Promise<Dete
           width: (topRight.x ?? 0) - (topLeft.x ?? 0),
           height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
         },
-        originalData: detection,
       };
     });
   } catch (error) {

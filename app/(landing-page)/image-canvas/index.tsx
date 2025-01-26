@@ -52,6 +52,7 @@ export const ImageCanvas = ({
           width: rect.width,
           height: rect.height,
           backgroundColor: hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'black',
+          // border: hoveredRectId === rect.id ? '1px solid red' : '1px solid black',
           transition: 'all 0.2s ease',
           zIndex: hoveredRectId === rect.id ? 10 : 1,
         }}

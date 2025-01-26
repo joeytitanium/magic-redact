@@ -6,7 +6,7 @@ export const imageCoordinates = ({
   viewportSize,
   headerHeight,
   footerHeight,
-  margin = 100,
+  margin = 50,
 }: {
   imageSize: Size;
   viewportSize: Size;

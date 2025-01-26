@@ -41,7 +41,7 @@ export const ImageCanvas = ({
     onMouseUp={handleMouseUp}
     onMouseLeave={handleMouseUp}
   >
-    <Image src={imageUrl} bg="blue" alt="Uploaded image" />
+    <Image src={imageUrl} alt="Uploaded image" />
     {rectangles.map((rect) => (
       <Box
         key={rect.id}

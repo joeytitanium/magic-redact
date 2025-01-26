@@ -14,7 +14,15 @@ export const Footer = ({
   onAnalyzeImage: () => void;
   isAnalyzing: boolean;
 }) => (
-  <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg" {...flexProps}>
+  <Flex
+    justify="space-between"
+    align="center"
+    h="100%"
+    gap="xs"
+    px="lg"
+    bg="transparent"
+    {...flexProps}
+  >
     {/* Dummy Button */}
     <Button
       leftSection={<IconDownload size={CONFIG.icon.size.sm} />}

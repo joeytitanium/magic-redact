@@ -164,6 +164,7 @@ export default function HomePage() {
 
     return (
       <>
+        <Box pos="fixed" top={0} left={0} right={0} bottom={0} className="graph-paper" />
         <ImageCanvas
           imageRef={imageRef}
           coordinates={coordinates}
@@ -177,14 +178,7 @@ export default function HomePage() {
           currentRect={currentRect}
           onHoveredRectIdChange={setHoveredRectId}
         />
-        <Box
-          pos="fixed"
-          left={0}
-          right={0}
-          bottom={0}
-          h={CONFIG.layout.footerHeight}
-          className="frosted-glass"
-        >
+        <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Footer
             onDownload={onDownload}
             onReset={onReset}

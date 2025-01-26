@@ -1,5 +1,13 @@
-# Mantine Next Template
+# TODO
 
-Get started with the template by clicking `Use this template` button on the top of the page.
+- Posthog
+- Server logs (ocr payload, openai payload)
+- Pass all rectangles and add a sensitive key
 
-[Documentation](https://mantine.dev/guides/next/)
+# ROADMAP
+
+- Paste keyboard shortcut
+- Save as (png/jpg/etc)
+- Size 1x/2x
+- Pixelated, Blur, Black bar
+-

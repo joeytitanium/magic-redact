@@ -26,7 +26,7 @@ export default function HomePage() {
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-
+  const [showRedacted, setShowRedacted] = useState(false);
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
@@ -45,6 +45,7 @@ export default function HomePage() {
   });
 
   const onReset = () => {
+    setShowRedacted(false);
     setImage(null);
     setImageSize(null);
     setRectangles([]);
@@ -217,6 +218,7 @@ export default function HomePage() {
           handleDeleteRect={handleDeleteRect}
           currentRect={currentRect}
           onHoveredRectIdChange={setHoveredRectId}
+          showRedacted={showRedacted}
         />
         <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Footer
@@ -224,6 +226,8 @@ export default function HomePage() {
             onReset={onReset}
             onAnalyzeImage={onAnalyzeImage}
             isAnalyzing={isAnalyzing || fauxLoadingSampleImage}
+            showRedacted={showRedacted}
+            onToggleRedacted={() => setShowRedacted((prev) => !prev)}
           />
         </Box>
       </>

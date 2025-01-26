@@ -14,6 +14,7 @@ export const ImageCanvas = ({
   handleDeleteRect,
   currentRect,
   onHoveredRectIdChange,
+  showRedacted,
 }: {
   imageRef: React.RefObject<HTMLDivElement>;
   coordinates: Rectangle;
@@ -26,6 +27,7 @@ export const ImageCanvas = ({
   handleDeleteRect: (id: string) => void;
   currentRect: Rect | null;
   onHoveredRectIdChange: (id: string | null) => void;
+  showRedacted: boolean;
 }) => (
   <Box
     ref={imageRef}
@@ -51,7 +53,10 @@ export const ImageCanvas = ({
           left: rect.x,
           width: rect.width,
           height: rect.height,
-          backgroundColor: hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'black',
+          backgroundColor:
+            hoveredRectId !== rect.id
+              ? `rgba(0, 0, 0, ${showRedacted ? 0.3 : 1})`
+              : 'rgba(0, 0, 0, 0.3)',
           // border: hoveredRectId === rect.id ? '1px solid red' : '1px solid black',
           transition: 'all 0.2s ease',
           zIndex: hoveredRectId === rect.id ? 10 : 1,

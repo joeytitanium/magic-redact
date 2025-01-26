@@ -1,18 +1,57 @@
 import { CONFIG } from '@/config';
-import { ActionIcon, Button, Flex, FlexProps, Group, Tooltip } from '@mantine/core';
-import { IconDownload, IconTrash, IconWand } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  ActionIconProps,
+  Button,
+  Flex,
+  FlexProps,
+  Group,
+  Tooltip,
+} from '@mantine/core';
+import { IconDownload, IconEye, IconEyeOff, IconTrash, IconWand } from '@tabler/icons-react';
+import { ReactNode } from 'react';
+
+const ActionButton = ({
+  tooltip,
+  onClick,
+  loading,
+  icon,
+  ...actionIconProps
+}: ActionIconProps & {
+  tooltip: string;
+  onClick: () => void;
+  loading?: boolean;
+  icon: ReactNode;
+}) => (
+  <Tooltip label={tooltip} arrowSize={8} offset={8} withArrow>
+    <ActionIcon
+      variant="default"
+      onClick={onClick}
+      radius="xl"
+      size="lg"
+      loading={loading}
+      {...actionIconProps}
+    >
+      {icon}
+    </ActionIcon>
+  </Tooltip>
+);
 
 export const Footer = ({
   onDownload,
   onReset,
   onAnalyzeImage,
   isAnalyzing,
+  showRedacted,
+  onToggleRedacted,
   ...flexProps
 }: FlexProps & {
   onDownload: () => void;
   onReset: () => void;
   onAnalyzeImage: () => void;
   isAnalyzing: boolean;
+  showRedacted: boolean;
+  onToggleRedacted: () => void;
 }) => (
   <Flex
     justify="space-between"
@@ -34,12 +73,12 @@ export const Footer = ({
       Download
     </Button>
     <Group>
-      <Tooltip label="Reset Image" arrowSize={8} withArrow>
-        <ActionIcon variant="filled" onClick={onReset} radius="xl" size="xl">
-          <IconTrash />
-        </ActionIcon>
-      </Tooltip>
-      <Tooltip label="Censor" arrowSize={8} withArrow>
+      <ActionButton
+        icon={<IconTrash size={CONFIG.icon.size.sm} />}
+        tooltip="Start over"
+        onClick={onReset}
+      />
+      <Tooltip label="Redact" arrowSize={8} offset={8} withArrow>
         <ActionIcon
           variant="filled"
           onClick={onAnalyzeImage}
@@ -50,6 +89,17 @@ export const Footer = ({
           <IconWand />
         </ActionIcon>
       </Tooltip>
+      <ActionButton
+        icon={
+          showRedacted ? (
+            <IconEye size={CONFIG.icon.size.sm} />
+          ) : (
+            <IconEyeOff size={CONFIG.icon.size.sm} />
+          )
+        }
+        tooltip={showRedacted ? 'Hide redacted' : 'Show redacted'}
+        onClick={onToggleRedacted}
+      />
     </Group>
     <Button
       leftSection={<IconDownload size={CONFIG.icon.size.sm} />}

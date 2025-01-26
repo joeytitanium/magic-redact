@@ -5,8 +5,8 @@ import { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Pixelate',
-  description: 'Auto-blur your images',
+  title: 'Redacted',
+  description: 'Auto-redact sensitive information from your images',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

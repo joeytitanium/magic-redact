@@ -14,7 +14,7 @@ export const Logo = ({
 }: LogoProps) => (
   <Flex align="center" {...flexProps}>
     <Text fz="h1" fw={800}>
-      Pixelate
+      Redacted
     </Text>
     {/* <Image
       component={NextImage}

@@ -1,21 +1,20 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { Box, Card, Container, Flex, Stack, Text } from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { Box } from '@mantine/core';
 
-import { imageCoordinates, scaledRects } from '@/app/utils/image-coordinates';
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { Rect } from '@/types/rectangle';
+import { imageCoordinates, scaledRects } from '@/utils/image-coordinates';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
+import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
 import { ImageCanvas } from './image-canvas';
-import classes from './page.module.css';
+import { ImageDropzone } from './image-dropzone';
 
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
@@ -27,6 +26,10 @@ export default function HomePage() {
   const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Demo vars
+  const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
+  const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
 
   const { height: viewportHeight, width: viewportWidth } = useViewportSize();
 
@@ -49,6 +52,7 @@ export default function HomePage() {
     setHoveredRectId(null);
     setStartPoint(null);
     resetAnalyzing();
+    setSelectedSampleImage(null);
   };
 
   const coordinates = imageCoordinates({
@@ -105,8 +109,16 @@ export default function HomePage() {
   };
 
   const onAnalyzeImage = async () => {
-    if (!image) return;
+    if (selectedSampleImage) {
+      setFauxLoadingSampleImage(true);
+      setTimeout(() => {
+        setFauxLoadingSampleImage(false);
+        setRectangles(sampleImageRects[selectedSampleImage]);
+      }, 2000);
+      return;
+    }
 
+    if (!image) return;
     try {
       const reader = new FileReader();
       reader.readAsDataURL(image);
@@ -174,6 +186,13 @@ export default function HomePage() {
     setHoveredRectId(null);
   };
 
+  const onClickSampleImage = (sampleImage: SampleImage) => {
+    setSelectedSampleImage(sampleImage);
+    void fetch(sampleImage)
+      .then((res) => res.blob())
+      .then((blob) => setImage(new File([blob], sampleImage)));
+  };
+
   const r = scaledRects({
     rects: rectangles,
     scaledImageSize: { width: coordinates.width, height: coordinates.height },
@@ -204,7 +223,7 @@ export default function HomePage() {
             onDownload={onDownload}
             onReset={onReset}
             onAnalyzeImage={onAnalyzeImage}
-            isAnalyzing={isAnalyzing}
+            isAnalyzing={isAnalyzing || fauxLoadingSampleImage}
           />
         </Box>
       </>
@@ -212,61 +231,10 @@ export default function HomePage() {
   }
 
   return (
-    <Container px={0} h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`} fluid>
-      <Flex h="100%" justify="center" align="center" p="xl">
-        <Card className={classes.dropzone} p="xl" radius="lg" withBorder>
-          <Dropzone
-            className={classes.dropzone}
-            onDrop={(files) => {
-              setImage(files[0]);
-
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const img: HTMLImageElement = document.createElement('img');
-                img.onload = () => {
-                  setImageSize({
-                    width: img.width,
-                    height: img.height,
-                  });
-                };
-                img.src = e.target?.result as string;
-              };
-              reader.readAsDataURL(files[0]);
-            }}
-            onReject={(files) => console.log('rejected files', files)}
-            maxSize={5 * 1024 ** 2}
-            maw={800}
-            accept={IMAGE_MIME_TYPE}
-          >
-            <Stack
-              justify="center"
-              align="center"
-              gap="xl"
-              mih={220}
-              style={{ pointerEvents: 'none' }}
-            >
-              <Dropzone.Accept>
-                <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-              </Dropzone.Accept>
-              <Dropzone.Reject>
-                <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-              </Dropzone.Reject>
-              <Dropzone.Idle>
-                <IconPhoto size={52} stroke={1.5} />
-              </Dropzone.Idle>
-
-              <div>
-                <Text size="xl" fw="bold" ta="center" inline>
-                  Drag image here or click to select a file
-                </Text>
-                <Text c="dimmed" ta="center" mt="xs">
-                  File should not exceed 5mb
-                </Text>
-              </div>
-            </Stack>
-          </Dropzone>
-        </Card>
-      </Flex>
-    </Container>
+    <ImageDropzone
+      setImage={setImage}
+      setImageSize={setImageSize}
+      onClickSampleImage={onClickSampleImage}
+    />
   );
 }

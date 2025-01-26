@@ -3,10 +3,11 @@
 import '@/theme/style.css';
 import { MantineProvider } from '@mantine/core';
 //
-import '@/theme/shadcn-style.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+//
+import '@/theme/shadcn-style.css';
 
 import { shadcnTheme } from '@/theme';
 import { Notifications } from '@mantine/notifications';

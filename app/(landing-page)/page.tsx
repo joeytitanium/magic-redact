@@ -185,7 +185,7 @@ export default function HomePage() {
 
     return (
       <>
-        <Box pos="fixed" top={0} left={0} right={0} bottom={0} className="graph-paper" />
+        <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
         <ImageCanvas
           imageRef={imageRef}
           coordinates={coordinates}
@@ -212,12 +212,7 @@ export default function HomePage() {
   }
 
   return (
-    <Container
-      size={CONFIG.layout.containerSize}
-      px={0}
-      className="graph-paper"
-      h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`}
-    >
+    <Container px={0} h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`} fluid>
       <Flex h="100%" justify="center" align="center" p="xl">
         <Card className={classes.dropzone} p="xl" radius="lg" withBorder>
           <Dropzone

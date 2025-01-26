@@ -11,6 +11,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
 
   return (
     <MantineAppShell
+      className="graph-paper"
       header={{ height: CONFIG.layout.headerHeight }}
       // padding="md"
       styles={() => ({

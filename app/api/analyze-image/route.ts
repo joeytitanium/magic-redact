@@ -19,48 +19,48 @@ const openai = new OpenAI({
 // });
 
 export async function POST(request: Request) {
-  return NextResponse.json(
-    {
-      rectangles: [
-        {
-          x: 206,
-          y: 935,
-          width: 148,
-          height: 24,
-          description: '111589130',
-        },
-        {
-          x: 181,
-          y: 1062,
-          width: 125,
-          height: 25,
-          description: 'Michelle',
-        },
-        {
-          x: 316,
-          y: 1062,
-          width: 147,
-          height: 25,
-          description: 'Chiamaka',
-        },
-        {
-          x: 474,
-          y: 1062,
-          width: 95,
-          height: 25,
-          description: 'Okeke',
-        },
-        {
-          x: 173,
-          y: 1124,
-          width: 431,
-          height: 32,
-          description: 'michelleokeke13@gmail.com',
-        },
-      ],
-    },
-    { status: 200 }
-  );
+  // return NextResponse.json(
+  //   {
+  //     rectangles: [
+  //       {
+  //         x: 206,
+  //         y: 935,
+  //         width: 148,
+  //         height: 24,
+  //         description: '111589130',
+  //       },
+  //       {
+  //         x: 181,
+  //         y: 1062,
+  //         width: 125,
+  //         height: 25,
+  //         description: 'Michelle',
+  //       },
+  //       {
+  //         x: 316,
+  //         y: 1062,
+  //         width: 147,
+  //         height: 25,
+  //         description: 'Chiamaka',
+  //       },
+  //       {
+  //         x: 474,
+  //         y: 1062,
+  //         width: 95,
+  //         height: 25,
+  //         description: 'Okeke',
+  //       },
+  //       {
+  //         x: 173,
+  //         y: 1124,
+  //         width: 431,
+  //         height: 32,
+  //         description: 'michelleokeke13@gmail.com',
+  //       },
+  //     ],
+  //   },
+  //   { status: 200 }
+  // );
 
   try {
     const body = await request.json();

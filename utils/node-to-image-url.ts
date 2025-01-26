@@ -44,6 +44,7 @@ export const nodeToImageUrl = async ({ node }: { node: HTMLElement }): Promise<s
     await document.fonts.ready;
 
     // Introduce a slight delay to ensure rendering
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise<void>((resolve) => setTimeout(resolve, 100));
 
     // Use html2canvas to capture the cloned node

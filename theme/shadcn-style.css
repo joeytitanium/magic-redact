@@ -205,8 +205,6 @@
   }
 }
 
-/* Switch */
-
 /* Slider */
 [data-mantine-color-scheme='light'],
 [data-mantine-color-scheme='dark'] {
@@ -474,6 +472,7 @@
   --popover-border-color: var(--mantine-color-default-border);
   background-color: var(--mantine-color-body);
 }
+
 .mantine-Popover-arrow {
   --popover-border-color: var(--mantine-color-default-border);
 }
@@ -505,6 +504,7 @@
         }
       }
     }
+
     .mantine-Accordion-label {
       &:where(:not(:disabled, [data-disabled])) {
         &:hover {
@@ -536,6 +536,7 @@
 /* Badge */
 .mantine-Badge-root {
   --badge-color: var(--mantine-primary-color-contrast);
+
   &[data-variant='dot'] {
     background-color: var(--mantine-color-secondary-light);
     border-color: var(--mantine-color-secondary-light);

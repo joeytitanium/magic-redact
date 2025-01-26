@@ -130,19 +130,40 @@ export default function HomePage() {
 
     const node = document.getElementById('node');
     if (!node) {
-      // TODO: Alert
-      console.error('No element found');
+      console.error('No element found with id "node"');
+      notifications.show({
+        title: 'Error',
+        message: 'Target element not found',
+        color: 'red',
+      });
+      setIsDownloading(false);
       return;
     }
 
     try {
-      const url = await nodeToImageUrl({ node });
+      const imageUrl = await nodeToImageUrl({ node });
+
+      if (!imageUrl) {
+        throw new Error('Failed to generate image URL');
+      }
+
       const link = document.createElement('a');
       link.download = 'screenshot.png';
-      link.href = url;
+      link.href = imageUrl;
+      document.body.appendChild(link);
       link.click();
-    } catch (err) {
-      console.error('Error generating image:', err);
+      document.body.removeChild(link);
+      notifications.show({
+        message: 'Image downloaded successfully',
+        color: 'green',
+      });
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to generate image',
+        color: 'red',
+      });
     } finally {
       setIsDownloading(false);
     }
@@ -194,6 +215,7 @@ export default function HomePage() {
     <Container
       size={CONFIG.layout.containerSize}
       px={0}
+      className="graph-paper"
       h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`}
     >
       <Flex h="100%" justify="center" align="center" p="xl">

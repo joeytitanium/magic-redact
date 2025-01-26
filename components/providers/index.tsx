@@ -3,6 +3,7 @@
 import '@/theme/style.css';
 import { MantineProvider } from '@mantine/core';
 //
+import '@/theme/shadcn-style.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
@@ -13,6 +14,7 @@ import dynamic from 'next/dynamic';
 import { useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
 import { cssVariableResolver } from '@/theme/css-variable-resolver';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PHProvider } from './posthog';
 

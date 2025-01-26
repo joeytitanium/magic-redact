@@ -205,18 +205,6 @@
   }
 }
 
-[data-mantine-color-scheme='dark'] {
-  .mantine-SegmentedControl-root {
-    .mantine-SegmentedControl-label {
-      &:where(:not([data-disabled], [data-active], [data-read-only])) {
-        &:hover {
-          color: var(--mantine-color-white);
-        }
-      }
-    }
-  }
-}
-
 /* Switch */
 
 /* Slider */

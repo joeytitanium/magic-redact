@@ -1,5 +1,10 @@
 import { CONFIG } from '@/config';
-import { SAMPLE_IMAGES, SampleImage, sampleImageSize } from '@/utils/sample-images';
+import {
+  SAMPLE_IMAGES,
+  SampleImage,
+  sampleImageSize,
+  sampleImageThumbnail,
+} from '@/utils/sample-images';
 import { Card, Container, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -85,9 +90,7 @@ export const ImageDropzone = ({
             <Card w={60} h={60} p={0} withBorder>
               <Image
                 radius="md"
-                fit="cover"
-                bg="red"
-                src={imageName}
+                src={sampleImageThumbnail[imageName]}
                 alt="Sample image"
                 w="100%"
                 h="100%"

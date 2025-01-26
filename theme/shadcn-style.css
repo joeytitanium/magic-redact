@@ -174,11 +174,13 @@
 
   .mantine-SegmentedControl-label {
     color: var(--mantine-color-dimmed);
+
     &[data-active] {
       color: var(--mantine-color-text);
     }
   }
 }
+
 [data-mantine-color-scheme='light'] {
   .mantine-SegmentedControl-root {
     .mantine-SegmentedControl-label {
@@ -190,6 +192,7 @@
     }
   }
 }
+
 [data-mantine-color-scheme='dark'] {
   .mantine-SegmentedControl-root {
     .mantine-SegmentedControl-label {
@@ -213,6 +216,7 @@
     }
   }
 }
+
 [data-mantine-color-scheme='dark'] {
   .mantine-SegmentedControl-root {
     .mantine-SegmentedControl-label {
@@ -332,6 +336,7 @@
         background-color: var(--mantine-color-default-hover);
       }
     }
+
     &:where([data-active]) {
       background-color: var(--pagination-active-bg);
       border-color: var(--pagination-active-bg);

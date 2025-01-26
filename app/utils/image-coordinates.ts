@@ -49,6 +49,8 @@ export const scaledRect = ({
   scaledImageSize: Size;
   originalImageSize: Size;
 }) => {
+  if (rect.source === 'user') return rect;
+
   const diff = originalImageSize.width / scaledImageSize.width;
   return {
     ...rect,

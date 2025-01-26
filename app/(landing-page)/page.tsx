@@ -1,7 +1,7 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { ActionIcon, Box, Card, Container, Flex, Image, Stack, Text } from '@mantine/core';
+import { Box, Card, Container, Flex, Stack, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
@@ -12,7 +12,9 @@ import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
+import { ImageCanvas } from './image-canvas';
 import classes from './page.module.css';
 
 export default function HomePage() {
@@ -34,7 +36,8 @@ export default function HomePage() {
     reset: resetAnalyzing,
   } = useAnalyzeImage({
     onSuccess: (data) => {
-      setRectangles((prev) => [...prev, ...data]);
+      const r: Rect[] = data.map((rect) => ({ ...rect, source: 'server' }));
+      setRectangles((prev) => [...prev, ...r]);
     },
   });
 
@@ -54,7 +57,6 @@ export default function HomePage() {
     headerHeight: CONFIG.layout.headerHeight,
     footerHeight: CONFIG.layout.footerHeight,
   });
-  console.log(`🔫 : ${JSON.stringify(coordinates, null, '\t')}`);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -69,7 +71,7 @@ export default function HomePage() {
 
     setIsDrawing(true);
     setStartPoint({ x, y });
-    setCurrentRect({ id: crypto.randomUUID(), x, y, width: 0, height: 0 });
+    setCurrentRect({ id: uuidv4(), source: 'user', x, y, width: 0, height: 0 });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -162,67 +164,19 @@ export default function HomePage() {
 
     return (
       <>
-        <Box
-          ref={imageRef}
-          pos="fixed"
-          id="node"
-          top={coordinates.y}
-          left={coordinates.x}
-          w={coordinates.width}
-          h={coordinates.height}
-          style={{ cursor: 'crosshair' }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          <Image src={imageUrl} bg="blue" alt="Uploaded image" />
-          {r.map((rect) => (
-            <Box
-              key={rect.id}
-              style={{
-                position: 'absolute',
-                top: rect.y,
-                left: rect.x,
-                width: rect.width,
-                height: rect.height,
-                backgroundColor: hoveredRectId === rect.id ? 'rgba(0, 0, 0, 0.3)' : 'green',
-                transition: 'all 0.2s ease',
-                zIndex: hoveredRectId === rect.id ? 10 : 1,
-              }}
-              onMouseEnter={() => setHoveredRectId(rect.id)}
-              onMouseLeave={() => setHoveredRectId(null)}
-            >
-              {hoveredRectId === rect.id && (
-                <ActionIcon
-                  variant="filled"
-                  color="red"
-                  size="sm"
-                  radius="xl"
-                  pos="absolute"
-                  top={-10}
-                  right={-10}
-                  onClick={() => handleDeleteRect(rect.id)}
-                >
-                  <IconX size={14} />
-                </ActionIcon>
-              )}
-            </Box>
-          ))}
-          {currentRect && (
-            <Box
-              style={{
-                position: 'absolute',
-                top: currentRect.y,
-                left: currentRect.x,
-                width: currentRect.width,
-                height: currentRect.height,
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                border: '1px solid black',
-              }}
-            />
-          )}
-        </Box>
+        <ImageCanvas
+          imageRef={imageRef}
+          coordinates={coordinates}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          handleMouseUp={handleMouseUp}
+          imageUrl={imageUrl}
+          rectangles={r}
+          hoveredRectId={hoveredRectId}
+          handleDeleteRect={handleDeleteRect}
+          currentRect={currentRect}
+          onHoveredRectIdChange={setHoveredRectId}
+        />
         <Box
           pos="fixed"
           left={0}

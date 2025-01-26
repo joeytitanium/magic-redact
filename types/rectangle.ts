@@ -7,7 +7,6 @@ export const RECTANGLE_SCHEMA = z.object({
   height: z.number(),
   description: z.string().optional(),
 });
-
 export type Rectangle = z.infer<typeof RECTANGLE_SCHEMA>;
 
 export const ANALYZE_IMAGE_RESPONSE_SCHEMA = z.object({
@@ -15,4 +14,5 @@ export const ANALYZE_IMAGE_RESPONSE_SCHEMA = z.object({
 });
 export type AnalyzeImageResponse = z.infer<typeof ANALYZE_IMAGE_RESPONSE_SCHEMA>;
 
-export type Rect = Rectangle & { id: string };
+export type RectSource = 'user' | 'server';
+export type Rect = Rectangle & { id: string; source: RectSource };

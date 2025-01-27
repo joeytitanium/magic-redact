@@ -49,53 +49,29 @@ export async function POST(request: Request) {
 
     const response = await openai.beta.chat.completions.parse({
       model: 'gpt-4o',
-      response_format: zodResponseFormat(OPEN_AI_REQUESTED_SCHEMA, 'indexes'),
+      response_format: zodResponseFormat(OPEN_AI_REQUESTED_SCHEMA, 'sensitiveStrings'),
       messages: [
         {
           role: 'user',
           content: [
             {
               type: 'text',
-              text: `You are a privacy protection system. Your task is to identify sensitive text fragments and ALL numbers that should be redacted from medical documents.
+              text: `You are a world class data protection expert. Analyze the following strings and determine which ones contain sensitive information. 
 
-Input: An array of OCR-detected text fragments, numbered starting from 0.
-Output: Return only the indexes of text fragments that should be redacted.
+⚠️ Important:
+2️⃣ Return an **array of strings** that contain sensitive text, including:
+   - **Names**
+   - **Addresses**
+   - **Dates of birth**
+   - **License numbers**
+   - **Emails**
+   - **Phone numbers**
+   - **Financial details**
+   - **Identifying numbers (e.g., passport, driver's license, social security)**
+4️⃣ Do **not** include general text like labels (e.g., "DOB:", "Name:", etc.) unless they are part of private info.
+5️⃣ Return an **array** of sensitive strings.
 
-Critical Rules:
-1. ALWAYS REDACT:
-   - ALL numbers and numeric sequences (including dates, times, IDs, etc.)
-   - Full names (e.g., "John Smith", "Sarah Anderson")
-   - Email addresses (e.g., "john.doe@email.com")
-   - Phone numbers
-   - Physical addresses
-   - Any text containing numbers (e.g., "MA567891", "Room 101")
-   - Alphanumeric combinations
-   - Dates in any format
-   - Times in any format
-   - Ages
-   - Measurements
-   - Insurance numbers
-   - Medical record numbers
-   - Any other identifying numbers
-
-2. NEVER REDACT:
-   - Headers or section titles without numbers (e.g., "MEDICAL REPORT", "Assessment", "Diagnosis")
-   - Field labels without numbers (e.g., "Doctor's Name:", "Phone:", "Email:")
-   - Medical terminology without numbers
-   - Descriptions of health status without numbers
-   - Hospital/clinic names (unless they contain numbers)
-   - General words and phrases without numbers
-
-3. NUMBER DETECTION RULES:
-   - If a fragment contains ANY numbers (0-9), redact the entire fragment
-   - Include fragments with written numbers (e.g., "one", "two") if they are part of sensitive information
-   - Include number-like characters (e.g., "#", "+")
-
-Example:
-Input: ["MEDICAL REPORT", "Visit Date:", "14.11.2023", "Room 101", "Assessment", "Height: 170cm"]
-Should return: [2, 3, 5] (all fragments containing numbers)
-
-Analyze these text fragments:
+The strings are:  
 ${input.join(',')}`,
             },
           ],
@@ -111,16 +87,31 @@ ${input.join(',')}`,
       return NextResponse.json({ error: outputResult.error.message }, { status: 400 });
     }
 
-    const { indexes } = outputResult.data.choices[0].message.parsed;
+    const { sensitiveStrings } = outputResult.data.choices[0].message.parsed;
+
+    const sensitiveStringSet = new Set(
+      sensitiveStrings.flatMap((str) =>
+        str
+          .split(/[,\s]+/) // split by comma or any whitespace
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0)
+      )
+    );
+    // console.log(
+    //   `🔫 sensitiveStringSet: ${JSON.stringify(Array.from(sensitiveStringSet), null, '\t')}`
+    // );
 
     // Get the rectangles corresponding to the sensitive indexes
-    const sensitiveRectangles = indexes.map((index) => ocrMapped.rectangles[index]);
+    const rectangles = ocrMapped.rectangles.map((x) => ({
+      ...x,
+      sensitive: sensitiveStringSet.has(x.description),
+    }));
     console.log(`🔫 prompt_tokens: ${outputResult.data.usage.prompt_tokens}`);
     console.log(`🔫 completion_tokens: ${outputResult.data.usage.completion_tokens}`);
     console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);
     // console.log(`🔫 sensitiveRectangles: ${JSON.stringify(sensitiveRectangles, null, '\t')}`);
 
-    return NextResponse.json({ rectangles: sensitiveRectangles });
+    return NextResponse.json({ rectangles });
   } catch (error) {
     console.error('Error analyzing image:', error);
     return NextResponse.json({ error: 'Failed to analyze image' }, { status: 500 });

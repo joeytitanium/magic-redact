@@ -1,6 +1,7 @@
 import { Rect, Rectangle } from '@/types/rectangle';
 import { ActionIcon, Box, Image } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
+import { CSSProperties } from 'react';
 
 export const ImageCanvas = ({
   imageRef,
@@ -28,70 +29,80 @@ export const ImageCanvas = ({
   currentRect: Rect | null;
   onHoveredRectIdChange: (id: string | null) => void;
   showRedacted: boolean;
-}) => (
-  <Box
-    ref={imageRef}
-    pos="fixed"
-    id="node"
-    top={coordinates.y}
-    left={coordinates.x}
-    w={coordinates.width}
-    h={coordinates.height}
-    style={{ cursor: 'crosshair' }}
-    onMouseDown={handleMouseDown}
-    onMouseMove={handleMouseMove}
-    onMouseUp={handleMouseUp}
-    onMouseLeave={handleMouseUp}
-  >
-    <Image src={imageUrl} alt="Uploaded image" />
-    {rectangles.map((rect) => (
-      <Box
-        key={rect.id}
-        style={{
-          position: 'absolute',
-          top: rect.y,
-          left: rect.x,
-          width: rect.width,
-          height: rect.height,
-          backgroundColor:
-            hoveredRectId !== rect.id
-              ? `rgba(0, 0, 0, ${showRedacted ? 0.3 : 1})`
-              : 'rgba(0, 0, 0, 0.3)',
-          // border: hoveredRectId === rect.id ? '1px solid red' : '1px solid black',
-          transition: 'all 0.2s ease',
-          zIndex: hoveredRectId === rect.id ? 10 : 1,
-        }}
-        onMouseEnter={() => onHoveredRectIdChange(rect.id)}
-        onMouseLeave={() => onHoveredRectIdChange(null)}
-      >
-        {hoveredRectId === rect.id && (
-          <ActionIcon
-            variant="filled"
-            color="red"
-            size="sm"
-            radius="xl"
-            pos="absolute"
-            top={-10}
-            right={-10}
-            onClick={() => handleDeleteRect(rect.id)}
-          >
-            <IconX size={14} />
-          </ActionIcon>
-        )}
-      </Box>
-    ))}
-    {currentRect && (
-      <Box
-        style={{
-          position: 'absolute',
-          top: currentRect.y,
-          left: currentRect.x,
-          width: currentRect.width,
-          height: currentRect.height,
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          border: '1px solid black',
-        }}
-      />
-    )}
-  </Box>
-);
+}) => {
+  const stylingForRect = (rect: Rect): CSSProperties => {
+    if (rect.sensitive) {
+      return {
+        backgroundColor: !showRedacted ? 'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.3)',
+      };
+    }
+
+    return {
+      border: '1px solid green',
+    };
+  };
+
+  return (
+    <Box
+      ref={imageRef}
+      pos="fixed"
+      id="node"
+      top={coordinates.y}
+      left={coordinates.x}
+      w={coordinates.width}
+      h={coordinates.height}
+      style={{ cursor: 'crosshair' }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <Image src={imageUrl} alt="Uploaded image" />
+      {rectangles.map((rect) => (
+        <Box
+          key={rect.id}
+          style={{
+            position: 'absolute',
+            top: rect.y,
+            left: rect.x,
+            width: rect.width,
+            height: rect.height,
+            transition: 'all 0.2s ease',
+            zIndex: hoveredRectId === rect.id ? 10 : 1,
+            ...stylingForRect(rect),
+          }}
+          onMouseEnter={() => onHoveredRectIdChange(rect.id)}
+          onMouseLeave={() => onHoveredRectIdChange(null)}
+        >
+          {hoveredRectId === rect.id && (
+            <ActionIcon
+              variant="filled"
+              color="red"
+              size="sm"
+              radius="xl"
+              pos="absolute"
+              top={-10}
+              right={-10}
+              onClick={() => handleDeleteRect(rect.id)}
+            >
+              <IconX size={14} />
+            </ActionIcon>
+          )}
+        </Box>
+      ))}
+      {currentRect && (
+        <Box
+          style={{
+            position: 'absolute',
+            top: currentRect.y,
+            left: currentRect.x,
+            width: currentRect.width,
+            height: currentRect.height,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            border: '1px solid black',
+          }}
+        />
+      )}
+    </Box>
+  );
+};

@@ -6,11 +6,12 @@ export const RECTANGLE_SCHEMA = z.object({
   width: z.number(),
   height: z.number(),
   description: z.string().optional(),
+  sensitive: z.boolean(),
 });
 export type Rectangle = z.infer<typeof RECTANGLE_SCHEMA>;
 
 export const OPEN_AI_REQUESTED_SCHEMA = z.object({
-  indexes: z.array(z.number()),
+  sensitiveStrings: z.array(z.string()),
 });
 
 export const OPEN_AI_RESPONSE_SCHEMA = z.object({

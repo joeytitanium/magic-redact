@@ -10,6 +10,7 @@ import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { useSearchParams } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
@@ -27,6 +28,10 @@ export default function HomePage() {
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showRedacted, setShowRedacted] = useState(false);
+
+  const searchParams = useSearchParams();
+  const isDebug = searchParams.get('debug') === 'true';
+
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
@@ -40,7 +45,7 @@ export default function HomePage() {
   } = useAnalyzeImage({
     onSuccess: (data) => {
       const r: Rect[] = data.map((rect) => ({ ...rect, source: 'server' }));
-      setRectangles((prev) => [...prev, ...r]);
+      setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
     },
   });
 
@@ -76,7 +81,7 @@ export default function HomePage() {
 
     setIsDrawing(true);
     setStartPoint({ x, y });
-    setCurrentRect({ id: uuidv4(), source: 'user', x, y, width: 0, height: 0 });
+    setCurrentRect({ id: uuidv4(), source: 'user', x, y, width: 0, height: 0, sensitive: true });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

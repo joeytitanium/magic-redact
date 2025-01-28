@@ -25,7 +25,21 @@ export interface DetectedText {
   confidence: number;
 }
 
-export async function detectTextWithGoogleVision(imageUrl: string): Promise<DetectedText[]> {
+type DetectTextWithGoogleVisionResult =
+  | {
+      data: DetectedText[];
+      originalResponse: any;
+      error: null;
+    }
+  | {
+      data: null;
+      originalResponse: any;
+      error: Error;
+    };
+
+export async function detectTextWithGoogleVision(
+  imageUrl: string
+): Promise<DetectTextWithGoogleVisionResult> {
   try {
     const [result] = await vision.documentTextDetection({
       image: { source: { imageUri: imageUrl } },
@@ -33,23 +47,33 @@ export async function detectTextWithGoogleVision(imageUrl: string): Promise<Dete
     const detections = result.textAnnotations ?? [];
 
     // Skip the first detection as it contains the entire text
-    return detections.slice(1).map((detection) => {
-      const vertices = detection.boundingPoly?.vertices ?? [];
-      const [topLeft, topRight, bottomLeft] = vertices;
+    return {
+      originalResponse: result,
+      data: detections.slice(1).map((detection) => {
+        const vertices = detection.boundingPoly?.vertices ?? [];
+        const [topLeft, topRight, bottomLeft] = vertices;
 
-      return {
-        text: detection.description ?? '',
-        confidence: detection.confidence ?? 0,
-        boundingBox: {
-          x: topLeft.x ?? 0,
-          y: topLeft.y ?? 0,
-          width: (topRight.x ?? 0) - (topLeft.x ?? 0),
-          height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
-        },
-      };
-    });
+        return {
+          text: detection.description ?? '',
+          confidence: detection.confidence ?? 0,
+          boundingBox: {
+            x: topLeft.x ?? 0,
+            y: topLeft.y ?? 0,
+            width: (topRight.x ?? 0) - (topLeft.x ?? 0),
+            height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
+          },
+        };
+      }),
+      error: null,
+    };
   } catch (error) {
-    console.error('Error in Google Vision text detection:', error);
-    throw new Error('Failed to perform OCR with Google Vision');
+    if (error instanceof Error) {
+      return { data: null, originalResponse: null, error };
+    }
+    return {
+      data: null,
+      originalResponse: null,
+      error: new Error('Failed to perform OCR with Google Vision'),
+    };
   }
 }

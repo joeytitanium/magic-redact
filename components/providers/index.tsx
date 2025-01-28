@@ -12,7 +12,9 @@ import '@/theme/shadcn-style.css';
 import { shadcnTheme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 import dynamic from 'next/dynamic';
-import { useState, type ReactNode } from 'react';
+import { supabaseClient } from '@/lib/supabase/client';
+import posthog from 'posthog-js';
+import { useEffect, useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
 import { cssVariableResolver } from '@/theme/css-variable-resolver';
 
@@ -25,6 +27,37 @@ const PostHogPageView = dynamic(() => import('./posthog-page-view'), {
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   const [queryClient] = useState(() => new QueryClient());
+  const supabase = supabaseClient();
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        // handle initial session
+      } else if (event === 'SIGNED_IN') {
+        posthog.identify(session?.user.id, {
+          email: session?.user.email,
+          name: session?.user.user_metadata.name ?? session?.user.user_metadata.displayName,
+        });
+
+        if (session) {
+          // void updateUserProfile({ session });
+        }
+      } else if (event === 'SIGNED_OUT') {
+        posthog.reset();
+      } else if (event === 'PASSWORD_RECOVERY') {
+        // handle password recovery event
+      } else if (event === 'TOKEN_REFRESHED') {
+        // handle token refreshed event
+      } else if (event === 'USER_UPDATED') {
+        // handle user updated event
+      }
+    });
+
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, [supabase]);
+
   return (
     // <ErrorBoundary>
     <PHProvider>

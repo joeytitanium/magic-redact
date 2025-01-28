@@ -6,7 +6,7 @@ import {
   sampleImageThumbnail,
 } from '@/utils/sample-images';
 import { Card, Container, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Dropzone } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
 // TODO: Add paste from clipboard
@@ -43,7 +43,17 @@ export const ImageDropzone = ({
           onReject={(files) => console.log('rejected files', files)}
           maxSize={5 * 1024 ** 2}
           maw={800}
-          accept={IMAGE_MIME_TYPE}
+          accept={[
+            'image/png',
+            'image/gif',
+            'image/jpeg',
+            'image/svg+xml',
+            'image/webp',
+            'image/avif',
+            'image/heic',
+            'image/heif',
+            // 'application/pdf',
+          ]}
           maxFiles={1}
           style={{ cursor: 'pointer' }}
         >

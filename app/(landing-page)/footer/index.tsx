@@ -69,6 +69,7 @@ export const Footer = ({
       radius="md"
       size="md"
       style={{ visibility: 'hidden' }}
+      visibleFrom={CONFIG.layout.mobileBreakpoint}
     >
       Download
     </Button>

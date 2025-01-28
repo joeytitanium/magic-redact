@@ -120,7 +120,7 @@ export default function HomePage() {
       setTimeout(() => {
         setFauxLoadingSampleImage(false);
         setRectangles(sampleImageRects[selectedSampleImage]);
-      }, 2000);
+      }, 3500);
       return;
     }
 
@@ -224,6 +224,7 @@ export default function HomePage() {
           currentRect={currentRect}
           onHoveredRectIdChange={setHoveredRectId}
           showRedacted={showRedacted}
+          isDebug={isDebug}
         />
         <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Footer

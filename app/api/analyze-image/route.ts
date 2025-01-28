@@ -248,7 +248,7 @@ ${input.join(',')}`;
     // console.log(`🔫 prompt_tokens: ${outputResult.data.usage.prompt_tokens}`);
     // console.log(`🔫 completion_tokens: ${outputResult.data.usage.completion_tokens}`);
     // console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);
-    // console.log(`🔫 sensitiveRectangles: ${JSON.stringify(sensitiveRectangles, null, '\t')}`);
+    // console.log(`🔫 sensitiveRectangles: ${JSON.stringify(rectangles, null, '\t')}`);
 
     await insertDocument({
       supabase,

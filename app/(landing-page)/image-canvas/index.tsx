@@ -16,6 +16,7 @@ export const ImageCanvas = ({
   currentRect,
   onHoveredRectIdChange,
   showRedacted,
+  isDebug,
 }: {
   imageRef: React.RefObject<HTMLDivElement>;
   canvasCoordinates: Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>;
@@ -29,6 +30,7 @@ export const ImageCanvas = ({
   currentRect: Rect | null;
   onHoveredRectIdChange: (id: string | null) => void;
   showRedacted: boolean;
+  isDebug: boolean;
 }) => {
   const stylingForRect = (rect: Rect): CSSProperties => {
     if (rect.sensitive) {
@@ -38,7 +40,7 @@ export const ImageCanvas = ({
     }
 
     return {
-      border: '1px solid green',
+      border: isDebug ? '1px solid green' : 'none',
     };
   };
 

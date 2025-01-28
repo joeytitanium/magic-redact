@@ -2,14 +2,14 @@ import { ColorSchemeButton } from '@/components/color-scheme-button';
 import { Logo } from '@/components/logo';
 import { CONFIG } from '@/config';
 import { getRouteUrl } from '@/routing/get-route-url';
-import { Box, Burger, Container, Flex } from '@mantine/core';
+import { Box, Container, Flex } from '@mantine/core';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import classes from './index.module.css';
 
 export type MobileHeaderProps = {
-  onToggle: () => void;
-  opened: boolean;
+  // onToggle: () => void;
+  // opened: boolean;
 };
 
 // const HeaderButton = ({
@@ -31,15 +31,17 @@ export type MobileHeaderProps = {
 //   </ActionIcon>
 // );
 
-export const MobileHeader = ({ opened, onToggle }: MobileHeaderProps) => (
+export const MobileHeader = () => (
   <Box
     component="header"
+    bg="transparent"
     className={clsx(classes.header)}
     hiddenFrom={CONFIG.layout.mobileBreakpoint}
   >
     <Container size={CONFIG.layout.containerSize} h="100%" px="xs">
       <Flex justify="space-between" align="center" h="100%" gap="xs">
-        <Burger size="sm" opened={opened} onClick={onToggle} />
+        {/* <Burger size="sm" opened={opened} onClick={onToggle} /> */}
+        <Logo width={166} height={24} style={{ flexShrink: 0 }} priority />
         <Flex justify="end" align="center" w="100%">
           <ColorSchemeButton />
         </Flex>

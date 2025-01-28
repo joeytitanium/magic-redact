@@ -22,7 +22,7 @@ export const ImageDropzone = ({
 }) => (
   <Container px={0} h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`} fluid>
     <Stack h="100%" justify="center" align="center">
-      <Card p="calc(2 * var(--mantine-spacing-xl))" radius="lg" withBorder>
+      <Card p="calc(2 * var(--mantine-spacing-xl))" mx="lg" radius="lg" withBorder>
         <Dropzone
           onDrop={(files) => {
             setImage(files[0]);

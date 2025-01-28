@@ -22,6 +22,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 573,
       width: 172,
       height: 26,
+      sensitive: true,
     },
     {
       id: '47082b22-bc4e-425c-85dd-6ff65ba555de',
@@ -30,6 +31,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 612,
       width: 95,
       height: 24,
+      sensitive: true,
     },
     {
       id: '26d54813-99ff-4935-9d39-15b285f576f0',
@@ -38,6 +40,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 648,
       width: 194,
       height: 27,
+      sensitive: true,
     },
   ],
   '/sample-zoom-call.jpeg': [
@@ -48,6 +51,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 138,
       width: 22,
       height: 12,
+      sensitive: true,
     },
     {
       id: 'b7f00add-0bb1-42cd-a758-56a9c31e590f',
@@ -56,6 +60,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 138,
       width: 37,
       height: 12,
+      sensitive: true,
     },
     {
       id: '0731dfa6-1856-484b-bc94-ed7edb0c9fd9',
@@ -64,6 +69,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 138,
       width: 18,
       height: 12,
+      sensitive: true,
     },
     {
       id: 'df9ab20d-4459-4b75-803b-db0c0609d98a',
@@ -72,6 +78,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 138,
       width: 28,
       height: 12,
+      sensitive: true,
     },
     {
       id: '32f14d8c-11aa-48c7-9294-083487073295',
@@ -80,6 +87,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 139,
       width: 32,
       height: 10,
+      sensitive: true,
     },
     {
       id: '1b76c96b-64bc-4617-b8e0-b34c5968b12c',
@@ -88,6 +96,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 139,
       width: 29,
       height: 11,
+      sensitive: true,
     },
     {
       id: '9c1015c3-62dc-4d25-a8bc-134786ac121e',
@@ -96,6 +105,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 139,
       width: 56,
       height: 11,
+      sensitive: true,
     },
     {
       id: 'd5be99bb-cb8c-4339-9abc-fd0d936ea70e',
@@ -104,6 +114,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 139,
       width: 22,
       height: 11,
+      sensitive: true,
     },
     {
       id: 'c7388d9c-707d-4877-a76f-b7f66639b0cd',
@@ -112,6 +123,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
       y: 139,
       width: 26,
       height: 11,
+      sensitive: true,
     },
   ],
 };

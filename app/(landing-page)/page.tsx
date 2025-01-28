@@ -5,7 +5,7 @@ import { Box } from '@mantine/core';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { Rect } from '@/types/rectangle';
-import { imageCoordinates, scaledRects } from '@/utils/image-coordinates';
+import { canvasCoordinates, scaledRects } from '@/utils/image-coordinates';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
@@ -61,7 +61,7 @@ export default function HomePage() {
     setSelectedSampleImage(null);
   };
 
-  const coordinates = imageCoordinates({
+  const coordinates = canvasCoordinates({
     imageSize: imageSize ?? { width: 0, height: 0 },
     viewportSize: { width: viewportWidth, height: viewportHeight },
     headerHeight: CONFIG.layout.headerHeight,
@@ -213,7 +213,7 @@ export default function HomePage() {
         <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
         <ImageCanvas
           imageRef={imageRef}
-          coordinates={coordinates}
+          canvasCoordinates={coordinates}
           handleMouseDown={handleMouseDown}
           handleMouseMove={handleMouseMove}
           handleMouseUp={handleMouseUp}

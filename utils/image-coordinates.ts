@@ -1,7 +1,7 @@
 import { Rect, Rectangle } from '@/types/rectangle';
 import { Size } from '@/types/size';
 
-export const imageCoordinates = ({
+export const canvasCoordinates = ({
   imageSize,
   viewportSize,
   headerHeight,
@@ -13,7 +13,7 @@ export const imageCoordinates = ({
   headerHeight: number;
   footerHeight: number;
   margin?: number;
-}): Rectangle => {
+}): Pick<Rectangle, 'x' | 'y' | 'width' | 'height'> => {
   const isPortrait = imageSize.width < imageSize.height;
   const imageScale = imageSize.width / imageSize.height;
 

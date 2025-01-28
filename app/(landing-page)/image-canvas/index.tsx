@@ -5,7 +5,7 @@ import { CSSProperties } from 'react';
 
 export const ImageCanvas = ({
   imageRef,
-  coordinates,
+  canvasCoordinates,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
@@ -18,7 +18,7 @@ export const ImageCanvas = ({
   showRedacted,
 }: {
   imageRef: React.RefObject<HTMLDivElement>;
-  coordinates: Rectangle;
+  canvasCoordinates: Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>;
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseUp: () => void;
@@ -47,10 +47,10 @@ export const ImageCanvas = ({
       ref={imageRef}
       pos="fixed"
       id="node"
-      top={coordinates.y}
-      left={coordinates.x}
-      w={coordinates.width}
-      h={coordinates.height}
+      top={canvasCoordinates.y}
+      left={canvasCoordinates.x}
+      w={canvasCoordinates.width}
+      h={canvasCoordinates.height}
       style={{ cursor: 'crosshair' }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

@@ -9,7 +9,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => (
   // const [opened, { toggle }] = useDisclosure();
 
   <MantineAppShell
-    className="graph-paper"
+    // className="graph-paper"
     header={{ height: CONFIG.layout.headerHeight }}
     // padding="md"
     styles={() => ({

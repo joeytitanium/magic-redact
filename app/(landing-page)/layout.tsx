@@ -1,11 +1,12 @@
 import { AppShell } from '@/components/app-shell';
 import { Providers } from '@/components/providers';
+import { CONFIG } from '@/config';
 import { ColorSchemeScript } from '@mantine/core';
 import { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Redacted',
+  title: CONFIG.site.name,
   description: 'Auto-redact sensitive information from your images',
 };
 

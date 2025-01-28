@@ -38,9 +38,9 @@ export const CONFIG: {
   localStorageKey: {};
 } = {
   site: {
-    url: isDevelopment ? 'http://localhost:3000' : 'https://www.titanium.dev',
-    name: 'Titanium',
-    description: 'Description here',
+    url: isDevelopment ? 'http://localhost:3000' : 'https://www.magicredact.com',
+    name: 'MagicRedact',
+    description: 'Automatically redact sensitive information from images',
   },
   layout: {
     headerHeight: 60,

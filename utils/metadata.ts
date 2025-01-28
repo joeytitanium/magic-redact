@@ -2,7 +2,7 @@ import { CONFIG } from '@/config';
 import type { Metadata } from 'next';
 
 export const openGraph: Metadata['openGraph'] = {
-  title: 'Titanium',
+  title: CONFIG.site.name,
   description: CONFIG.site.description,
   type: 'website',
   url: CONFIG.site.url,
@@ -20,7 +20,7 @@ export const openGraph: Metadata['openGraph'] = {
 export const generateMetadata = (metadata: Metadata = {}): Metadata => ({
   title: CONFIG.site.name,
   description: CONFIG.site.description,
-  keywords: ['Mantine components', 'Landing page components', 'Mantine themes'].join(', '),
+  keywords: ['MagicRedact', 'AI', 'Image', 'Redact', 'Sensitive', 'Information'].join(', '),
   openGraph,
   twitter: {
     card: 'summary_large_image',

@@ -46,7 +46,8 @@ export default function HomePage() {
   } = useAnalyzeImage({
     onSuccess: (data) => {
       const r: Rect[] = data.map((rect) => ({ ...rect, source: 'server' }));
-      setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
+      // setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
+      setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
     },
   });
 

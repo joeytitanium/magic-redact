@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
 import { ImageCanvas } from './image-canvas';
 import { ImageDropzone } from './image-dropzone';
-
+//
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);

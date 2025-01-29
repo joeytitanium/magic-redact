@@ -1,6 +1,8 @@
+import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
+import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
 import { logApiError } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -26,6 +28,56 @@ const openai = new OpenAI({
 // const INDEX_RESPONSE_SCHEMA = z.object({
 //   indexes: z.array(z.number()),
 // });
+
+type TokenCostResponse = {
+  inputTokenCost: string;
+  outputTokenCost: string;
+  totalCost: string;
+};
+
+export const estimatedTokenCost = ({
+  inputTokens,
+  outputTokens,
+  model,
+  fixedDecimal = 8,
+}: {
+  inputTokens: number;
+  outputTokens: number;
+  model: AiModel;
+  fixedDecimal?: number;
+}): TokenCostResponse => {
+  if (model === 'gpt-4o') {
+    // $2.50 / 1M input tokens
+    // $10.00 / 1M output tokens
+    const inputTokenCost = (inputTokens / 1_000_000) * 2.5;
+    const outputTokenCost = (outputTokens / 1_000_000) * 10;
+    const totalTokenCost = inputTokenCost + outputTokenCost;
+    const inputTokenCostDisplay = `$${Number(inputTokenCost).toFixed(fixedDecimal)}`;
+    const outputTokenCostDisplay = `$${Number(outputTokenCost).toFixed(fixedDecimal)}`;
+    const totalCostDisplay = `$${Number(totalTokenCost).toFixed(fixedDecimal)}`;
+    return {
+      inputTokenCost: inputTokenCostDisplay,
+      outputTokenCost: outputTokenCostDisplay,
+      totalCost: totalCostDisplay,
+    };
+  }
+
+  // if (model === 'gpt-4o-mini') {
+  // $0.150 / 1M input tokens
+  // $0.600 / 1M output tokens
+  const inputTokenCost = (inputTokens / 1_000_000) * 0.15;
+  const outputTokenCost = (outputTokens / 1_000_000) * 0.6;
+  const totalCost = inputTokenCost + outputTokenCost;
+  const inputTokenCostDisplay = `$${Number(inputTokenCost).toFixed(fixedDecimal)}`;
+  const outputTokenCostDisplay = `$${Number(outputTokenCost).toFixed(fixedDecimal)}`;
+  const totalCostDisplay = `$${Number(totalCost).toFixed(fixedDecimal)}`;
+  return {
+    inputTokenCost: inputTokenCostDisplay,
+    outputTokenCost: outputTokenCostDisplay,
+    totalCost: totalCostDisplay,
+  };
+  // }
+};
 
 const getDocumentTypeFromDataUrl = (dataUrl: string): string | null => {
   // Check if it's a valid data URL
@@ -55,7 +107,7 @@ const insertDocument = async ({
   supabase: SupabaseClient;
   document: Omit<DocumentInsert, 'device_info' | 'ai_model'>;
   request: Request;
-  deviceInfo: Record<string, any>;
+  deviceInfo: DeviceInfo;
 }) => {
   const { error: insertError } = await supabase.from('documents').insert({
     ...document,
@@ -63,7 +115,13 @@ const insertDocument = async ({
     device_info: deviceInfo,
   });
   if (insertError) {
-    logApiError('Error inserting document', { error: insertError, request });
+    await sendDiscordAlert({
+      username: '/analyze-image',
+      title: 'Error inserting record into db',
+      deviceInfo,
+      variant: 'error',
+    });
+    logApiError('Error inserting record into db', { error: insertError, request });
   }
 };
 
@@ -74,12 +132,12 @@ export async function POST(request: Request) {
 
   const supabase = supabaseServiceRoleClient();
 
-  const ip = ipAddress(request);
   const userAgent = request.headers.get('user-agent') || '';
   const ua = new UAParser(userAgent);
-  const deviceInfo = {
+  const deviceInfo: DeviceInfo = {
     ...ua.getResult(),
     geolocation: geolocation(request),
+    ipAddress: ipAddress(request),
   };
 
   try {
@@ -101,13 +159,30 @@ export async function POST(request: Request) {
     if (!inputResult.success) {
       return NextResponse.json({ error: inputResult.error.message }, { status: 400 });
     }
-    const { imageUrl } = inputResult.data;
-    const documentType = getDocumentTypeFromDataUrl(imageUrl);
+    const { imageUrl: base64Image } = inputResult.data;
+    const documentType = getDocumentTypeFromDataUrl(base64Image);
     if (!documentType) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Invalid image URL',
+        deviceInfo,
+        variant: 'error',
+      });
+      logApiError('Invalid image URL', { error: new Error('Invalid image URL'), request });
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
-    const s3ImageUrl = await uploadToS3(imageUrl);
+    const { url: s3ImageUrl, error: s3Error } = await uploadToS3(base64Image);
+    if (s3Error) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'S3 upload error',
+        deviceInfo,
+        variant: 'error',
+      });
+      logApiError('S3 upload error', { error: s3Error, request });
+      return NextResponse.json({ error: s3Error.message }, { status: 400 });
+    }
 
     // OCR
     const {
@@ -116,13 +191,27 @@ export async function POST(request: Request) {
       error: ocrError,
     } = await detectTextWithGoogleVision(s3ImageUrl);
     if (ocrError) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Error detecting text with Google Vision',
+        imageUrl: s3ImageUrl,
+        deviceInfo,
+        variant: 'error',
+        context: [
+          {
+            name: 'Error',
+            value: ocrError.message,
+            inline: false,
+          },
+        ],
+      });
       logApiError('Error detecting text with Google Vision', { error: ocrError, request });
       await insertDocument({
         supabase,
         request,
         deviceInfo,
         document: {
-          ip_address: ip,
+          ip_address: deviceInfo.ipAddress,
           document_url: s3ImageUrl,
           document_type: documentType,
           ocr_error: ocrError.message,
@@ -136,13 +225,20 @@ export async function POST(request: Request) {
     //   context: { ocrResults },
     // });
     if (ocrResults.length === 0) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'No text detected',
+        imageUrl: s3ImageUrl,
+        deviceInfo,
+        variant: 'error',
+      });
       logApiError('No text detected', { error: new Error('No text detected'), request });
       await insertDocument({
         supabase,
         request,
         deviceInfo,
         document: {
-          ip_address: ip,
+          ip_address: deviceInfo.ipAddress,
           document_url: s3ImageUrl,
           document_type: documentType,
           ocr_response: originalResponse,
@@ -207,13 +303,32 @@ ${input.join(',')}`;
     // });
     const outputResult = OPEN_AI_RESPONSE_SCHEMA.safeParse(response);
     if (!outputResult.success) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Error parsing OpenAI response',
+        imageUrl: s3ImageUrl,
+        deviceInfo,
+        variant: 'error',
+        context: [
+          {
+            name: 'OpenAI response',
+            value: JSON.stringify(response, null, '\t'),
+            inline: false,
+          },
+          {
+            name: 'Parse error',
+            value: outputResult.error.message,
+            inline: false,
+          },
+        ],
+      });
       logApiError('Error parsing OpenAI response', { error: outputResult.error, request });
       await insertDocument({
         supabase,
         request,
         deviceInfo,
         document: {
-          ip_address: ip,
+          ip_address: deviceInfo.ipAddress,
           document_url: s3ImageUrl,
           document_type: documentType,
           ocr_response: originalResponse,
@@ -255,7 +370,7 @@ ${input.join(',')}`;
       request,
       deviceInfo,
       document: {
-        ip_address: ip,
+        ip_address: deviceInfo.ipAddress,
         document_url: s3ImageUrl,
         document_type: documentType,
         ocr_response: originalResponse,
@@ -265,6 +380,28 @@ ${input.join(',')}`;
         ai_prompt: openaiPrompt,
         ai_response: response as any,
       },
+    });
+    const tokenCost = estimatedTokenCost({
+      inputTokens: outputResult.data.usage.prompt_tokens,
+      outputTokens: outputResult.data.usage.completion_tokens,
+      model: AI_MODEL,
+    });
+    const tokenSummary = `Prompt: ${outputResult.data.usage.prompt_tokens} = **${tokenCost.inputTokenCost}**,
+Completion: ${outputResult.data.usage.completion_tokens} = **${tokenCost.outputTokenCost}**,
+Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalCost}**`;
+    await sendDiscordAlert({
+      username: '/analyze-image',
+      title: 'Image successfully analyzed',
+      imageUrl: s3ImageUrl,
+      deviceInfo,
+      variant: 'success',
+      context: [
+        {
+          name: 'Tokens',
+          value: tokenSummary,
+          inline: false,
+        },
+      ],
     });
     return NextResponse.json({ rectangles });
   } catch (error) {

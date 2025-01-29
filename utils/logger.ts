@@ -34,3 +34,11 @@ export const logDebugMessage = (message: string, options: LogMessageOptions) => 
   if (!isDevelopment) return;
   logMessage(message, { ...options });
 };
+
+export const logError = (
+  message: string,
+  error: unknown,
+  options?: Omit<LogMessageOptions, 'level'>
+) => {
+  logMessage(message, { ...options, level: 'error', context: { error, ...options?.context } });
+};

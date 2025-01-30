@@ -95,7 +95,7 @@ const getDocumentTypeFromDataUrl = (dataUrl: string): string | null => {
   }
 };
 
-const insertDocument = async ({
+const insertDbRecord = async ({
   supabase,
   document,
   request,
@@ -138,19 +138,6 @@ export async function POST(request: Request) {
   };
 
   try {
-    // Fetch geolocation data
-    // const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
-    // const geoData = await geoRes.json();
-    // console.log(`🔫 geoData: ${JSON.stringify(geoData, null, '\t')}`);
-    // const location = {
-    //   country: geoData.country,
-    //   region: geoData.regionName,
-    //   city: geoData.city,
-    //   lat: geoData.lat,
-    //   lon: geoData.lon,
-    //   isp: geoData.isp,
-    // };
-
     const body = await request.json();
     const inputResult = INPUT_SCHEMA.safeParse(body);
     if (!inputResult.success) {
@@ -214,7 +201,7 @@ export async function POST(request: Request) {
         error: ocrError ?? new Error('Unknown error'),
         request,
       });
-      await insertDocument({
+      await insertDbRecord({
         supabase,
         request,
         deviceInfo,
@@ -241,7 +228,7 @@ export async function POST(request: Request) {
         variant: 'error',
       });
       logApiError('No text detected', { error: new Error('No text detected'), request });
-      await insertDocument({
+      await insertDbRecord({
         supabase,
         request,
         deviceInfo,
@@ -331,7 +318,7 @@ ${input.join(',')}`;
         ],
       });
       logApiError('Error parsing OpenAI response', { error: outputResult.error, request });
-      await insertDocument({
+      await insertDbRecord({
         supabase,
         request,
         deviceInfo,
@@ -373,7 +360,7 @@ ${input.join(',')}`;
     // console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);
     // console.log(`🔫 sensitiveRectangles: ${JSON.stringify(rectangles, null, '\t')}`);
 
-    await insertDocument({
+    await insertDbRecord({
       supabase,
       request,
       deviceInfo,

@@ -4,21 +4,21 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
+    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
   images: {
     remotePatterns: [],
   },
   headers: () => [
     {
-      source: "/(.*)",
+      source: '/(.*)',
       headers: [
         {
-          key: "X-Frame-Options",
-          value: "DENY",
+          key: 'X-Frame-Options',
+          value: 'DENY',
         },
         {
-          key: "Content-Security-Policy",
+          key: 'Content-Security-Policy',
           value: "frame-ancestors 'self';",
         },
       ],

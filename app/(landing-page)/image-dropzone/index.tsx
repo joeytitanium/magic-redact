@@ -52,7 +52,7 @@ export const ImageDropzone = ({
             'image/avif',
             'image/heic',
             'image/heif',
-            // 'application/pdf',
+            'application/pdf',
           ]}
           maxFiles={1}
           style={{ cursor: 'pointer' }}

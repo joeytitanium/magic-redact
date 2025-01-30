@@ -1,15 +1,11 @@
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 
-const vision = new ImageAnnotatorClient({
+const client = new ImageAnnotatorClient({
   credentials: {
-    type: 'service_account',
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    universe_domain: 'googleapis.com',
+    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   },
+  projectId: process.env.GOOGLE_PROJECT_ID,
 });
 
 export interface BoundingBox {
@@ -37,43 +33,87 @@ type DetectTextWithGoogleVisionResult =
       error: Error;
     };
 
-export async function detectTextWithGoogleVision(
-  imageUrl: string
-): Promise<DetectTextWithGoogleVisionResult> {
+export const detectTextWithGoogleVision = async (
+  gcsUri: string
+): Promise<DetectTextWithGoogleVisionResult> => {
   try {
-    const [result] = await vision.documentTextDetection({
-      image: { source: { imageUri: imageUrl } },
-    });
-    const detections = result.textAnnotations ?? [];
+    if (gcsUri.toLowerCase().endsWith('.pdf')) {
+      const bucketName = 'magic-redact';
+      const outputPrefix = 'vision-output';
 
-    // Skip the first detection as it contains the entire text
-    return {
-      originalResponse: result,
-      data: detections.slice(1).map((detection) => {
-        const vertices = detection.boundingPoly?.vertices ?? [];
-        const [topLeft, topRight, bottomLeft] = vertices;
+      const inputConfig = {
+        mimeType: 'application/pdf',
+        gcsSource: {
+          uri: gcsUri,
+        },
+      };
 
-        return {
-          text: detection.description ?? '',
-          confidence: detection.confidence ?? 0,
-          boundingBox: {
-            x: topLeft.x ?? 0,
-            y: topLeft.y ?? 0,
-            width: (topRight.x ?? 0) - (topLeft.x ?? 0),
-            height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
+      const outputConfig = {
+        gcsDestination: {
+          uri: `gs://${bucketName}/${outputPrefix}/`,
+        },
+      };
+
+      const [operation] = await client.asyncBatchAnnotateFiles({
+        requests: [
+          {
+            inputConfig,
+            features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+            outputConfig,
           },
+        ],
+      });
+      console.log('Operation started, waiting for completion...');
+
+      const [filesResponse] = await operation.promise();
+
+      const destinationUri = filesResponse?.responses?.[0]?.outputConfig?.gcsDestination?.uri;
+      console.log('JSON saved to:', destinationUri);
+
+      // For now, return a basic response to verify it's working
+      return {
+        data: [],
+        originalResponse: filesResponse?.responses?.[0],
+        error: null,
+      };
+    } else {
+      const [result] = await client.documentTextDetection(gcsUri);
+      const detections = result.textAnnotations ?? [];
+
+      if (result.error?.message) {
+        return {
+          data: null,
+          originalResponse: result,
+          error: new Error(result.error.message),
         };
-      }),
-      error: null,
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      return { data: null, originalResponse: null, error };
+      }
+
+      // Skip the first detection as it contains the entire text
+      return {
+        originalResponse: result,
+        data: detections.slice(1).map((detection) => {
+          const vertices = detection.boundingPoly?.vertices ?? [];
+          const [topLeft, topRight, bottomLeft] = vertices;
+
+          return {
+            text: detection.description ?? '',
+            confidence: detection.confidence ?? 0,
+            boundingBox: {
+              x: topLeft.x ?? 0,
+              y: topLeft.y ?? 0,
+              width: (topRight.x ?? 0) - (topLeft.x ?? 0),
+              height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
+            },
+          };
+        }),
+        error: null,
+      };
     }
+  } catch (error) {
     return {
       data: null,
       originalResponse: null,
-      error: new Error('Failed to perform OCR with Google Vision'),
+      error: error instanceof Error ? error : new Error('Unknown error occurred'),
     };
   }
-}
+};

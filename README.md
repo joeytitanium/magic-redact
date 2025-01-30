@@ -11,3 +11,8 @@
 - Size 1x/2x
 - Pixelated, Blur, Black bar
 -
+
+TODO:
+
+- Get rid of s3 since we're using google storage
+- get rid of excess pdf library /renderer?

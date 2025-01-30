@@ -20,18 +20,30 @@ type UploadToS3Response =
       error: Error;
     };
 
-export const uploadToS3 = async (encodedImage: string): Promise<UploadToS3Response> => {
+export const uploadToS3 = async ({
+  encodedImage,
+  fileType,
+}: {
+  encodedImage: string;
+  fileType: string;
+}): Promise<UploadToS3Response> => {
   try {
-    const base64Data = encodedImage.replace(/^data:image\/\w+;base64,/, '');
+    const contentType = fileType.includes('pdf') ? 'application/pdf' : fileType;
+
+    let base64Data = encodedImage;
+    if (base64Data.includes('data:')) {
+      base64Data = encodedImage.replace(/^data:.*?;base64,/, '');
+    }
+
     const buffer = Buffer.from(base64Data, 'base64');
-    const key = `uploads/${format(new Date(), 'yyyy-MM-dd')}/${uuidv4()}.jpg`;
+    const key = `uploads/${format(new Date(), 'yyyy-MM-dd')}/${uuidv4()}.${fileType}`;
 
     await s3Client.send(
       new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,
         Key: key,
         Body: buffer,
-        ContentType: 'image/jpeg',
+        ContentType: contentType,
         ContentEncoding: 'base64',
       })
     );

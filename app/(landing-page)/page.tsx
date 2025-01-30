@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
 import { ImageCanvas } from './image-canvas';
 import { ImageDropzone } from './image-dropzone';
+import { PdfCanvas } from './pdf-canvas';
 
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
@@ -61,6 +62,7 @@ export default function HomePage() {
     setStartPoint(null);
     resetAnalyzing();
     setSelectedSampleImage(null);
+    setFauxLoadingSampleImage(false);
   };
 
   const coordinates = canvasCoordinates({
@@ -116,6 +118,32 @@ export default function HomePage() {
     setStartPoint(null);
   };
 
+  const handleFileUpload = async (file: File) => {
+    const reader = new FileReader();
+
+    if (file.type === 'application/pdf') {
+      // For PDFs, use readAsArrayBuffer
+      reader.readAsArrayBuffer(file);
+
+      reader.onload = async () => {
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const base64String = btoa(
+          new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+        const base64Pdf = `data:application/pdf;base64,${base64String}`;
+        void analyzeImageData({ imageUrl: base64Pdf });
+      };
+    } else {
+      // For images, use existing readAsDataURL
+      reader.readAsDataURL(file);
+
+      reader.onload = async () => {
+        const base64Image = reader.result as string;
+        void analyzeImageData({ imageUrl: base64Image });
+      };
+    }
+  };
+
   const onAnalyzeImage = async () => {
     if (selectedSampleImage) {
       setFauxLoadingSampleImage(true);
@@ -128,13 +156,7 @@ export default function HomePage() {
 
     if (!image) return;
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-
-      reader.onload = async () => {
-        const base64Image = reader.result as string;
-        void analyzeImageData({ imageUrl: base64Image });
-      };
+      await handleFileUpload(image);
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -213,21 +235,27 @@ export default function HomePage() {
     return (
       <>
         <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
-        <ImageCanvas
-          imageRef={imageRef}
-          canvasCoordinates={coordinates}
-          handleMouseDown={handleMouseDown}
-          handleMouseMove={handleMouseMove}
-          handleMouseUp={handleMouseUp}
-          imageUrl={imageUrl}
-          rectangles={r}
-          hoveredRectId={hoveredRectId}
-          handleDeleteRect={handleDeleteRect}
-          currentRect={currentRect}
-          onHoveredRectIdChange={setHoveredRectId}
-          showRedacted={showRedacted}
-          isDebug={isDebug}
-        />
+        {image.type === 'application/pdf' ? (
+          <PdfCanvas file={image} />
+        ) : (
+          <>
+            <ImageCanvas
+              imageRef={imageRef}
+              canvasCoordinates={coordinates}
+              handleMouseDown={handleMouseDown}
+              handleMouseMove={handleMouseMove}
+              handleMouseUp={handleMouseUp}
+              imageUrl={imageUrl}
+              rectangles={r}
+              hoveredRectId={hoveredRectId}
+              handleDeleteRect={handleDeleteRect}
+              currentRect={currentRect}
+              onHoveredRectIdChange={setHoveredRectId}
+              showRedacted={showRedacted}
+              isDebug={isDebug}
+            />
+          </>
+        )}
         <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Footer
             onDownload={onDownload}

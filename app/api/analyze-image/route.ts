@@ -7,13 +7,14 @@ import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/recta
 import { logApiError } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
+import { isNil } from 'lodash';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { UAParser } from 'ua-parser-js';
 import { z } from 'zod';
 import { detectTextWithGoogleVision } from './google-vision';
-import { uploadToS3 } from './upload-to-s3';
+import { uploadToGoogleCloudStorage } from './upload-to-google-cloud-storage';
 
 const AI_MODEL: AiModel = 'gpt-4o';
 
@@ -24,10 +25,6 @@ const INPUT_SCHEMA = z.object({
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-// const INDEX_RESPONSE_SCHEMA = z.object({
-//   indexes: z.array(z.number()),
-// });
 
 type TokenCostResponse = {
   inputTokenCost: string;
@@ -172,16 +169,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
-    const { url: s3ImageUrl, error: s3Error } = await uploadToS3(base64Image);
-    if (s3Error) {
+    const {
+      gsUrl: gsImageUrl,
+      publicUrl: publicImageUrl,
+      error: gcsError,
+    } = await uploadToGoogleCloudStorage({
+      encodedFile: base64Image,
+      fileType: documentType,
+    });
+
+    if (gcsError) {
       await sendDiscordAlert({
         username: '/analyze-image',
-        title: 'S3 upload error',
+        title: 'Google Cloud Storage upload error',
         deviceInfo,
         variant: 'error',
       });
-      logApiError('S3 upload error', { error: s3Error, request });
-      return NextResponse.json({ error: s3Error.message }, { status: 400 });
+      logApiError('Google Cloud Storage upload error', { error: gcsError, request });
+      return NextResponse.json({ error: gcsError.message }, { status: 400 });
     }
 
     // OCR
@@ -189,35 +194,38 @@ export async function POST(request: Request) {
       data: ocrResults,
       originalResponse,
       error: ocrError,
-    } = await detectTextWithGoogleVision(s3ImageUrl);
-    if (ocrError) {
+    } = await detectTextWithGoogleVision(gsImageUrl);
+    if (!isNil(ocrError) || isNil(ocrResults)) {
       await sendDiscordAlert({
         username: '/analyze-image',
         title: 'Error detecting text with Google Vision',
-        imageUrl: s3ImageUrl,
+        imageUrl: publicImageUrl,
         deviceInfo,
         variant: 'error',
         context: [
           {
             name: 'Error',
-            value: ocrError.message,
+            value: ocrError?.message ?? 'Unknown error',
             inline: false,
           },
         ],
       });
-      logApiError('Error detecting text with Google Vision', { error: ocrError, request });
+      logApiError('Error detecting text with Google Vision', {
+        error: ocrError ?? new Error('Unknown error'),
+        request,
+      });
       await insertDocument({
         supabase,
         request,
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: s3ImageUrl,
+          document_url: publicImageUrl,
           document_type: documentType,
-          ocr_error: ocrError.message,
+          ocr_error: ocrError?.message ?? 'Unknown error',
         },
       });
-      return NextResponse.json({ error: ocrError.message }, { status: 400 });
+      return NextResponse.json({ error: ocrError?.message ?? 'Unknown error' }, { status: 400 });
     }
 
     // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
@@ -228,7 +236,7 @@ export async function POST(request: Request) {
       await sendDiscordAlert({
         username: '/analyze-image',
         title: 'No text detected',
-        imageUrl: s3ImageUrl,
+        imageUrl: publicImageUrl,
         deviceInfo,
         variant: 'error',
       });
@@ -239,7 +247,7 @@ export async function POST(request: Request) {
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: s3ImageUrl,
+          document_url: publicImageUrl,
           document_type: documentType,
           ocr_response: originalResponse,
         },
@@ -306,7 +314,7 @@ ${input.join(',')}`;
       await sendDiscordAlert({
         username: '/analyze-image',
         title: 'Error parsing OpenAI response',
-        imageUrl: s3ImageUrl,
+        imageUrl: publicImageUrl,
         deviceInfo,
         variant: 'error',
         context: [
@@ -329,7 +337,7 @@ ${input.join(',')}`;
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: s3ImageUrl,
+          document_url: publicImageUrl,
           document_type: documentType,
           ocr_response: originalResponse,
           ai_error: response as any,
@@ -371,7 +379,7 @@ ${input.join(',')}`;
       deviceInfo,
       document: {
         ip_address: deviceInfo.ipAddress,
-        document_url: s3ImageUrl,
+        document_url: publicImageUrl,
         document_type: documentType,
         ocr_response: originalResponse,
         ai_completion_tokens: outputResult.data.usage.completion_tokens,
@@ -392,7 +400,7 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalCost}**`;
     await sendDiscordAlert({
       username: '/analyze-image',
       title: 'Image successfully analyzed',
-      imageUrl: s3ImageUrl,
+      imageUrl: publicImageUrl,
       deviceInfo,
       variant: 'success',
       context: [

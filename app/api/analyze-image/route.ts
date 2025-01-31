@@ -6,7 +6,7 @@ import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
-import { logApiError } from '@/utils/logger';
+import { logApiError, logDebugMessage } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
 import { isNil } from 'lodash';
@@ -159,6 +159,7 @@ export async function POST(request: Request) {
     const {
       gsUrl: gsImageUrl,
       publicUrl: publicImageUrl,
+      fileUuid,
       error: gcsError,
     } = await uploadToGoogleCloudStorage({
       encodedFile: base64Image,
@@ -177,7 +178,14 @@ export async function POST(request: Request) {
     }
 
     // OCR
-    const { data: ocrResults, originalResponse, error: ocrError } = await ocrDetectText(gsImageUrl);
+    const {
+      data: ocrResults,
+      originalResponse,
+      error: ocrError,
+    } = await ocrDetectText({
+      gsImageUrl,
+      fileUuid,
+    });
     if (!isNil(ocrError) || isNil(ocrResults)) {
       await sendDiscordAlert({
         username: '/analyze-image',
@@ -211,10 +219,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: ocrError?.message ?? 'Unknown error' }, { status: 400 });
     }
 
-    // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
-    //   request,
-    //   context: { ocrResults },
-    // });
+    logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
+      request,
+      context: { ocrResults },
+    });
     if (ocrResults.length === 0) {
       await sendDiscordAlert({
         username: '/analyze-image',
@@ -238,20 +246,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No text detected' }, { status: 400 });
     }
 
-    const ocrMapped = {
-      rectangles: ocrResults.map((x) => ({
-        description: x.text,
-        x: x.boundingBox.x,
-        y: x.boundingBox.y,
-        width: x.boundingBox.width,
-        height: x.boundingBox.height,
-      })),
-    };
-    const input = ocrMapped.rectangles.map((x) => x.description).filter((x) => x.length > 1);
-    // logDebugMessage(`🔫 input: ${JSON.stringify(input, null, '\t')}`, {
-    //   request,
-    //   context: { input },
-    // });
+    const input = ocrResults
+      .flat()
+      .map((x) => x.text)
+      .filter((x) => x && x.length > 1);
+    logDebugMessage(`🔫 input: ${JSON.stringify(input, null, '\t')}`, {
+      request,
+      context: { input },
+    });
 
     // OPEN AI
     const openaiPrompt = `You are a world class data protection expert. Analyze the following strings and determine which ones contain sensitive information. 
@@ -288,10 +290,10 @@ ${input.join(',')}`;
       max_tokens: 500, // TODO: verify
     });
 
-    // logDebugMessage(`🔫 response: ${JSON.stringify(response, null, '\t')}`, {
-    //   request,
-    //   context: { response },
-    // });
+    logDebugMessage(`🔫 response: ${JSON.stringify(response, null, '\t')}`, {
+      request,
+      context: { response },
+    });
     const outputResult = OPEN_AI_RESPONSE_SCHEMA.safeParse(response);
     if (!outputResult.success) {
       await sendDiscordAlert({
@@ -346,11 +348,12 @@ ${input.join(',')}`;
     //   }
     // );
 
-    // Get the rectangles corresponding to the sensitive indexes
-    const rectangles = ocrMapped.rectangles.map((x) => ({
-      ...x,
-      sensitive: sensitiveStringSet.has(x.description),
-    }));
+    const rectangles = ocrResults.map((page) => {
+      return page.map((y) => ({
+        ...y,
+        sensitive: sensitiveStringSet.has(y.text ?? ''),
+      }));
+    });
     // console.log(`🔫 prompt_tokens: ${outputResult.data.usage.prompt_tokens}`);
     // console.log(`🔫 completion_tokens: ${outputResult.data.usage.completion_tokens}`);
     // console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);

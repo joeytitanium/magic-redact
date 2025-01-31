@@ -1,7 +1,7 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { Rectangle } from '@/types/rectangle';
+import { Rect, Rectangle } from '@/types/rectangle';
 import { canvasCoordinates } from '@/utils/image-coordinates';
 import { Box } from '@mantine/core';
 import { PDFDocument, rgb } from 'pdf-lib';
@@ -19,12 +19,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 interface PdfCanvasProps {
   file: File;
-  boundingBoxes?: Array<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }>;
+  rectangles: Rect[][];
 }
 
 const EXAMPLE_BOUNDING_BOXES = [
@@ -44,7 +39,7 @@ const EXAMPLE_BOUNDING_BOXES = [
   },
 ];
 
-export const PdfCanvas = ({ file, boundingBoxes = EXAMPLE_BOUNDING_BOXES }: PdfCanvasProps) => {
+export const PdfCanvas = ({ file, rectangles }: PdfCanvasProps) => {
   const [numPages, setNumPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [modifiedPdfUrl, setModifiedPdfUrl] = useState<string | null>(null);
@@ -54,6 +49,8 @@ export const PdfCanvas = ({ file, boundingBoxes = EXAMPLE_BOUNDING_BOXES }: PdfC
     width: 0,
     height: 0,
   });
+
+  console.log(`🔫 rectangles: ${JSON.stringify(rectangles, null, '\t')}`);
 
   useEffect(() => {
     const modifyPdf = async () => {
@@ -66,7 +63,8 @@ export const PdfCanvas = ({ file, boundingBoxes = EXAMPLE_BOUNDING_BOXES }: PdfC
         const { width, height } = firstPage.getSize();
 
         // Draw boxes for each bounding box
-        boundingBoxes.forEach((box) => {
+        rectangles[0].forEach((box) => {
+          // EXAMPLE_BOUNDING_BOXES.forEach((box) => {
           // Convert normalized coordinates to PDF coordinates
           const pdfX = box.x * width;
           const pdfY = height - box.y * height; // PDF coordinates start from bottom-left
@@ -79,9 +77,9 @@ export const PdfCanvas = ({ file, boundingBoxes = EXAMPLE_BOUNDING_BOXES }: PdfC
             y: pdfY - boxHeight, // Adjust Y because we're drawing from bottom-left
             width: boxWidth,
             height: boxHeight,
-            borderColor: rgb(1, 0, 0), // Red border
+            borderColor: box.sensitive ? rgb(1, 0, 0) : rgb(0.5, 0.5, 0.5),
             borderWidth: 1,
-            color: rgb(1, 0, 0, 0.1), // Transparent red fill
+            // color: box.sensitive rgb(1, 0, 0, 0.1), // Transparent red fill
           });
         });
 
@@ -99,10 +97,10 @@ export const PdfCanvas = ({ file, boundingBoxes = EXAMPLE_BOUNDING_BOXES }: PdfC
       }
     };
 
-    if (boundingBoxes.length > 0) {
+    if (rectangles.length > 0) {
       void modifyPdf();
     }
-  }, [file, boundingBoxes]);
+  }, [file, rectangles]);
 
   const onLoadSuccess = async (doc: DocumentCallback) => {
     setNumPages(doc.numPages);

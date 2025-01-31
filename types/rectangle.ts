@@ -5,7 +5,7 @@ export const RECTANGLE_SCHEMA = z.object({
   y: z.number(),
   width: z.number(),
   height: z.number(),
-  description: z.string().optional(),
+  text: z.string().optional(),
   sensitive: z.boolean(),
 });
 export type Rectangle = z.infer<typeof RECTANGLE_SCHEMA>;
@@ -33,7 +33,7 @@ export const OPEN_AI_RESPONSE_SCHEMA = z.object({
 export type OpenAiResponse = z.infer<typeof OPEN_AI_RESPONSE_SCHEMA>;
 
 export const ANALYZE_IMAGE_RESPONSE_SCHEMA = z.object({
-  rectangles: z.array(RECTANGLE_SCHEMA),
+  rectangles: z.array(z.array(RECTANGLE_SCHEMA)),
 });
 export type AnalyzeImageResponse = z.infer<typeof ANALYZE_IMAGE_RESPONSE_SCHEMA>;
 

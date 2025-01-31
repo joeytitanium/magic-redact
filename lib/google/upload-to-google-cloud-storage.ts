@@ -1,5 +1,5 @@
+import { generateFilepath } from '@/utils/generate-filepath';
 import { Storage } from '@google-cloud/storage';
-import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 const storage = new Storage({
@@ -19,11 +19,13 @@ type UploadToGCSResponse =
   | {
       gsUrl: string;
       publicUrl: string;
+      fileUuid: string;
       error?: never;
     }
   | {
       gsUrl?: never;
       publicUrl?: never;
+      fileUuid?: never;
       error: Error;
     };
 
@@ -67,8 +69,14 @@ export const uploadToGoogleCloudStorage = async ({
       }
     }
 
-    const key = `uploads/${format(new Date(), 'yyyy-MM-dd')}/${uuidv4()}.${fileType}`;
-    const file = bucket.file(key);
+    const fileUuid = uuidv4();
+    const filePath = generateFilepath({
+      uuid: fileUuid,
+      fileType,
+      date: new Date(),
+      type: 'input',
+    });
+    const file = bucket.file(filePath);
 
     await file.save(buffer, {
       contentType,
@@ -77,16 +85,16 @@ export const uploadToGoogleCloudStorage = async ({
       },
     });
 
-    // Get the file metadata to verify upload
+    // TODO: Cleanup. Get the file metadata to verify upload
     const [metadata] = await file.getMetadata();
 
-    const gcsUri = `gs://${bucketName}/${key}`;
-    const publicUrl = `https://storage.cloud.google.com/${bucketName}/${key}`;
+    const gcsUri = `gs://${bucketName}/${filePath}`;
+    const publicUrl = `https://storage.cloud.google.com/${bucketName}/${filePath}`;
 
-    // Verify file exists and is accessible
+    // TODO: Cleanup. (Verify file exists and is accessible)
     const [exists] = await file.exists();
 
-    return { gsUrl: gcsUri, publicUrl };
+    return { gsUrl: gcsUri, publicUrl, fileUuid };
   } catch (error) {
     if (error instanceof Error) {
       return { error };

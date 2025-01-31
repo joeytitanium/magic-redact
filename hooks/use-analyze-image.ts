@@ -1,4 +1,4 @@
-import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rectangle } from '@/types/rectangle';
+import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rect } from '@/types/rectangle';
 import { notifications } from '@mantine/notifications';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
@@ -6,9 +6,7 @@ type Variables = {
   imageUrl: string;
 };
 
-type Rect = Rectangle & { id: string };
-
-type Response = Rect[];
+type Response = Rect[][];
 
 export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Variables>) =>
   useMutation<Response, Error, Variables>({
@@ -25,7 +23,9 @@ export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Var
 
       const data = await response.json();
       const parsed = ANALYZE_IMAGE_RESPONSE_SCHEMA.parse(data);
-      return parsed.rectangles.map((rect) => ({ ...rect, id: crypto.randomUUID() }));
+      return parsed.rectangles.map((page) => {
+        return page.map((r) => ({ ...r, id: crypto.randomUUID(), source: 'server' }));
+      });
     },
     onError: (error) => {
       console.error('Error in useAnalyzeImage', error);

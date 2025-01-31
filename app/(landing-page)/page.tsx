@@ -5,23 +5,22 @@ import { Box } from '@mantine/core';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { Rect } from '@/types/rectangle';
-import { canvasCoordinates, scaledRects } from '@/utils/image-coordinates';
+import { canvasCoordinates } from '@/utils/image-coordinates';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
-import { SampleImage, sampleImageRects } from '@/utils/sample-images';
+import { SampleImage } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
-import { ImageCanvas } from './image-canvas';
 import { ImageDropzone } from './image-dropzone';
 import { PdfCanvas } from './pdf-canvas';
 
 export default function HomePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const [rectangles, setRectangles] = useState<Rect[]>([]);
+  const [rectangles, setRectangles] = useState<Rect[][]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentRect, setCurrentRect] = useState<Rect | null>(null);
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
@@ -46,9 +45,9 @@ export default function HomePage() {
     reset: resetAnalyzing,
   } = useAnalyzeImage({
     onSuccess: (data) => {
-      const r: Rect[] = data.map((rect) => ({ ...rect, source: 'server' }));
       // setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
-      setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
+      // setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
+      setRectangles(data);
     },
   });
 
@@ -111,7 +110,7 @@ export default function HomePage() {
 
   const handleMouseUp = () => {
     if (currentRect && currentRect.width > 5 && currentRect.height > 5) {
-      setRectangles((prev) => [...prev, currentRect]);
+      // setRectangles((prev) => [...prev, currentRect]);
     }
     setIsDrawing(false);
     setCurrentRect(null);
@@ -149,7 +148,7 @@ export default function HomePage() {
       setFauxLoadingSampleImage(true);
       setTimeout(() => {
         setFauxLoadingSampleImage(false);
-        setRectangles(sampleImageRects[selectedSampleImage]);
+        // setRectangles(sampleImageRects[selectedSampleImage]);
       }, 3500);
       return;
     }
@@ -223,11 +222,11 @@ export default function HomePage() {
       .then((blob) => setImage(new File([blob], sampleImage)));
   };
 
-  const r = scaledRects({
-    rects: rectangles,
-    scaledImageSize: { width: coordinates.width, height: coordinates.height },
-    originalImageSize: imageSize ?? { width: 0, height: 0 },
-  });
+  // const r = scaledRects({
+  //   rects: rectangles,
+  //   scaledImageSize: { width: coordinates.width, height: coordinates.height },
+  //   originalImageSize: imageSize ?? { width: 0, height: 0 },
+  // });
 
   if (image) {
     const imageUrl = URL.createObjectURL(image);
@@ -236,10 +235,10 @@ export default function HomePage() {
       <>
         <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
         {image.type === 'application/pdf' ? (
-          <PdfCanvas file={image} />
+          <PdfCanvas file={image} rectangles={rectangles} />
         ) : (
           <>
-            <ImageCanvas
+            {/* <ImageCanvas
               imageRef={imageRef}
               canvasCoordinates={coordinates}
               handleMouseDown={handleMouseDown}
@@ -253,7 +252,7 @@ export default function HomePage() {
               onHoveredRectIdChange={setHoveredRectId}
               showRedacted={showRedacted}
               isDebug={isDebug}
-            />
+            /> */}
           </>
         )}
         <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>

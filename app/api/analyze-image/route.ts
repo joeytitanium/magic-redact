@@ -1,4 +1,6 @@
 import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
+import { ocrDetectText } from '@/lib/google/ocr-detect-text';
+import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
@@ -13,8 +15,6 @@ import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { UAParser } from 'ua-parser-js';
 import { z } from 'zod';
-import { detectTextWithGoogleVision } from './google-vision';
-import { uploadToGoogleCloudStorage } from './upload-to-google-cloud-storage';
 
 const AI_MODEL: AiModel = 'gpt-4o';
 
@@ -177,11 +177,7 @@ export async function POST(request: Request) {
     }
 
     // OCR
-    const {
-      data: ocrResults,
-      originalResponse,
-      error: ocrError,
-    } = await detectTextWithGoogleVision(gsImageUrl);
+    const { data: ocrResults, originalResponse, error: ocrError } = await ocrDetectText(gsImageUrl);
     if (!isNil(ocrError) || isNil(ocrResults)) {
       await sendDiscordAlert({
         username: '/analyze-image',

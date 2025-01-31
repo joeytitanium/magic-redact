@@ -20,6 +20,7 @@ type UploadToS3Response =
       error: Error;
     };
 
+// TODO: UNUSED. DELETE?
 export const uploadToS3 = async ({
   encodedImage,
   fileType,

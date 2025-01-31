@@ -33,9 +33,7 @@ type DetectTextWithGoogleVisionResult =
       error: Error;
     };
 
-export const detectTextWithGoogleVision = async (
-  gcsUri: string
-): Promise<DetectTextWithGoogleVisionResult> => {
+export const ocrDetectText = async (gcsUri: string): Promise<DetectTextWithGoogleVisionResult> => {
   try {
     if (gcsUri.toLowerCase().endsWith('.pdf')) {
       const bucketName = 'magic-redact';

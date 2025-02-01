@@ -61,12 +61,28 @@ const insertBox = ({
   return manualBoxesCopy;
 };
 
-const convertManualBox = ({ box, pageSize }: { box: BoundingBox; pageSize: Size }) => ({
-  x: box.x,
-  y: pageSize.height - box.y - box.height,
-  width: box.width,
-  height: box.height,
-});
+const convertManualBox = ({
+  box,
+  pageSize,
+  canvasBox,
+}: {
+  box: BoundingBox;
+  pageSize: Size;
+  canvasBox: BoundingBox;
+}) => {
+  const scaleY = pageSize.height / canvasBox.height;
+  const scaleX = pageSize.width / canvasBox.width;
+
+  const y = box.y * scaleY;
+  const flippedY = pageSize.height - y - box.height * scaleY;
+
+  return {
+    x: box.x * scaleX,
+    y: flippedY,
+    width: box.width * scaleX,
+    height: box.height * scaleY,
+  };
+};
 
 export const usePdf = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -87,23 +103,6 @@ export const usePdf = () => {
     setManualBoxes([]);
     setPdfUrl(bytesToUrl(pdfArrayBuffer));
   };
-
-  // const pageSize = useMemo(() => {
-  //   if (!pdfDoc) return { width: 0, height: 0 };
-  //   return pdfDoc.getPages()[0].getSize();
-  // }, [pdfDoc]);
-  // const numPages = pdfDoc?.getPageCount() ?? 0;
-
-  // const canvasBox = useMemo(
-  //   () =>
-  //     canvasCoordinates({
-  //       imageSize: pageSize,
-  //       viewportSize: { width: window.innerWidth, height: window.innerHeight },
-  //       headerHeight: CONFIG.layout.headerHeight,
-  //       footerHeight: CONFIG.layout.footerHeight,
-  //     }),
-  //   [pageSize]
-  // );
 
   const canvasBox = useMemo(
     () =>
@@ -136,7 +135,11 @@ export const usePdf = () => {
     for (const page of pages) {
       const pageBoxes = updatedManualBoxes[pageNumber] ?? [];
       for (const box of pageBoxes) {
-        const convertedBox = convertManualBox({ box, pageSize });
+        const convertedBox = convertManualBox({
+          box,
+          pageSize,
+          canvasBox,
+        });
         page.drawRectangle({
           x: convertedBox.x,
           y: convertedBox.y,
@@ -158,6 +161,7 @@ export const usePdf = () => {
     pdfFile: file,
     pdfUrl,
     canvasBox,
+    pageSize,
     loadPdf,
     currentPageNumber,
     setCurrentPageNumber,

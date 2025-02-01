@@ -24,6 +24,7 @@ interface PdfCanvasProps {
   imageRef: React.RefObject<HTMLDivElement>;
   currentPageNumber: number;
   canvasBox: BoundingBox;
+
   onPdfLoaded: (props: DocumentCallback) => void;
 }
 

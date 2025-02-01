@@ -3,6 +3,7 @@ import { ActionIcon, Box, Image } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { CSSProperties } from 'react';
 
+// TODO: Remove this
 export const ImageCanvas = ({
   imageRef,
   canvasCoordinates,

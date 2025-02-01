@@ -4,31 +4,28 @@ import { CONFIG } from '@/config';
 import { Box } from '@mantine/core';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
-import { Rect } from '@/types/rectangle';
-import { canvasCoordinates } from '@/utils/image-coordinates';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { SampleImage } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
 import { ImageDropzone } from './image-dropzone';
 import { PdfCanvas } from './pdf-canvas';
 
 export default function HomePage() {
-  const [image, setImage] = useState<File | null>(null);
+  // const [file, setFile] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const [rectangles, setRectangles] = useState<Rect[][]>([]);
+  const [rectangles, setRectangles] = useState<BoundingBoxWithMetadata[][]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentRect, setCurrentRect] = useState<Rect | null>(null);
+  const [currentRect, setCurrentRect] = useState<BoundingBoxWithMetadata | null>(null);
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showRedacted, setShowRedacted] = useState(false);
-  const [manualRectangles, setManualRectangles] = useState<Rect[]>([]);
 
   // const searchParams = useSearchParams();
   // const isDebug = searchParams.get('debug') === 'true';
@@ -52,9 +49,25 @@ export default function HomePage() {
     },
   });
 
+  const {
+    loadPdf,
+    pdfUrl,
+    pdfFile,
+    ref,
+    currentPageNumber,
+    // currentPage,
+    // setCurrentPage,
+    // modifiedPdfUrl,
+    onPdfLoaded,
+    // manualBoxes,
+    // setManualBoxes,
+    canvasBox,
+    addBox,
+  } = usePdf();
+
   const onReset = () => {
     setShowRedacted(false);
-    setImage(null);
+    // setFile(null);
     setImageSize(null);
     setRectangles([]);
     setCurrentRect(null);
@@ -63,24 +76,23 @@ export default function HomePage() {
     resetAnalyzing();
     setSelectedSampleImage(null);
     setFauxLoadingSampleImage(false);
-    setManualRectangles([]);
   };
 
-  const coordinates = canvasCoordinates({
-    imageSize: imageSize ?? { width: 0, height: 0 },
-    viewportSize: { width: viewportWidth, height: viewportHeight },
-    headerHeight: CONFIG.layout.headerHeight,
-    footerHeight: CONFIG.layout.footerHeight,
-  });
+  // const coordinates = canvasCoordinates({
+  //   imageSize: imageSize ?? { width: 0, height: 0 },
+  //   viewportSize: { width: viewportWidth, height: viewportHeight },
+  //   headerHeight: CONFIG.layout.headerHeight,
+  //   footerHeight: CONFIG.layout.footerHeight,
+  // });
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
       return;
     }
 
-    if (!imageRef.current) return;
+    if (!ref.current) return;
 
-    const rect = imageRef.current.getBoundingClientRect();
+    const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
@@ -90,15 +102,11 @@ export default function HomePage() {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawing || !startPoint || !imageRef.current) return;
+    if (!isDrawing || !startPoint || !ref.current) return;
 
-    const rect = imageRef.current.getBoundingClientRect();
+    const rect = ref.current.getBoundingClientRect();
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
-
-    // Calculate dimensions based on start point and current point
-    const width = Math.abs(currentX - startPoint.x);
-    const height = Math.abs(currentY - startPoint.y);
 
     // Determine the top-left position based on drag direction
     const x = currentX < startPoint.x ? currentX : startPoint.x;
@@ -106,26 +114,33 @@ export default function HomePage() {
 
     setCurrentRect((prev) => {
       if (!prev) return null;
-      return { ...prev, x, y, width, height };
+      return {
+        ...prev,
+        x,
+        y,
+        width: Math.abs(currentX - startPoint.x),
+        height: Math.abs(currentY - startPoint.y),
+      };
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
+    if (!pdfFile) return;
+
     if (currentRect && currentRect.width > 5 && currentRect.height > 5) {
-      // setRectangles((prev) => [...prev, currentRect]);
-      setManualRectangles((prev) => [...prev, currentRect]);
+      await addBox({ box: currentRect, pageNumber: currentPageNumber });
     }
     setIsDrawing(false);
     setCurrentRect(null);
     setStartPoint(null);
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (f: File) => {
     const reader = new FileReader();
 
-    if (file.type === 'application/pdf') {
+    if (f.type === 'application/pdf') {
       // For PDFs, use readAsArrayBuffer
-      reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(f);
 
       reader.onload = async () => {
         const arrayBuffer = reader.result as ArrayBuffer;
@@ -137,7 +152,7 @@ export default function HomePage() {
       };
     } else {
       // For images, use existing readAsDataURL
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(f);
 
       reader.onload = async () => {
         const base64Image = reader.result as string;
@@ -156,9 +171,9 @@ export default function HomePage() {
       return;
     }
 
-    if (!image) return;
+    if (!file) return;
     try {
-      await handleFileUpload(image);
+      await handleFileUpload(file);
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -222,35 +237,33 @@ export default function HomePage() {
     setSelectedSampleImage(sampleImage);
     void fetch(sampleImage)
       .then((res) => res.blob())
-      .then((blob) => setImage(new File([blob], sampleImage)));
+      .then((blob) => setFile(new File([blob], sampleImage)));
   };
 
-  // const r = scaledRects({
-  //   rects: rectangles,
-  //   scaledImageSize: { width: coordinates.width, height: coordinates.height },
-  //   originalImageSize: imageSize ?? { width: 0, height: 0 },
-  // });
+  const onSetFile = async (f: File) => {
+    // setFile(f);
+    await loadPdf(f);
+  };
 
-  if (image) {
-    const imageUrl = URL.createObjectURL(image);
-
+  if (pdfUrl) {
     return (
       <>
         <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
-        {image.type === 'application/pdf' ? (
-          <PdfCanvas
-            imageRef={imageRef}
-            file={image}
-            serverRects={rectangles}
-            manualRectangles={manualRectangles}
-            handleMouseDown={handleMouseDown}
-            handleMouseMove={handleMouseMove}
-            handleMouseUp={handleMouseUp}
-            currentRect={currentRect}
-          />
-        ) : (
-          <>
-            {/* <ImageCanvas
+        {/* {file.type === 'application/pdf' ? ( */}
+        <PdfCanvas
+          imageRef={ref}
+          file={pdfUrl}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          handleMouseUp={handleMouseUp}
+          currentRect={currentRect}
+          currentPageNumber={currentPageNumber}
+          onPdfLoaded={onPdfLoaded}
+          canvasBox={canvasBox}
+        />
+        {/* ) : ( */}
+        <>
+          {/* <ImageCanvas
               imageRef={imageRef}
               canvasCoordinates={coordinates}
               handleMouseDown={handleMouseDown}
@@ -265,8 +278,8 @@ export default function HomePage() {
               showRedacted={showRedacted}
               isDebug={isDebug}
             /> */}
-          </>
-        )}
+        </>
+        {/* )} */}
         <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
           <Footer
             onDownload={onDownload}
@@ -283,7 +296,7 @@ export default function HomePage() {
 
   return (
     <ImageDropzone
-      setImage={setImage}
+      setImage={onSetFile}
       setImageSize={setImageSize}
       onClickSampleImage={onClickSampleImage}
     />

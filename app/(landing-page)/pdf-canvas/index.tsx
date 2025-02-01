@@ -1,13 +1,10 @@
 'use client';
 
-import { CONFIG } from '@/config';
-import { Rect, Rectangle } from '@/types/rectangle';
-import { canvasCoordinates } from '@/utils/image-coordinates';
+import { BoundingBox } from '@/hooks/use-pdf';
+import { Rect } from '@/types/rectangle';
 import { Box } from '@mantine/core';
-import { PDFDocument, rgb } from 'pdf-lib';
-import { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { DocumentCallback } from 'react-pdf/dist/cjs/shared/types';
+import { DocumentCallback, File } from 'react-pdf/dist/cjs/shared/types';
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -19,160 +16,66 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 interface PdfCanvasProps {
   file: File;
-  serverRects: Rect[][];
+  // modifiedPdfUrl: string | undefined;
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseUp: () => void;
   currentRect: Rect | null;
   imageRef: React.RefObject<HTMLDivElement>;
-  manualRectangles: Rect[];
+  currentPageNumber: number;
+  canvasBox: BoundingBox;
+  onPdfLoaded: (props: DocumentCallback) => void;
 }
 
 export const PdfCanvas = ({
   file,
-  serverRects,
+  // modifiedPdfUrl,
+  // serverRects,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
   currentRect,
   imageRef,
-  manualRectangles,
-}: PdfCanvasProps) => {
-  const [numPages, setNumPages] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [modifiedPdfUrl, setModifiedPdfUrl] = useState<string | null>(null);
-
-  const [canvasRect, setCanvasRect] = useState<Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>>({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-
-  useEffect(() => {
-    const modifyPdf = async () => {
-      try {
-        // Load the PDF file
-        const arrayBuffer = await file.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
-        const pages = pdfDoc.getPages();
-        const firstPage = pages[0];
-        const { width, height } = firstPage.getSize();
-
-        // Draw boxes for each bounding box
-        if (serverRects.length > 0) {
-          const convertedServerRects = serverRects[0].map((box) => ({
-            ...box,
-            x: box.x * width,
-            y: height - box.y * height - box.height * height, // Adjust Y because we're drawing from bottom-left
-            width: box.width * width,
-            height: box.height * height,
-          }));
-
-          convertedServerRects.forEach((box) => {
-            firstPage.drawRectangle({
-              x: box.x,
-              y: box.y,
-              width: box.width,
-              height: box.height,
-              borderColor: box.sensitive ? rgb(1, 0, 0) : rgb(0.5, 0.5, 0.5),
-              borderWidth: 1,
-              // color: box.sensitive rgb(1, 0, 0, 0.1), // Transparent red fill
-            });
-          });
-        }
-
-        if (manualRectangles.length > 0) {
-          const convertedRects = manualRectangles.map((rect) => ({
-            x: rect.x,
-            y: height - rect.y - rect.height,
-            width: rect.width,
-            height: rect.height,
-          }));
-
-          convertedRects.forEach((rect) => {
-            firstPage.drawRectangle({
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-              borderColor: rgb(1, 0, 0),
-              borderWidth: 1,
-            });
-          });
-        }
-
-        // Save the modified PDF
-        const modifiedPdfBytes = await pdfDoc.save();
-
-        // Create a URL for the modified PDF
-        const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        setModifiedPdfUrl(url);
-
-        return () => URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Error processing PDF:', error);
-      }
-    };
-
-    if (serverRects.length > 0 || manualRectangles.length > 0) {
-      void modifyPdf();
-    }
-  }, [file, serverRects, manualRectangles]);
-
-  const onLoadSuccess = async (doc: DocumentCallback) => {
-    setNumPages(doc.numPages);
-    const page = await doc.getPage(1);
-
-    const coordinates = canvasCoordinates({
-      imageSize: {
-        width: page.getViewport({ scale: 1 }).width,
-        height: page.getViewport({ scale: 1 }).height,
-      },
-      viewportSize: { width: window.innerWidth, height: window.innerHeight },
-      headerHeight: CONFIG.layout.headerHeight,
-      footerHeight: CONFIG.layout.footerHeight,
-    });
-    setCanvasRect(coordinates);
-  };
-
-  return (
-    <Box
-      ref={imageRef}
-      pos="fixed"
-      style={{
-        top: canvasRect.y,
-        left: canvasRect.x,
-        w: canvasRect.width,
-        h: canvasRect.height,
-        cursor: 'crosshair',
-        userSelect: 'none',
-      }}
-    >
-      <Document file={modifiedPdfUrl ?? file} onLoadSuccess={onLoadSuccess}>
-        <Page
-          pageNumber={currentPage}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        />
-      </Document>
-      {currentRect && (
-        <Box
-          style={{
-            position: 'absolute',
-            top: currentRect.y,
-            left: currentRect.x,
-            width: currentRect.width,
-            height: currentRect.height,
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            border: '1px solid black',
-          }}
-        />
-      )}
-      {/* {numPages > 1 && (
+  // manualRectangles,
+  canvasBox,
+  currentPageNumber,
+  onPdfLoaded,
+}: PdfCanvasProps) => (
+  <Box
+    ref={imageRef}
+    pos="fixed"
+    style={{
+      top: canvasBox.y,
+      left: canvasBox.x,
+      cursor: 'crosshair',
+      userSelect: 'none',
+    }}
+  >
+    <Document file={file}>
+      <Page
+        pageNumber={currentPageNumber + 1}
+        width={canvasBox.width}
+        height={canvasBox.height}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        // onMouseLeave={handleMouseUp}
+      />
+    </Document>
+    {currentRect && (
+      <Box
+        style={{
+          position: 'absolute',
+          top: currentRect.y,
+          left: currentRect.x,
+          width: currentRect.width,
+          height: currentRect.height,
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          border: '1px solid black',
+        }}
+      />
+    )}
+    {/* {numPages > 1 && (
         <Box
           style={{
             position: 'sticky',
@@ -202,7 +105,6 @@ export const PdfCanvas = ({
             Next
           </button>
         </Box> */}
-      {/* )} */}
-    </Box>
-  );
-};
+    {/* )} */}
+  </Box>
+);

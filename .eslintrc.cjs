@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['mantine', 'plugin:@next/next/recommended'],
-  plugins: ['react-hooks', 'no-relative-import-paths'],
+  plugins: ['no-relative-import-paths', 'react-hooks'],
   overrides: [
     {
       files: ['**/?(*.)+(spec|test).[jt]s?(x)'],

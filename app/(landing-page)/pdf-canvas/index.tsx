@@ -19,38 +19,35 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 interface PdfCanvasProps {
   file: File;
-  rectangles: Rect[][];
+  serverRects: Rect[][];
+  handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleMouseUp: () => void;
+  currentRect: Rect | null;
+  imageRef: React.RefObject<HTMLDivElement>;
+  manualRectangles: Rect[];
 }
 
-const EXAMPLE_BOUNDING_BOXES = [
-  {
-    // "Joseph"
-    x: 0.42156863,
-    y: 0.053030305,
-    width: 0.08170137, // 0.503268 - 0.42156863
-    height: 0.017676765, // 0.07070707 - 0.053030305
-  },
-  {
-    // "Stein"
-    x: 0.5114379,
-    y: 0.05050505,
-    width: 0.0604575, // 0.5718954 - 0.5114379
-    height: 0.017676764, // 0.06818182 - 0.05050505
-  },
-];
-
-export const PdfCanvas = ({ file, rectangles }: PdfCanvasProps) => {
+export const PdfCanvas = ({
+  file,
+  serverRects,
+  handleMouseDown,
+  handleMouseMove,
+  handleMouseUp,
+  currentRect,
+  imageRef,
+  manualRectangles,
+}: PdfCanvasProps) => {
   const [numPages, setNumPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [modifiedPdfUrl, setModifiedPdfUrl] = useState<string | null>(null);
+
   const [canvasRect, setCanvasRect] = useState<Pick<Rectangle, 'x' | 'y' | 'width' | 'height'>>({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
   });
-
-  console.log(`🔫 rectangles: ${JSON.stringify(rectangles, null, '\t')}`);
 
   useEffect(() => {
     const modifyPdf = async () => {
@@ -63,25 +60,47 @@ export const PdfCanvas = ({ file, rectangles }: PdfCanvasProps) => {
         const { width, height } = firstPage.getSize();
 
         // Draw boxes for each bounding box
-        rectangles[0].forEach((box) => {
-          // EXAMPLE_BOUNDING_BOXES.forEach((box) => {
-          // Convert normalized coordinates to PDF coordinates
-          const pdfX = box.x * width;
-          const pdfY = height - box.y * height; // PDF coordinates start from bottom-left
-          const boxWidth = box.width * width;
-          const boxHeight = box.height * height;
+        if (serverRects.length > 0) {
+          const convertedServerRects = serverRects[0].map((box) => ({
+            ...box,
+            x: box.x * width,
+            y: height - box.y * height - box.height * height, // Adjust Y because we're drawing from bottom-left
+            width: box.width * width,
+            height: box.height * height,
+          }));
 
-          // Draw rectangle
-          firstPage.drawRectangle({
-            x: pdfX,
-            y: pdfY - boxHeight, // Adjust Y because we're drawing from bottom-left
-            width: boxWidth,
-            height: boxHeight,
-            borderColor: box.sensitive ? rgb(1, 0, 0) : rgb(0.5, 0.5, 0.5),
-            borderWidth: 1,
-            // color: box.sensitive rgb(1, 0, 0, 0.1), // Transparent red fill
+          convertedServerRects.forEach((box) => {
+            firstPage.drawRectangle({
+              x: box.x,
+              y: box.y,
+              width: box.width,
+              height: box.height,
+              borderColor: box.sensitive ? rgb(1, 0, 0) : rgb(0.5, 0.5, 0.5),
+              borderWidth: 1,
+              // color: box.sensitive rgb(1, 0, 0, 0.1), // Transparent red fill
+            });
           });
-        });
+        }
+
+        if (manualRectangles.length > 0) {
+          const convertedRects = manualRectangles.map((rect) => ({
+            x: rect.x,
+            y: height - rect.y - rect.height,
+            width: rect.width,
+            height: rect.height,
+          }));
+
+          convertedRects.forEach((rect) => {
+            firstPage.drawRectangle({
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+              borderColor: rgb(1, 0, 0),
+              borderWidth: 1,
+            });
+          });
+        }
 
         // Save the modified PDF
         const modifiedPdfBytes = await pdfDoc.save();
@@ -97,45 +116,62 @@ export const PdfCanvas = ({ file, rectangles }: PdfCanvasProps) => {
       }
     };
 
-    if (rectangles.length > 0) {
+    if (serverRects.length > 0 || manualRectangles.length > 0) {
       void modifyPdf();
     }
-  }, [file, rectangles]);
+  }, [file, serverRects, manualRectangles]);
 
   const onLoadSuccess = async (doc: DocumentCallback) => {
     setNumPages(doc.numPages);
-    console.log(`🔫 doc: ${JSON.stringify(await doc.getMetadata(), null, '\t')}`);
     const page = await doc.getPage(1);
 
     const coordinates = canvasCoordinates({
       imageSize: {
-        width: await page.getViewport({ scale: 1 }).width,
-        height: await page.getViewport({ scale: 1 }).height,
+        width: page.getViewport({ scale: 1 }).width,
+        height: page.getViewport({ scale: 1 }).height,
       },
       viewportSize: { width: window.innerWidth, height: window.innerHeight },
       headerHeight: CONFIG.layout.headerHeight,
       footerHeight: CONFIG.layout.footerHeight,
     });
-    console.log(`🔫 coordinates: ${JSON.stringify(coordinates, null, '\t')}`);
     setCanvasRect(coordinates);
   };
 
-  console.log(`🔫 canvasRect: ${JSON.stringify(canvasRect, null, '\t')}`);
-
   return (
     <Box
+      ref={imageRef}
       pos="fixed"
       style={{
         top: canvasRect.y,
         left: canvasRect.x,
         w: canvasRect.width,
         h: canvasRect.height,
+        cursor: 'crosshair',
+        userSelect: 'none',
       }}
     >
       <Document file={modifiedPdfUrl ?? file} onLoadSuccess={onLoadSuccess}>
-        <Page pageNumber={currentPage} width={canvasRect.width} height={canvasRect.height} />
+        <Page
+          pageNumber={currentPage}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        />
       </Document>
-
+      {currentRect && (
+        <Box
+          style={{
+            position: 'absolute',
+            top: currentRect.y,
+            left: currentRect.x,
+            width: currentRect.width,
+            height: currentRect.height,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            border: '1px solid black',
+          }}
+        />
+      )}
       {/* {numPages > 1 && (
         <Box
           style={{

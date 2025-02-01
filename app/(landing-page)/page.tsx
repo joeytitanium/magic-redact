@@ -28,6 +28,7 @@ export default function HomePage() {
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showRedacted, setShowRedacted] = useState(false);
+  const [manualRectangles, setManualRectangles] = useState<Rect[]>([]);
 
   // const searchParams = useSearchParams();
   // const isDebug = searchParams.get('debug') === 'true';
@@ -62,6 +63,7 @@ export default function HomePage() {
     resetAnalyzing();
     setSelectedSampleImage(null);
     setFauxLoadingSampleImage(false);
+    setManualRectangles([]);
   };
 
   const coordinates = canvasCoordinates({
@@ -111,6 +113,7 @@ export default function HomePage() {
   const handleMouseUp = () => {
     if (currentRect && currentRect.width > 5 && currentRect.height > 5) {
       // setRectangles((prev) => [...prev, currentRect]);
+      setManualRectangles((prev) => [...prev, currentRect]);
     }
     setIsDrawing(false);
     setCurrentRect(null);
@@ -235,7 +238,16 @@ export default function HomePage() {
       <>
         <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
         {image.type === 'application/pdf' ? (
-          <PdfCanvas file={image} rectangles={rectangles} />
+          <PdfCanvas
+            imageRef={imageRef}
+            file={image}
+            serverRects={rectangles}
+            manualRectangles={manualRectangles}
+            handleMouseDown={handleMouseDown}
+            handleMouseMove={handleMouseMove}
+            handleMouseUp={handleMouseUp}
+            currentRect={currentRect}
+          />
         ) : (
           <>
             {/* <ImageCanvas

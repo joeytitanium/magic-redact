@@ -9,9 +9,9 @@ import { SampleImage } from '@/utils/sample-images';
 import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
+import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { Footer } from './footer';
 import { ImageDropzone } from './image-dropzone';
 import { PdfCanvas } from './pdf-canvas';
@@ -20,8 +20,6 @@ export default function HomePage() {
   // const [file, setFile] = useState<File | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [rectangles, setRectangles] = useState<BoundingBoxWithMetadata[][]>([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [currentRect, setCurrentRect] = useState<BoundingBoxWithMetadata | null>(null);
   const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -65,67 +63,23 @@ export default function HomePage() {
     addBox,
   } = usePdf();
 
+  const { handleMouseDown, handleMouseMove, handleMouseUp, draftBox, resetDraftBox } =
+    useManualDrawing({
+      ref,
+      addBox: (box) => addBox({ box, pageNumber: currentPageNumber }),
+    });
+
   const onReset = () => {
     setShowRedacted(false);
     // setFile(null);
     setImageSize(null);
     setRectangles([]);
-    setCurrentRect(null);
+    resetDraftBox();
     setHoveredRectId(null);
     setStartPoint(null);
     resetAnalyzing();
     setSelectedSampleImage(null);
     setFauxLoadingSampleImage(false);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button')) {
-      return;
-    }
-
-    if (!ref.current) return;
-
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setIsDrawing(true);
-    setStartPoint({ x, y });
-    setCurrentRect({ id: uuidv4(), source: 'user', x, y, width: 0, height: 0, sensitive: true });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawing || !startPoint || !ref.current) return;
-
-    const rect = ref.current.getBoundingClientRect();
-    const currentX = e.clientX - rect.left;
-    const currentY = e.clientY - rect.top;
-
-    // Determine the top-left position based on drag direction
-    const x = currentX < startPoint.x ? currentX : startPoint.x;
-    const y = currentY < startPoint.y ? currentY : startPoint.y;
-
-    setCurrentRect((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        x,
-        y,
-        width: Math.abs(currentX - startPoint.x),
-        height: Math.abs(currentY - startPoint.y),
-      };
-    });
-  };
-
-  const handleMouseUp = async () => {
-    if (!pdfFile) return;
-
-    if (currentRect && currentRect.width > 5 && currentRect.height > 5) {
-      await addBox({ box: currentRect, pageNumber: currentPageNumber });
-    }
-    setIsDrawing(false);
-    setCurrentRect(null);
-    setStartPoint(null);
   };
 
   const handleFileUpload = async (f: File) => {
@@ -249,7 +203,7 @@ export default function HomePage() {
           handleMouseDown={handleMouseDown}
           handleMouseMove={handleMouseMove}
           handleMouseUp={handleMouseUp}
-          currentRect={currentRect}
+          draftBox={draftBox}
           currentPageNumber={currentPageNumber}
           onPdfLoaded={onPdfLoaded}
           canvasBox={canvasBox}

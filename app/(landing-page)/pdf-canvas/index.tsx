@@ -20,7 +20,7 @@ interface PdfCanvasProps {
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseUp: () => void;
-  currentRect: Rect | null;
+  draftBox: Rect | null;
   imageRef: React.RefObject<HTMLDivElement>;
   currentPageNumber: number;
   canvasBox: BoundingBox;
@@ -35,7 +35,7 @@ export const PdfCanvas = ({
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
-  currentRect,
+  draftBox,
   imageRef,
   // manualRectangles,
   canvasBox,
@@ -63,14 +63,14 @@ export const PdfCanvas = ({
         // onMouseLeave={handleMouseUp}
       />
     </Document>
-    {currentRect && (
+    {draftBox && (
       <Box
         style={{
           position: 'absolute',
-          top: currentRect.y,
-          left: currentRect.x,
-          width: currentRect.width,
-          height: currentRect.height,
+          top: draftBox.y,
+          left: draftBox.x,
+          width: draftBox.width,
+          height: draftBox.height,
           backgroundColor: 'rgba(0, 0, 0, 0.3)',
           border: '1px solid black',
         }}

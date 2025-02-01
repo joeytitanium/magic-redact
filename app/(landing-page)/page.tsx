@@ -78,13 +78,6 @@ export default function HomePage() {
     setFauxLoadingSampleImage(false);
   };
 
-  // const coordinates = canvasCoordinates({
-  //   imageSize: imageSize ?? { width: 0, height: 0 },
-  //   viewportSize: { width: viewportWidth, height: viewportHeight },
-  //   headerHeight: CONFIG.layout.headerHeight,
-  //   footerHeight: CONFIG.layout.footerHeight,
-  // });
-
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
       return;

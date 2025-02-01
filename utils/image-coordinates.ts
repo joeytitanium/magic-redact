@@ -6,20 +6,22 @@ export const canvasCoordinates = ({
   viewportSize,
   headerHeight,
   footerHeight,
-  margin = 20,
+  marginX = 0,
+  marginY = 20,
 }: {
   imageSize: Size;
   viewportSize: Size;
   headerHeight: number;
   footerHeight: number;
-  margin?: number;
+  marginY?: number;
+  marginX?: number;
 }): Pick<Rectangle, 'x' | 'y' | 'width' | 'height'> => {
   const isPortrait = imageSize.width < imageSize.height;
   const imageScale = imageSize.width / imageSize.height;
 
   if (isPortrait) {
-    const availableWidth = viewportSize.width - margin * 2;
-    let height = viewportSize.height - headerHeight - footerHeight - margin * 2;
+    const availableWidth = viewportSize.width - marginX * 2;
+    let height = viewportSize.height - headerHeight - footerHeight - marginY * 2;
     let width = height * imageScale;
 
     if (width > availableWidth) {
@@ -35,8 +37,8 @@ export const canvasCoordinates = ({
     };
   }
 
-  const availableHeight = viewportSize.height - headerHeight - footerHeight - margin * 2;
-  let width = viewportSize.width - margin * 2;
+  const availableHeight = viewportSize.height - headerHeight - footerHeight - marginY * 2;
+  let width = viewportSize.width - marginX * 2;
   let height = width / imageScale;
 
   if (height > availableHeight) {

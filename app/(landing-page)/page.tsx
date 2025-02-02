@@ -6,7 +6,6 @@ import { Box } from '@mantine/core';
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { nodeToImageUrl } from '@/utils/node-to-image-url';
 import { SampleImage } from '@/utils/sample-images';
-import { useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
@@ -33,20 +32,6 @@ export default function HomePage() {
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
 
-  const { height: viewportHeight, width: viewportWidth } = useViewportSize();
-
-  const {
-    mutate: analyzeImageData,
-    isPending: isAnalyzing,
-    reset: resetAnalyzing,
-  } = useAnalyzeImage({
-    onSuccess: (data) => {
-      // setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
-      // setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
-      setRectangles(data);
-    },
-  });
-
   const {
     loadPdf,
     pdfUrl,
@@ -60,14 +45,27 @@ export default function HomePage() {
     // manualBoxes,
     // setManualBoxes,
     canvasBox,
-    addBox,
+    addManualBox,
+    addServerBoxes,
   } = usePdf();
 
   const { handleMouseDown, handleMouseMove, handleMouseUp, draftBox, resetDraftBox } =
     useManualDrawing({
       ref,
-      addBox: (box) => addBox({ box, pageNumber: currentPageNumber }),
+      addBox: (box) => addManualBox({ box, pageNumber: currentPageNumber }),
     });
+
+  const {
+    mutate: analyzeImageData,
+    isPending: isAnalyzing,
+    reset: resetAnalyzing,
+  } = useAnalyzeImage({
+    onSuccess: async (data) => {
+      // setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
+      // setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
+      await addServerBoxes({ boxes: data });
+    },
+  });
 
   const onReset = () => {
     setShowRedacted(false);
@@ -118,9 +116,10 @@ export default function HomePage() {
       return;
     }
 
-    if (!file) return;
+    if (!pdfFile) return;
+
     try {
-      await handleFileUpload(file);
+      await handleFileUpload(pdfFile);
     } catch (error) {
       notifications.show({
         title: 'Error',

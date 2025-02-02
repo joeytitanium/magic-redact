@@ -23,42 +23,25 @@ export type BoundingBoxWithMetadata = BoundingBox & {
   sensitive: boolean;
 };
 
-// const convertServerBox = ({
-//   box,
-//   width,
-//   height,
-// }: {
-//   boxes: BoundingBox;
-//   width: number;
-//   height: number;
-// }) => ({
-//   ...box,
-//   x: box.x * width,
-//   y: height - box.y * height - box.height * height,
-//   width: box.width * width,
-//   height: box.height * height,
-// });
+const convertServerBox = ({
+  box,
+  width,
+  height,
+}: {
+  box: BoundingBox;
+  width: number;
+  height: number;
+}) => ({
+  ...box,
+  x: box.x * width,
+  y: height - box.y * height - box.height * height,
+  width: box.width * width,
+  height: box.height * height,
+});
 
 const bytesToUrl = (bytes: Uint8Array<ArrayBufferLike> | ArrayBuffer) => {
   const blob = new Blob([bytes], { type: 'application/pdf' });
   return URL.createObjectURL(blob);
-};
-
-const insertBox = ({
-  box,
-  pageNumber,
-  existingBoxes,
-}: {
-  box: BoundingBoxWithMetadata;
-  pageNumber: number;
-  existingBoxes: BoundingBoxWithMetadata[][];
-}) => {
-  const manualBoxesCopy = cloneDeep(existingBoxes);
-  const pageBoxes = manualBoxesCopy[pageNumber] ?? [];
-  if (pageBoxes.some((x) => x.id === box.id)) return manualBoxesCopy;
-  pageBoxes.push(box);
-  manualBoxesCopy[pageNumber] = pageBoxes;
-  return manualBoxesCopy;
 };
 
 const convertManualBox = ({
@@ -90,7 +73,7 @@ export const usePdf = () => {
   const [pageSize, setPageSize] = useState<Size>({ width: 0, height: 0 });
   const [pdfUrl, setPdfUrl] = useState<string>();
   const [currentPageNumber, setCurrentPageNumber] = useState(0);
-  const [manualBoxes, setManualBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
+  const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
 
   const viewportSize = useViewportSize();
 
@@ -100,7 +83,7 @@ export const usePdf = () => {
     const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
     setPageSize(pdfDoc.getPages()[0].getSize());
     setCurrentPageNumber(0);
-    setManualBoxes([]);
+    setBoxes([]);
     setPdfUrl(bytesToUrl(pdfArrayBuffer));
   };
 
@@ -117,29 +100,29 @@ export const usePdf = () => {
 
   const onPdfLoaded = (props: DocumentCallback) => {};
 
-  const addBox = async ({
-    box: newBox,
-    pageNumber,
-  }: {
-    box: BoundingBoxWithMetadata;
-    pageNumber: number;
-  }) => {
+  const drawBoxes = async ({ boxes: boxesToDraw }: { boxes: BoundingBoxWithMetadata[][] }) => {
     if (!file) return;
 
     const arrayBuffer = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(arrayBuffer);
     const pages = pdfDoc.getPages();
 
-    const updatedManualBoxes = insertBox({ box: newBox, pageNumber, existingBoxes: manualBoxes });
-
+    let pageNumber = 0;
     for (const page of pages) {
-      const pageBoxes = updatedManualBoxes[pageNumber] ?? [];
+      const pageBoxes = boxesToDraw[pageNumber] ?? [];
       for (const box of pageBoxes) {
-        const convertedBox = convertManualBox({
-          box,
-          pageSize,
-          canvasBox,
-        });
+        const convertedBox =
+          box.source === 'user'
+            ? convertManualBox({
+                box,
+                pageSize,
+                canvasBox,
+              })
+            : convertServerBox({
+                box,
+                width: page.getWidth(),
+                height: page.getHeight(),
+              });
         page.drawRectangle({
           x: convertedBox.x,
           y: convertedBox.y,
@@ -149,12 +132,48 @@ export const usePdf = () => {
           borderWidth: 1,
         });
       }
+      pageNumber++;
     }
 
-    setManualBoxes(updatedManualBoxes);
     const modifiedPdfBytes = await pdfDoc.save();
     const modifiedPdfUrl = bytesToUrl(modifiedPdfBytes);
     setPdfUrl(modifiedPdfUrl);
+  };
+
+  const addManualBox = async ({
+    box: newBox,
+    pageNumber,
+  }: {
+    box: BoundingBoxWithMetadata;
+    pageNumber: number;
+  }) => {
+    if (!file) return;
+
+    const manualBoxesCopy = cloneDeep(boxes);
+    const pageBoxes = manualBoxesCopy[pageNumber] ?? [];
+    if (pageBoxes.some((x) => x.id === newBox.id)) return manualBoxesCopy;
+    pageBoxes.push(newBox);
+    manualBoxesCopy[pageNumber] = pageBoxes;
+    setBoxes(manualBoxesCopy);
+
+    await drawBoxes({ boxes: manualBoxesCopy });
+  };
+
+  const addServerBoxes = async ({ boxes: newBoxes }: { boxes: BoundingBoxWithMetadata[][] }) => {
+    const maxPages = Math.max(boxes.length, newBoxes.length);
+    const boxesCopy = cloneDeep(boxes);
+
+    for (let i = 0; i < maxPages; i++) {
+      const pageBoxes = boxesCopy[i] ?? [];
+      const newPageBoxes = newBoxes[i] ?? [];
+      const combinedPageBoxes = [...pageBoxes, ...newPageBoxes].filter(
+        (x, index, self) => self.findIndex((t) => t.id === x.id) === index
+      );
+      boxesCopy[i] = combinedPageBoxes;
+    }
+
+    setBoxes(boxesCopy);
+    await drawBoxes({ boxes: boxesCopy });
   };
 
   return {
@@ -166,7 +185,8 @@ export const usePdf = () => {
     currentPageNumber,
     setCurrentPageNumber,
     onPdfLoaded,
-    addBox,
+    addManualBox,
+    addServerBoxes,
     ref,
   };
 };

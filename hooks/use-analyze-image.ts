@@ -1,12 +1,13 @@
-import { ANALYZE_IMAGE_RESPONSE_SCHEMA, Rect } from '@/types/rectangle';
+import { ANALYZE_IMAGE_RESPONSE_SCHEMA } from '@/types/rectangle';
 import { notifications } from '@mantine/notifications';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { BoundingBoxWithMetadata } from './use-pdf';
 
 type Variables = {
   imageUrl: string;
 };
 
-type Response = Rect[][];
+type Response = BoundingBoxWithMetadata[][];
 
 export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Variables>) =>
   useMutation<Response, Error, Variables>({
@@ -23,9 +24,9 @@ export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Var
 
       const data = await response.json();
       const parsed = ANALYZE_IMAGE_RESPONSE_SCHEMA.parse(data);
-      return parsed.rectangles.map((page) => {
-        return page.map((r) => ({ ...r, id: crypto.randomUUID(), source: 'server' }));
-      });
+      return parsed.rectangles.map((page) =>
+        page.map((r) => ({ ...r, id: crypto.randomUUID(), source: 'server' }))
+      );
     },
     onError: (error) => {
       console.error('Error in useAnalyzeImage', error);

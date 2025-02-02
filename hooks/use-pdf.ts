@@ -123,17 +123,24 @@ export const usePdf = () => {
                 width: page.getWidth(),
                 height: page.getHeight(),
               });
-        page.drawRectangle({
-          x: convertedBox.x,
-          y: convertedBox.y,
-          width: convertedBox.width,
-          height: convertedBox.height,
-          borderColor: rgb(1, 0, 0),
-          borderWidth: 1,
-        });
+        if (box.sensitive) {
+          page.drawRectangle({
+            x: convertedBox.x,
+            y: convertedBox.y,
+            width: convertedBox.width,
+            height: convertedBox.height,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1,
+            color: rgb(0, 0, 0),
+          });
+        }
       }
       pageNumber++;
     }
+
+    pdfDoc.setCreator('auto-redacted by magicredact.com');
+    pdfDoc.setProducer('magicredact.com');
+    pdfDoc.setModificationDate(new Date());
 
     const modifiedPdfBytes = await pdfDoc.save();
     const modifiedPdfUrl = bytesToUrl(modifiedPdfBytes);

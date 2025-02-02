@@ -12,7 +12,6 @@ import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
 import { PdfCanvas } from '@/app/(landing-page)/pdf-canvas';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
-import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useState } from 'react';
 
 type ClientPageProps = {
@@ -31,8 +30,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
-
-  const { exportPdf } = usePdfExport();
 
   const {
     loadPdf,

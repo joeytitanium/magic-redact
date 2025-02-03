@@ -1,20 +1,7 @@
+import { convertPdfBoxToCanvasBox } from '@/utils/convert-bounding-box';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BoundingBox, BoundingBoxWithMetadata, Coordinates } from './use-pdf';
-
-export const convertPdfBoxToCanvasBox = ({
-  box,
-  canvasBox,
-}: {
-  box: BoundingBox;
-  canvasBox: BoundingBox;
-}) => {
-  const x = box.x * canvasBox.width;
-  const y = box.y * canvasBox.height;
-  const width = box.width * canvasBox.width;
-  const height = box.height * canvasBox.height;
-  return { x, y, width, height };
-};
 
 type UseManualDrawingProps = {
   ref: React.RefObject<HTMLDivElement>;

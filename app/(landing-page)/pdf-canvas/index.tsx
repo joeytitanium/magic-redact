@@ -1,9 +1,10 @@
 'use client';
 
 import { CONFIG } from '@/config';
-import { convertPdfBoxToCanvasBox } from '@/hooks/use-manual-drawing';
+
 import { BoundingBox, BoundingBoxWithMetadata } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
+import { convertPdfBoxToCanvasBox } from '@/utils/convert-bounding-box';
 import { Box, Center, Paper, UnstyledButton } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { Document, Page, pdfjs } from 'react-pdf';

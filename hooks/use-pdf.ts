@@ -1,4 +1,5 @@
 import { CONFIG } from '@/config';
+import { convertManualBox, convertServerBox } from '@/utils/convert-bounding-box';
 import { canvasCoordinates } from '@/utils/image-coordinates';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { cloneDeep } from 'lodash';
@@ -23,48 +24,9 @@ export type BoundingBoxWithMetadata = BoundingBox & {
   sensitive: boolean;
 };
 
-export const convertServerBox = ({
-  box,
-  width,
-  height,
-}: {
-  box: BoundingBox;
-  width: number;
-  height: number;
-}) => ({
-  ...box,
-  x: box.x * width,
-  y: height - box.y * height - box.height * height,
-  width: box.width * width,
-  height: box.height * height,
-});
-
 const bytesToUrl = (bytes: Uint8Array<ArrayBufferLike> | ArrayBuffer) => {
   const blob = new Blob([bytes], { type: 'application/pdf' });
   return URL.createObjectURL(blob);
-};
-
-export const convertManualBox = ({
-  box,
-  pageSize,
-  canvasBox,
-}: {
-  box: BoundingBox;
-  pageSize: Size;
-  canvasBox: BoundingBox;
-}) => {
-  const scaleY = pageSize.height / canvasBox.height;
-  const scaleX = pageSize.width / canvasBox.width;
-
-  const y = box.y * scaleY;
-  const flippedY = pageSize.height - y - box.height * scaleY;
-
-  return {
-    x: box.x * scaleX,
-    y: flippedY,
-    width: box.width * scaleX,
-    height: box.height * scaleY,
-  };
 };
 
 export const usePdf = () => {
@@ -146,8 +108,7 @@ export const usePdf = () => {
               })
             : convertServerBox({
                 box,
-                width: page.getWidth(),
-                height: page.getHeight(),
+                pageSize,
               });
         if (box.sensitive) {
           page.drawRectangle({

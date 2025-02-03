@@ -73,7 +73,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   const onReset = () => {
     resetPdf();
     setShowRedacted(false);
-    // setFile(null);
     setImageSize(null);
     setRectangles([]);
     resetDraftBox();

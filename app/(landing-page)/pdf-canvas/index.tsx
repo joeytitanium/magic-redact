@@ -2,7 +2,7 @@
 
 import { BoundingBox } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
-import { Box } from '@mantine/core';
+import { Box, Paper } from '@mantine/core';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { DocumentCallback, File } from 'react-pdf/dist/cjs/shared/types';
 
@@ -14,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-interface PdfCanvasProps {
+type PdfCanvasProps = {
   file: File;
   // modifiedPdfUrl: string | undefined;
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
@@ -24,9 +24,8 @@ interface PdfCanvasProps {
   imageRef: React.RefObject<HTMLDivElement>;
   currentPageNumber: number;
   canvasBox: BoundingBox;
-
   onPdfLoaded: (props: DocumentCallback) => void;
-}
+};
 
 export const PdfCanvas = ({
   file,
@@ -42,12 +41,14 @@ export const PdfCanvas = ({
   currentPageNumber,
   onPdfLoaded,
 }: PdfCanvasProps) => (
-  <Box
+  <Paper
     ref={imageRef}
     pos="fixed"
+    withBorder
+    radius={0}
+    top={canvasBox.y}
+    left={canvasBox.x}
     style={{
-      top: canvasBox.y,
-      left: canvasBox.x,
       cursor: 'crosshair',
       userSelect: 'none',
     }}
@@ -107,5 +108,5 @@ export const PdfCanvas = ({
           </button>
         </Box> */}
     {/* )} */}
-  </Box>
+  </Paper>
 );

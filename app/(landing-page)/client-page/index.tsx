@@ -12,6 +12,7 @@ import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
 import { PdfCanvas } from '@/app/(landing-page)/pdf-canvas';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
+import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useState } from 'react';
 
 type ClientPageProps = {
@@ -47,6 +48,8 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     addManualBox,
     addServerBoxes,
   } = usePdf();
+
+  const { exportPdf } = usePdfExport();
 
   const { handleMouseDown, handleMouseMove, handleMouseUp, draftBox, resetDraftBox } =
     useManualDrawing({
@@ -130,52 +133,21 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
 
   const onDownload = async () => {
     if (!pdfUrl) return;
-    await exportPdf(pdfUrl, 'png');
+
+    try {
+      await exportPdf(pdfUrl, { fileName: pdfFile?.name ?? 'document' });
+      notifications.show({
+        message: 'File downloaded successfully',
+        color: 'green',
+      });
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to download file',
+        color: 'red',
+      });
+    }
   };
-
-  // const onDownload = async () => {
-  //   console.log(`🔫 : ${JSON.stringify(pdfUrl, null, '\t')}`);
-  //   if (isDownloading) return;
-  //   if (!pdfUrl) return;
-  //   setIsDownloading(true);
-
-  //   try {
-  //     const response = await fetch(pdfUrl);
-  //     const blob = await response.blob();
-  //     const a = document.createElement('a');
-  //     a.href = URL.createObjectURL(blob);
-  //     a.download = 'screenshot.pdf';
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     document.body.removeChild(a);
-  //     URL.revokeObjectURL(a.href);
-  //     // const imageUrl = await nodeToImageUrl({ node });
-
-  //     // if (!imageUrl) {
-  //     //   throw new Error('Failed to generate image URL');
-  //     // }
-
-  //     // const link = document.createElement('a');
-  //     // link.download = 'screenshot.png';
-  //     // link.href = imageUrl;
-  //     // document.body.appendChild(link);
-  //     // link.click();
-  //     // document.body.removeChild(link);
-  //     notifications.show({
-  //       message: 'Image downloaded successfully',
-  //       color: 'green',
-  //     });
-  //   } catch (error) {
-  //     console.error('Failed to download image:', error);
-  //     notifications.show({
-  //       title: 'Error',
-  //       message: 'Failed to generate image',
-  //       color: 'red',
-  //     });
-  //   } finally {
-  //     setIsDownloading(false);
-  //   }
-  // };
 
   const handleDeleteRect = (id: string) => {
     setRectangles((prev) => prev.filter((rect) => rect.id !== id));

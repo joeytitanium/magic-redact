@@ -42,7 +42,10 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     addManualBox,
     addServerBoxes,
     canvasBox,
-    currentPageNumber,
+    currentPageIndex,
+    numPages,
+    nextPage,
+    previousPage,
     onPdfLoaded,
     pdfFile,
     pdfUrl,
@@ -55,7 +58,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   const { handleMouseDown, handleMouseMove, handleMouseUp, draftBox, resetDraftBox } =
     useManualDrawing({
       ref,
-      addBox: (box) => addManualBox({ box, pageNumber: currentPageNumber }),
+      addBox: (box) => addManualBox({ box, pageNumber: currentPageIndex }),
     });
 
   const {
@@ -179,7 +182,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
           handleMouseMove={handleMouseMove}
           handleMouseUp={handleMouseUp}
           draftBox={draftBox}
-          currentPageNumber={currentPageNumber}
+          currentPageIndex={currentPageIndex}
           onPdfLoaded={onPdfLoaded}
           canvasBox={canvasBox}
         />
@@ -210,6 +213,10 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
             isAnalyzing={isAnalyzing || fauxLoadingSampleImage}
             showRedacted={showRedacted}
             onToggleRedacted={() => setShowRedacted((prev) => !prev)}
+            onNextPage={nextPage}
+            onPreviousPage={previousPage}
+            currentPageIndex={currentPageIndex}
+            numPages={numPages}
           />
         </Box>
       </>

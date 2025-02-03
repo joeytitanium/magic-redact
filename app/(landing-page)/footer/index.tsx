@@ -8,7 +8,15 @@ import {
   Group,
   Tooltip,
 } from '@mantine/core';
-import { IconDownload, IconEye, IconEyeOff, IconTrash, IconWand } from '@tabler/icons-react';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDownload,
+  IconEye,
+  IconEyeOff,
+  IconTrash,
+  IconWand,
+} from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
 const ActionButton = ({
@@ -44,6 +52,10 @@ export const Footer = ({
   isAnalyzing,
   showRedacted,
   onToggleRedacted,
+  onNextPage,
+  onPreviousPage,
+  numPages,
+  currentPageIndex,
   ...flexProps
 }: FlexProps & {
   onDownload: () => void;
@@ -52,6 +64,10 @@ export const Footer = ({
   isAnalyzing: boolean;
   showRedacted: boolean;
   onToggleRedacted: () => void;
+  onNextPage: () => void;
+  onPreviousPage: () => void;
+  currentPageIndex: number;
+  numPages: number;
 }) => (
   <Flex
     justify="space-between"
@@ -101,6 +117,20 @@ export const Footer = ({
         tooltip={showRedacted ? 'Hide redacted' : 'Show redacted'}
         onClick={onToggleRedacted}
       />
+      <Group ml="xl" align="center">
+        <ActionButton
+          tooltip="Previous page"
+          onClick={onPreviousPage}
+          icon={<IconChevronLeft />}
+          disabled={currentPageIndex === 0}
+        />
+        <ActionButton
+          tooltip="Next page"
+          onClick={onNextPage}
+          icon={<IconChevronRight />}
+          disabled={currentPageIndex === numPages - 1}
+        />
+      </Group>
     </Group>
     <Button
       leftSection={<IconDownload size={CONFIG.icon.size.sm} />}

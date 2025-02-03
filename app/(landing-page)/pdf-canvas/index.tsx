@@ -22,7 +22,7 @@ type PdfCanvasProps = {
   handleMouseUp: () => void;
   draftBox: Rect | null;
   imageRef: React.RefObject<HTMLDivElement>;
-  currentPageNumber: number;
+  currentPageIndex: number;
   canvasBox: BoundingBox;
   onPdfLoaded: (props: DocumentCallback) => void;
 };
@@ -38,7 +38,7 @@ export const PdfCanvas = ({
   imageRef,
   // manualRectangles,
   canvasBox,
-  currentPageNumber,
+  currentPageIndex,
   onPdfLoaded,
 }: PdfCanvasProps) => (
   <Paper
@@ -53,9 +53,9 @@ export const PdfCanvas = ({
       userSelect: 'none',
     }}
   >
-    <Document file={file}>
+    <Document file={file} onLoadSuccess={onPdfLoaded}>
       <Page
-        pageNumber={currentPageNumber + 1}
+        pageIndex={currentPageIndex}
         width={canvasBox.width}
         height={canvasBox.height}
         onMouseDown={handleMouseDown}

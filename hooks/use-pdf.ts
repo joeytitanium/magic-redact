@@ -70,16 +70,17 @@ const convertManualBox = ({
 export const usePdf = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File>();
+  const [numPages, setNumPages] = useState(0);
   const [pageSize, setPageSize] = useState<Size>({ width: 0, height: 0 });
   const [pdfUrl, setPdfUrl] = useState<string>();
-  const [currentPageNumber, setCurrentPageNumber] = useState(0);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
 
   const resetPdf = () => {
     setFile(undefined);
     setPageSize({ width: 0, height: 0 });
     setPdfUrl(undefined);
-    setCurrentPageNumber(0);
+    setCurrentPageIndex(0);
     setBoxes([]);
   };
 
@@ -90,7 +91,7 @@ export const usePdf = () => {
     const pdfArrayBuffer = await newFile.arrayBuffer();
     const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
     setPageSize(pdfDoc.getPages()[0].getSize());
-    setCurrentPageNumber(0);
+    setCurrentPageIndex(0);
     setBoxes([]);
     setPdfUrl(bytesToUrl(pdfArrayBuffer));
   };
@@ -106,7 +107,9 @@ export const usePdf = () => {
     [pageSize, viewportSize]
   );
 
-  const onPdfLoaded = (props: DocumentCallback) => {};
+  const onPdfLoaded = (props: DocumentCallback) => {
+    setNumPages(props.numPages);
+  };
 
   const drawBoxes = async ({ boxes: boxesToDraw }: { boxes: BoundingBoxWithMetadata[][] }) => {
     if (!file) return;
@@ -191,11 +194,21 @@ export const usePdf = () => {
     await drawBoxes({ boxes: boxesCopy });
   };
 
+  const nextPage = () => {
+    if (currentPageIndex === numPages - 1) return;
+    setCurrentPageIndex((prev) => prev + 1);
+  };
+
+  const previousPage = () => {
+    if (currentPageIndex === 0) return;
+    setCurrentPageIndex((prev) => prev - 1);
+  };
+
   return {
     addManualBox,
     addServerBoxes,
     canvasBox,
-    currentPageNumber,
+    currentPageIndex,
     loadPdf,
     onPdfLoaded,
     resetPdf,
@@ -203,6 +216,8 @@ export const usePdf = () => {
     pdfFile: file,
     pdfUrl,
     ref,
-    setCurrentPageNumber,
+    nextPage,
+    previousPage,
+    numPages,
   };
 };

@@ -67,10 +67,9 @@ const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUui
     },
   };
 
-  const outputDir = `gs://${BUCKET_NAME}/${filePath}`;
   const outputConfig = {
     gcsDestination: {
-      uri: `${outputDir}/output`,
+      uri: `gs://${BUCKET_NAME}/${filePath}`,
     },
   };
 

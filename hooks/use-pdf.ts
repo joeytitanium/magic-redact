@@ -75,6 +75,14 @@ export const usePdf = () => {
   const [currentPageNumber, setCurrentPageNumber] = useState(0);
   const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
 
+  const resetPdf = () => {
+    setFile(undefined);
+    setPageSize({ width: 0, height: 0 });
+    setPdfUrl(undefined);
+    setCurrentPageNumber(0);
+    setBoxes([]);
+  };
+
   const viewportSize = useViewportSize();
 
   const loadPdf = async (newFile: File) => {
@@ -184,16 +192,17 @@ export const usePdf = () => {
   };
 
   return {
-    pdfFile: file,
-    pdfUrl,
-    canvasBox,
-    pageSize,
-    loadPdf,
-    currentPageNumber,
-    setCurrentPageNumber,
-    onPdfLoaded,
     addManualBox,
     addServerBoxes,
+    canvasBox,
+    currentPageNumber,
+    loadPdf,
+    onPdfLoaded,
+    resetPdf,
+    pageSize,
+    pdfFile: file,
+    pdfUrl,
     ref,
+    setCurrentPageNumber,
   };
 };

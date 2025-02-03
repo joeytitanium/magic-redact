@@ -34,19 +34,20 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
 
   const {
     loadPdf,
-    pdfUrl,
-    pdfFile,
-    ref,
-    currentPageNumber,
     // currentPage,
-    // setCurrentPage,
-    // modifiedPdfUrl,
-    onPdfLoaded,
     // manualBoxes,
+    // modifiedPdfUrl,
+    // setCurrentPage,
     // setManualBoxes,
-    canvasBox,
     addManualBox,
     addServerBoxes,
+    canvasBox,
+    currentPageNumber,
+    onPdfLoaded,
+    pdfFile,
+    pdfUrl,
+    ref,
+    resetPdf,
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
@@ -70,6 +71,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   });
 
   const onReset = () => {
+    resetPdf();
     setShowRedacted(false);
     // setFile(null);
     setImageSize(null);

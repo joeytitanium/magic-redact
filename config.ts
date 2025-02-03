@@ -36,6 +36,9 @@ export const CONFIG: {
     };
   };
   localStorageKey: {};
+  zIndex: {
+    hoverOverBox: number;
+  };
 } = {
   site: {
     url: isDevelopment ? 'http://localhost:3000' : 'https://www.magicredact.com',
@@ -59,6 +62,9 @@ export const CONFIG: {
     },
   },
   localStorageKey: {},
+  zIndex: {
+    hoverOverBox: 10,
+  },
   social: {
     x: { url: 'https://x.com/joeytitanium', handle: '@joeytitanium' },
   },

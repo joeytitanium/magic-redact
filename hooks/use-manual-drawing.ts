@@ -1,16 +1,80 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { BoundingBoxWithMetadata, Coordinates } from './use-pdf';
+import { BoundingBox, BoundingBoxWithMetadata, Coordinates } from './use-pdf';
+
+export const convertPdfBoxToCanvasBox = ({
+  box,
+  canvasBox,
+}: {
+  box: BoundingBox;
+  canvasBox: BoundingBox;
+}) => {
+  const x = box.x * canvasBox.width;
+  const y = box.y * canvasBox.height;
+  const width = box.width * canvasBox.width;
+  const height = box.height * canvasBox.height;
+  return { x, y, width, height };
+};
 
 type UseManualDrawingProps = {
   ref: React.RefObject<HTMLDivElement>;
   addBox: (box: BoundingBoxWithMetadata) => void;
+  boxes: BoundingBoxWithMetadata[][];
+  currentPageIndex: number;
+  canvasBox: BoundingBox;
 };
 
-export const useManualDrawing = ({ ref, addBox }: UseManualDrawingProps) => {
+const findBoxHoveringOver = ({
+  boxes,
+  x,
+  y,
+  currentPageIndex,
+
+  canvasBox,
+}: {
+  boxes: BoundingBoxWithMetadata[][];
+  x: number;
+  y: number;
+  currentPageIndex: number;
+
+  canvasBox: BoundingBox;
+}) => {
+  const boxesOnPage = boxes[currentPageIndex] ?? [];
+  const targetBox = boxesOnPage.find((box) => {
+    const b = box.source === 'user' ? box : convertPdfBoxToCanvasBox({ box, canvasBox });
+
+    return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height;
+  });
+  return targetBox ?? null;
+};
+
+export const useManualDrawing = ({
+  ref,
+  addBox,
+  boxes,
+  currentPageIndex,
+  canvasBox,
+}: UseManualDrawingProps) => {
   const [draftBox, setDraftBox] = useState<BoundingBoxWithMetadata | null>(null);
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [hoveringOverBox, setHoveringOverBox] = useState<BoundingBoxWithMetadata | null>(null);
+
+  // useEffect(() => {
+  //   if (!hoveringOverBoxId) return;
+
+  //   const b = findBoxHoveringOver({
+  //     boxes,
+  //     x: hoveringOverBoxId.x,
+  //     y: hoveringOverBoxId.y,
+  //     currentPageIndex,
+  //     pageSize,
+  //     canvasBox,
+  //   });
+  //   if (!b) {
+  //     setHoveringOverBoxId(null);
+  //   }
+  // }, [boxes, currentPageIndex, hoveringOverBox, pageSize, canvasBox]);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button')) {
@@ -29,11 +93,23 @@ export const useManualDrawing = ({ ref, addBox }: UseManualDrawingProps) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawing || !startPoint || !ref.current) return;
+    if (!ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
+
+    if (!isDrawing || !startPoint) {
+      const box = findBoxHoveringOver({
+        boxes,
+        x: currentX,
+        y: currentY,
+        currentPageIndex,
+        canvasBox,
+      });
+      setHoveringOverBox(box ?? null);
+      return;
+    }
 
     // Determine the top-left position based on drag direction
     const x = currentX < startPoint.x ? currentX : startPoint.x;
@@ -61,10 +137,11 @@ export const useManualDrawing = ({ ref, addBox }: UseManualDrawingProps) => {
   };
 
   return {
+    draftBox,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    draftBox,
+    hoveringOverBox,
     resetDraftBox: () => setDraftBox(null),
   };
 };

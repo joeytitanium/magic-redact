@@ -11,7 +11,7 @@ import { Footer } from '@/app/(landing-page)/footer';
 import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
 import { PdfCanvas } from '@/app/(landing-page)/pdf-canvas';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
-import { BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
+import { usePdf } from '@/hooks/use-pdf';
 import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useState } from 'react';
 
@@ -20,12 +20,6 @@ type ClientPageProps = {
 };
 
 export const ClientPage = ({ isDebug }: ClientPageProps) => {
-  // const [file, setFile] = useState<File | null>(null);
-  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const [rectangles, setRectangles] = useState<BoundingBoxWithMetadata[][]>([]);
-  const [hoveredRectId, setHoveredRectId] = useState<string | null>(null);
-  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [showRedacted, setShowRedacted] = useState(false);
 
   // Demo vars
@@ -41,6 +35,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     // setManualBoxes,
     addManualBox,
     addServerBoxes,
+    boxes,
     canvasBox,
     currentPageIndex,
     numPages,
@@ -51,15 +46,25 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     pdfUrl,
     ref,
     resetPdf,
+    deleteBox,
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp, draftBox, resetDraftBox } =
-    useManualDrawing({
-      ref,
-      addBox: (box) => addManualBox({ box, pageNumber: currentPageIndex }),
-    });
+  const {
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    hoveringOverBox,
+    draftBox,
+    resetDraftBox,
+  } = useManualDrawing({
+    boxes,
+    ref,
+    currentPageIndex,
+    addBox: (box) => addManualBox({ box, pageNumber: currentPageIndex }),
+    canvasBox,
+  });
 
   const {
     mutate: analyzeImageData,
@@ -76,11 +81,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   const onReset = () => {
     resetPdf();
     setShowRedacted(false);
-    setImageSize(null);
-    setRectangles([]);
     resetDraftBox();
-    setHoveredRectId(null);
-    setStartPoint(null);
     resetAnalyzing();
     setSelectedSampleImage(null);
     setFauxLoadingSampleImage(false);
@@ -153,11 +154,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     }
   };
 
-  const handleDeleteRect = (id: string) => {
-    setRectangles((prev) => prev.filter((rect) => rect.id !== id));
-    setHoveredRectId(null);
-  };
-
   const onClickSampleImage = (sampleImage: SampleImage) => {
     setSelectedSampleImage(sampleImage);
     void fetch(sampleImage)
@@ -185,6 +181,8 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
           currentPageIndex={currentPageIndex}
           onPdfLoaded={onPdfLoaded}
           canvasBox={canvasBox}
+          hoveringOverBox={hoveringOverBox}
+          onDeleteBox={deleteBox}
         />
         {/* ) : ( */}
         <>
@@ -223,11 +221,5 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     );
   }
 
-  return (
-    <ImageDropzone
-      setImage={onSetFile}
-      setImageSize={setImageSize}
-      onClickSampleImage={onClickSampleImage}
-    />
-  );
+  return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
 };

@@ -1,8 +1,11 @@
 'use client';
 
-import { BoundingBox } from '@/hooks/use-pdf';
+import { CONFIG } from '@/config';
+import { convertPdfBoxToCanvasBox } from '@/hooks/use-manual-drawing';
+import { BoundingBox, BoundingBoxWithMetadata } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
-import { Box, Paper } from '@mantine/core';
+import { Box, Center, Paper, UnstyledButton } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { DocumentCallback, File } from 'react-pdf/dist/cjs/shared/types';
 
@@ -25,6 +28,8 @@ type PdfCanvasProps = {
   currentPageIndex: number;
   canvasBox: BoundingBox;
   onPdfLoaded: (props: DocumentCallback) => void;
+  hoveringOverBox: BoundingBoxWithMetadata | null;
+  onDeleteBox: (id: string) => void;
 };
 
 export const PdfCanvas = ({
@@ -40,73 +45,73 @@ export const PdfCanvas = ({
   canvasBox,
   currentPageIndex,
   onPdfLoaded,
-}: PdfCanvasProps) => (
-  <Paper
-    ref={imageRef}
-    pos="fixed"
-    withBorder
-    radius={0}
-    top={canvasBox.y}
-    left={canvasBox.x}
-    style={{
-      cursor: 'crosshair',
-      userSelect: 'none',
-    }}
-  >
-    <Document file={file} onLoadSuccess={onPdfLoaded}>
-      <Page
-        pageIndex={currentPageIndex}
-        width={canvasBox.width}
-        height={canvasBox.height}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        // onMouseLeave={handleMouseUp}
-      />
-    </Document>
-    {draftBox && (
-      <Box
-        style={{
-          position: 'absolute',
-          top: draftBox.y,
-          left: draftBox.x,
-          width: draftBox.width,
-          height: draftBox.height,
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          border: '1px solid black',
-        }}
-      />
-    )}
-    {/* {numPages > 1 && (
+  hoveringOverBox,
+  onDeleteBox,
+}: PdfCanvasProps) => {
+  const hoverBox = (() => {
+    if (!hoveringOverBox) return null;
+    if (hoveringOverBox.source === 'user') return hoveringOverBox;
+    return convertPdfBoxToCanvasBox({ box: hoveringOverBox, canvasBox });
+  })();
+
+  return (
+    <Paper
+      ref={imageRef}
+      pos="fixed"
+      withBorder
+      radius={0}
+      top={canvasBox.y}
+      left={canvasBox.x}
+      style={{
+        cursor: 'crosshair',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+      }}
+    >
+      <Document file={file} onLoadSuccess={onPdfLoaded}>
+        <Page
+          pageIndex={currentPageIndex}
+          width={canvasBox.width}
+          height={canvasBox.height}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          // onMouseLeave={handleMouseUp}
+        />
+      </Document>
+      {draftBox && (
         <Box
           style={{
-            position: 'sticky',
-            bottom: 20,
-            background: 'white',
-            padding: '10px',
-            borderRadius: '4px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            zIndex: 1000,
+            position: 'absolute',
+            top: draftBox.y,
+            left: draftBox.x,
+            width: draftBox.width,
+            height: draftBox.height,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            border: '1px solid black',
           }}
+        />
+      )}
+      {hoverBox && hoveringOverBox && (
+        <UnstyledButton
+          onClick={() => onDeleteBox(hoveringOverBox.id)}
+          style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            top: hoverBox.y,
+            left: hoverBox.x,
+            width: hoverBox.width,
+            height: hoverBox.height,
+            zIndex: CONFIG.zIndex.hoverOverBox,
+          }}
+          variant="filled"
+          color="red"
         >
-          <button
-            type="button"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage <= 1}
-          >
-            Previous
-          </button>
-          <span style={{ margin: '0 1rem' }}>
-            Page {currentPage} of {numPages}
-          </span>
-          <button
-            type="button"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, numPages))}
-            disabled={currentPage >= numPages}
-          >
-            Next
-          </button>
-        </Box> */}
-    {/* )} */}
-  </Paper>
-);
+          <Center>
+            <IconTrash size={CONFIG.icon.size.sm} color="var(--mantine-color-red-5)" />
+          </Center>
+        </UnstyledButton>
+      )}
+    </Paper>
+  );
+};

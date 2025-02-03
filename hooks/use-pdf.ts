@@ -23,7 +23,7 @@ export type BoundingBoxWithMetadata = BoundingBox & {
   sensitive: boolean;
 };
 
-const convertServerBox = ({
+export const convertServerBox = ({
   box,
   width,
   height,
@@ -44,7 +44,7 @@ const bytesToUrl = (bytes: Uint8Array<ArrayBufferLike> | ArrayBuffer) => {
   return URL.createObjectURL(blob);
 };
 
-const convertManualBox = ({
+export const convertManualBox = ({
   box,
   pageSize,
   canvasBox,
@@ -209,6 +209,17 @@ export const usePdf = () => {
     await drawBoxes({ boxes: boxesCopy });
   };
 
+  const deleteBox = async (id: string) => {
+    if (!file) return;
+
+    const boxesCopy = cloneDeep(boxes);
+    const pageBoxes = boxesCopy[currentPageIndex] ?? [];
+    const newPageBoxes = pageBoxes.filter((x) => x.id !== id);
+    boxesCopy[currentPageIndex] = newPageBoxes;
+    setBoxes(boxesCopy);
+    await drawBoxes({ boxes: boxesCopy });
+  };
+
   return {
     addManualBox,
     addServerBoxes,
@@ -224,5 +235,7 @@ export const usePdf = () => {
     nextPage,
     previousPage,
     numPages,
+    boxes,
+    deleteBox,
   };
 };

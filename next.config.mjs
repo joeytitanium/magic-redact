@@ -6,6 +6,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
+  devIndicators: {
+    appIsrStatus: false,
+  },
   images: {
     remotePatterns: [],
   },

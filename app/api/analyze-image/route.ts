@@ -219,10 +219,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: ocrError?.message ?? 'Unknown error' }, { status: 400 });
     }
 
-    logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
-      request,
-      context: { ocrResults },
-    });
+    // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
+    //   request,
+    //   context: { ocrResults },
+    // });
     if (ocrResults.length === 0) {
       await sendDiscordAlert({
         username: '/analyze-image',
@@ -348,12 +348,12 @@ ${input.join(',')}`;
     //   }
     // );
 
-    const rectangles = ocrResults.map((page) => {
-      return page.map((y) => ({
+    const rectangles = ocrResults.map((page) =>
+      page.map((y) => ({
         ...y,
         sensitive: sensitiveStringSet.has(y.text ?? ''),
-      }));
-    });
+      }))
+    );
     // console.log(`🔫 prompt_tokens: ${outputResult.data.usage.prompt_tokens}`);
     // console.log(`🔫 completion_tokens: ${outputResult.data.usage.completion_tokens}`);
     // console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);

@@ -1,10 +1,8 @@
 import { Rectangle } from '@/types/rectangle';
 import { generateFilepath } from '@/utils/generate-filepath';
 import { Storage } from '@google-cloud/storage';
-import { ImageAnnotatorClient, protos } from '@google-cloud/vision';
-import { isNil } from 'lodash';
-
-type BatchAnnotateFilesResponse = protos.google.cloud.vision.v1.IAnnotateFileResponse;
+import { ImageAnnotatorClient } from '@google-cloud/vision';
+import { fetchOcrResults } from './fetch-ocr-results';
 
 const BUCKET_NAME = 'magic-redact';
 
@@ -54,36 +52,6 @@ type DetectTextWithGoogleVisionResult =
       error: Error;
     };
 
-function transformVisionResponse(response: BatchAnnotateFilesResponse): Rectangle[][] {
-  return (
-    response.responses?.[0]?.fullTextAnnotation?.pages?.map((page) => {
-      return (
-        page.blocks
-          ?.flatMap((block) =>
-            block.paragraphs?.flatMap((paragraph) =>
-              paragraph.words?.map((word) => {
-                const vertices = word.boundingBox?.normalizedVertices;
-                if (!vertices || vertices.length < 4) return null;
-
-                const [topLeft, topRight, bottomRight] = vertices;
-
-                return {
-                  x: topLeft.x ?? 0,
-                  y: topLeft.y ?? 0,
-                  width: (topRight.x ?? 0) - (topLeft.x ?? 0),
-                  height: (bottomRight.y ?? 0) - (topLeft.y ?? 0),
-                  text: word.symbols?.map((symbol) => symbol.text).join('') ?? '',
-                  confidence: word.confidence ?? 0,
-                  sensitive: false,
-                };
-              })
-            )
-          )
-          .filter((rect) => !isNil(rect)) ?? []
-      );
-    }) ?? []
-  );
-}
 const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUuid: string }) => {
   const filePath = generateFilepath({
     uuid: fileUuid,
@@ -99,9 +67,10 @@ const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUui
     },
   };
 
+  const outputDir = `gs://${BUCKET_NAME}/${filePath}`;
   const outputConfig = {
     gcsDestination: {
-      uri: `gs://${BUCKET_NAME}/${filePath}`,
+      uri: `${outputDir}/output`,
     },
   };
 
@@ -117,7 +86,7 @@ const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUui
 
   const [filesResponse] = await operation.promise();
 
-  const folderDestinationUrl = filesResponse?.responses?.[0]?.outputConfig?.gcsDestination?.uri;
+  const folderDestinationUrl = filesResponse.responses?.[0]?.outputConfig?.gcsDestination?.uri;
   if (!folderDestinationUrl) {
     return {
       data: null,
@@ -125,15 +94,11 @@ const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUui
       error: new Error('No destination URI found'),
     };
   }
-  const resultUrl = `${filePath}output-1-to-1.json`;
 
-  const [result] = await storage.bucket(BUCKET_NAME).file(resultUrl).download();
-  const json = JSON.parse(result.toString()) as BatchAnnotateFilesResponse;
-
+  const results = await fetchOcrResults({ filePath, storage, bucketName: BUCKET_NAME });
   return {
-    data: transformVisionResponse(json),
-    originalResponse: null,
-    // originalResponse: filesResponse?.responses?.[0],
+    data: results,
+    originalResponse: filesResponse,
     error: null,
   };
 };
@@ -182,9 +147,9 @@ export const ocrDetectText = async ({
   try {
     if (gsImageUrl.toLowerCase().endsWith('.pdf')) {
       return await detectPdf({ gsImageUrl, fileUuid });
-    } else {
-      return await detectNonPdf(gsImageUrl);
     }
+
+    return await detectNonPdf(gsImageUrl);
   } catch (error) {
     return {
       data: null,

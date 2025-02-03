@@ -1,6 +1,6 @@
 import { CONFIG } from '@/config';
 import { canvasCoordinates } from '@/utils/image-coordinates';
-import { useViewportSize } from '@mantine/hooks';
+import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { useMemo, useRef, useState } from 'react';
@@ -83,6 +83,21 @@ export const usePdf = () => {
     setCurrentPageIndex(0);
     setBoxes([]);
   };
+
+  const nextPage = () => {
+    if (currentPageIndex === numPages - 1) return;
+    setCurrentPageIndex((prev) => prev + 1);
+  };
+
+  const previousPage = () => {
+    if (currentPageIndex === 0) return;
+    setCurrentPageIndex((prev) => prev - 1);
+  };
+
+  useHotkeys([
+    ['ArrowRight', nextPage],
+    ['ArrowLeft', previousPage],
+  ]);
 
   const viewportSize = useViewportSize();
 
@@ -192,16 +207,6 @@ export const usePdf = () => {
 
     setBoxes(boxesCopy);
     await drawBoxes({ boxes: boxesCopy });
-  };
-
-  const nextPage = () => {
-    if (currentPageIndex === numPages - 1) return;
-    setCurrentPageIndex((prev) => prev + 1);
-  };
-
-  const previousPage = () => {
-    if (currentPageIndex === 0) return;
-    setCurrentPageIndex((prev) => prev - 1);
   };
 
   return {

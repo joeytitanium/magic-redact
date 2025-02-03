@@ -20,33 +20,28 @@ type ClientPageProps = {
 };
 
 export const ClientPage = ({ isDebug }: ClientPageProps) => {
-  const [showRedacted, setShowRedacted] = useState(false);
-
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
 
   const {
-    loadPdf,
-    // currentPage,
-    // manualBoxes,
-    // modifiedPdfUrl,
-    // setCurrentPage,
-    // setManualBoxes,
     addManualBox,
     addServerBoxes,
     boxes,
     canvasBox,
     currentPageIndex,
-    numPages,
+    deleteBox,
+    loadPdf,
     nextPage,
-    previousPage,
+    numPages,
     onPdfLoaded,
     pdfFile,
     pdfUrl,
+    previousPage,
     ref,
     resetPdf,
-    deleteBox,
+    togglePreviewRedacted,
+    previewRedacted,
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
@@ -80,7 +75,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
 
   const onReset = () => {
     resetPdf();
-    setShowRedacted(false);
     resetDraftBox();
     resetAnalyzing();
     setSelectedSampleImage(null);
@@ -209,8 +203,8 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
             onReset={onReset}
             onAnalyzeImage={onAnalyzeImage}
             isAnalyzing={isAnalyzing || fauxLoadingSampleImage}
-            showRedacted={showRedacted}
-            onToggleRedacted={() => setShowRedacted((prev) => !prev)}
+            showRedacted={previewRedacted}
+            onToggleRedacted={togglePreviewRedacted}
             onNextPage={nextPage}
             onPreviousPage={previousPage}
             currentPageIndex={currentPageIndex}

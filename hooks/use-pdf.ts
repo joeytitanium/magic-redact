@@ -37,6 +37,7 @@ export const usePdf = () => {
   const [pdfUrl, setPdfUrl] = useState<string>();
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
+  const [previewRedacted, setPreviewRedacted] = useState(true);
 
   const resetPdf = () => {
     setFile(undefined);
@@ -88,7 +89,13 @@ export const usePdf = () => {
     setNumPages(props.numPages);
   };
 
-  const drawBoxes = async ({ boxes: boxesToDraw }: { boxes: BoundingBoxWithMetadata[][] }) => {
+  const drawBoxes = async ({
+    boxes: boxesToDraw,
+    previewRedacted: previewRedactedToDraw,
+  }: {
+    boxes: BoundingBoxWithMetadata[][];
+    previewRedacted: boolean;
+  }) => {
     if (!file) return;
 
     const arrayBuffer = await file.arrayBuffer();
@@ -119,6 +126,7 @@ export const usePdf = () => {
             borderColor: rgb(0, 0, 0),
             borderWidth: 1,
             color: rgb(0, 0, 0),
+            opacity: previewRedactedToDraw ? 0.5 : 1,
           });
         }
       }
@@ -150,7 +158,7 @@ export const usePdf = () => {
     manualBoxesCopy[pageNumber] = pageBoxes;
     setBoxes(manualBoxesCopy);
 
-    await drawBoxes({ boxes: manualBoxesCopy });
+    await drawBoxes({ boxes: manualBoxesCopy, previewRedacted });
   };
 
   const addServerBoxes = async ({ boxes: newBoxes }: { boxes: BoundingBoxWithMetadata[][] }) => {
@@ -167,7 +175,7 @@ export const usePdf = () => {
     }
 
     setBoxes(boxesCopy);
-    await drawBoxes({ boxes: boxesCopy });
+    await drawBoxes({ boxes: boxesCopy, previewRedacted });
   };
 
   const deleteBox = async (id: string) => {
@@ -178,25 +186,34 @@ export const usePdf = () => {
     const newPageBoxes = pageBoxes.filter((x) => x.id !== id);
     boxesCopy[currentPageIndex] = newPageBoxes;
     setBoxes(boxesCopy);
-    await drawBoxes({ boxes: boxesCopy });
+    await drawBoxes({ boxes: boxesCopy, previewRedacted });
+  };
+
+  const togglePreviewRedacted = () => {
+    setPreviewRedacted((prev) => {
+      void drawBoxes({ boxes, previewRedacted: !prev });
+      return !prev;
+    });
   };
 
   return {
     addManualBox,
     addServerBoxes,
+    boxes,
     canvasBox,
     currentPageIndex,
+    deleteBox,
     loadPdf,
+    nextPage,
+    numPages,
     onPdfLoaded,
-    resetPdf,
     pageSize,
     pdfFile: file,
     pdfUrl,
-    ref,
-    nextPage,
     previousPage,
-    numPages,
-    boxes,
-    deleteBox,
+    ref,
+    resetPdf,
+    togglePreviewRedacted,
+    previewRedacted,
   };
 };

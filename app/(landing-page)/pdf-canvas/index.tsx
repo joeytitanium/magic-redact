@@ -20,7 +20,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 type PdfCanvasProps = {
   file: File;
-  // modifiedPdfUrl: string | undefined;
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseUp: () => void;
@@ -35,14 +34,11 @@ type PdfCanvasProps = {
 
 export const PdfCanvas = ({
   file,
-  // modifiedPdfUrl,
-  // serverRects,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
   draftBox,
   imageRef,
-  // manualRectangles,
   canvasBox,
   currentPageIndex,
   onPdfLoaded,

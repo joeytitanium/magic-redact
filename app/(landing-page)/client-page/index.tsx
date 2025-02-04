@@ -148,16 +148,16 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     }
   };
 
+  const onSetFile = async (f: File) => {
+    // setFile(f);
+    await loadFile(f);
+  };
+
   const onClickSampleImage = (sampleImage: SampleImage) => {
     setSelectedSampleImage(sampleImage);
     void fetch(sampleImage)
       .then((res) => res.blob())
-      .then((blob) => setFile(new File([blob], sampleImage)));
-  };
-
-  const onSetFile = async (f: File) => {
-    // setFile(f);
-    await loadFile(f);
+      .then((blob) => onSetFile(new File([blob], sampleImage)));
   };
 
   if (!pdfUrl || !pdfFile) {

@@ -102,40 +102,6 @@ const detectPdf = async ({ gsImageUrl, fileUuid }: { gsImageUrl: string; fileUui
   };
 };
 
-const detectNonPdf = async (gcsUri: string) => {
-  const [result] = await client.documentTextDetection(gcsUri);
-  const detections = result.textAnnotations ?? [];
-
-  if (result.error?.message) {
-    return {
-      data: null,
-      originalResponse: result,
-      error: new Error(result.error.message),
-    };
-  }
-
-  // Skip the first detection as it contains the entire text
-  return {
-    data: detections.slice(1).map((detection) => {
-      const vertices = detection.boundingPoly?.vertices ?? [];
-      const [topLeft, topRight, bottomLeft] = vertices;
-
-      return {
-        text: detection.description ?? '',
-        confidence: detection.confidence ?? 0,
-        boundingBox: {
-          x: topLeft.x ?? 0,
-          y: topLeft.y ?? 0,
-          width: (topRight.x ?? 0) - (topLeft.x ?? 0),
-          height: (bottomLeft.y ?? 0) - (topLeft.y ?? 0),
-        },
-      };
-    }),
-    originalResponse: result,
-    error: null,
-  };
-};
-
 export const ocrDetectText = async ({
   gsImageUrl,
   fileUuid,
@@ -144,11 +110,7 @@ export const ocrDetectText = async ({
   fileUuid: string;
 }): Promise<DetectTextWithGoogleVisionResult> => {
   try {
-    if (gsImageUrl.toLowerCase().endsWith('.pdf')) {
-      return await detectPdf({ gsImageUrl, fileUuid });
-    }
-
-    return await detectNonPdf(gsImageUrl);
+    return await detectPdf({ gsImageUrl, fileUuid });
   } catch (error) {
     return {
       data: null,

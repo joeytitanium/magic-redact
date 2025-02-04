@@ -23,7 +23,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
   '/sample-lemon-squeezy.jpeg': [
     {
       id: '1',
-      description: 'Woohoo',
+      text: 'Woohoo',
       x: 40,
       y: 113,
       width: 100,
@@ -33,7 +33,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '2',
-      description: '!',
+      text: '!',
       x: 142,
       y: 113,
       width: 8,
@@ -43,7 +43,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '3',
-      description: 'You',
+      text: 'You',
       x: 156,
       y: 113,
       width: 45,
@@ -53,7 +53,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '4',
-      description: 'made',
+      text: 'made',
       x: 210,
       y: 113,
       width: 67,
@@ -63,7 +63,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '5',
-      description: 'a',
+      text: 'a',
       x: 285,
       y: 113,
       width: 12,
@@ -73,7 +73,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '6',
-      description: 'sale',
+      text: 'sale',
       x: 306,
       y: 113,
       width: 48,
@@ -83,7 +83,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '7',
-      description: '!',
+      text: '!',
       x: 355,
       y: 113,
       width: 8,
@@ -93,7 +93,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '8',
-      description: 'Order',
+      text: 'Order',
       x: 41,
       y: 497,
       width: 46,
@@ -103,7 +103,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '9',
-      description: '#',
+      text: '#',
       x: 91,
       y: 497,
       width: 10,
@@ -113,7 +113,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '10',
-      description: ':',
+      text: ':',
       x: 103,
       y: 497,
       width: 5,
@@ -123,7 +123,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '11',
-      description: '111589130',
+      text: '111589130',
       x: 113,
       y: 497,
       width: 80,
@@ -133,7 +133,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '12',
-      description: 'Date',
+      text: 'Date',
       x: 41,
       y: 531,
       width: 38,
@@ -143,7 +143,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '13',
-      description: ':',
+      text: ':',
       x: 78,
       y: 531,
       width: 5,
@@ -153,7 +153,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '14',
-      description: '24',
+      text: '24',
       x: 88,
       y: 531,
       width: 20,
@@ -163,7 +163,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '15',
-      description: 'Jan',
+      text: 'Jan',
       x: 114,
       y: 531,
       width: 29,
@@ -173,7 +173,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '16',
-      description: '2025',
+      text: '2025',
       x: 149,
       y: 531,
       width: 40,
@@ -183,7 +183,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '17',
-      description: ',',
+      text: ',',
       x: 189,
       y: 531,
       width: 5,
@@ -193,7 +193,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '18',
-      description: '21:33',
+      text: '21:33',
       x: 198,
       y: 531,
       width: 44,
@@ -203,7 +203,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '19',
-      description: 'Name',
+      text: 'Name',
       x: 41,
       y: 565,
       width: 47,
@@ -213,7 +213,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '20',
-      description: ':',
+      text: ':',
       x: 89,
       y: 565,
       width: 6,
@@ -223,7 +223,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '21',
-      description: 'John',
+      text: 'John',
       x: 98,
       y: 565,
       width: 41,
@@ -233,7 +233,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '22',
-      description: 'Doe',
+      text: 'Doe',
       x: 145,
       y: 565,
       width: 36,
@@ -243,7 +243,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '23',
-      description: 'Email',
+      text: 'Email',
       x: 41,
       y: 597,
       width: 42,
@@ -253,7 +253,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '24',
-      description: ':',
+      text: ':',
       x: 85,
       y: 597,
       width: 4,
@@ -263,7 +263,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     },
     {
       id: '25',
-      description: 'johndoe@gmail.com',
+      text: 'johndoe@gmail.com',
       x: 94,
       y: 597,
       width: 174,
@@ -276,7 +276,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '1',
       source: 'server',
-      description: 'Zoom',
+      text: 'Zoom',
       x: 781,
       y: 87,
       width: 37,
@@ -286,7 +286,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '2',
       source: 'server',
-      description: 'April',
+      text: 'April',
       x: 325,
       y: 200,
       width: 28,
@@ -296,7 +296,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '3',
       source: 'server',
-      description: 'Williams',
+      text: 'Williams',
       x: 357,
       y: 200,
       width: 53,
@@ -306,7 +306,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '4',
       source: 'server',
-      description: 'Tori',
+      text: 'Tori',
       x: 519,
       y: 201,
       width: 23,
@@ -316,7 +316,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '5',
       source: 'server',
-      description: 'Kojuro',
+      text: 'Kojuro',
       x: 547,
       y: 201,
       width: 38,
@@ -326,7 +326,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '6',
       source: 'server',
-      description: 'Madrid',
+      text: 'Madrid',
       x: 728,
       y: 197,
       width: 45,
@@ -336,7 +336,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '7',
       source: 'server',
-      description: '(',
+      text: '(',
       x: 776,
       y: 200,
       width: 5,
@@ -346,7 +346,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '8',
       source: 'server',
-      description: '5',
+      text: '5',
       x: 781,
       y: 200,
       width: 9,
@@ -356,7 +356,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '9',
       source: 'server',
-      description: ')',
+      text: ')',
       x: 788,
       y: 201,
       width: 6,
@@ -366,7 +366,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '10',
       source: 'server',
-      description: 'Casey',
+      text: 'Casey',
       x: 905,
       y: 201,
       width: 39,
@@ -376,7 +376,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '11',
       source: 'server',
-      description: 'Cunningham',
+      text: 'Cunningham',
       x: 948,
       y: 201,
       width: 79,
@@ -386,7 +386,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '12',
       source: 'server',
-      description: 'Mike',
+      text: 'Mike',
       x: 1115,
       y: 200,
       width: 27,
@@ -396,7 +396,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '13',
       source: 'server',
-      description: 'Nolan',
+      text: 'Nolan',
       x: 1147,
       y: 200,
       width: 35,
@@ -406,7 +406,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '14',
       source: 'server',
-      description: '↑',
+      text: '↑',
       x: 794,
       y: 879,
       width: 11,
@@ -416,7 +416,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '15',
       source: 'server',
-      description: 'End',
+      text: 'End',
       x: 1362,
       y: 889,
       width: 24,
@@ -426,7 +426,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '16',
       source: 'server',
-      description: 'Mute',
+      text: 'Mute',
       x: 213,
       y: 905,
       width: 31,
@@ -436,7 +436,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '17',
       source: 'server',
-      description: 'Stop',
+      text: 'Stop',
       x: 296,
       y: 904,
       width: 30,
@@ -446,7 +446,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '18',
       source: 'server',
-      description: 'Video',
+      text: 'Video',
       x: 329,
       y: 903,
       width: 37,
@@ -456,7 +456,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '19',
       source: 'server',
-      description: 'Security',
+      text: 'Security',
       x: 569,
       y: 905,
       width: 54,
@@ -466,7 +466,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '20',
       source: 'server',
-      description: 'Participants',
+      text: 'Participants',
       x: 655,
       y: 905,
       width: 77,
@@ -476,7 +476,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '21',
       source: 'server',
-      description: 'Share',
+      text: 'Share',
       x: 757,
       y: 903,
       width: 37,
@@ -486,7 +486,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '22',
       source: 'server',
-      description: 'Screen',
+      text: 'Screen',
       x: 797,
       y: 902,
       width: 44,
@@ -496,7 +496,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '23',
       source: 'server',
-      description: 'Chat',
+      text: 'Chat',
       x: 883,
       y: 905,
       width: 30,
@@ -506,7 +506,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '24',
       source: 'server',
-      description: 'Record',
+      text: 'Record',
       x: 965,
       y: 905,
       width: 43,
@@ -516,7 +516,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '25',
       source: 'server',
-      description: 'Reactions',
+      text: 'Reactions',
       x: 1045,
       y: 905,
       width: 63,
@@ -528,7 +528,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '1',
       source: 'server',
-      description: 'Visit',
+      text: 'Visit',
       x: 108,
       y: 191,
       width: 36,
@@ -538,7 +538,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '2',
       source: 'server',
-      description: 'Info',
+      text: 'Info',
       x: 147,
       y: 191,
       width: 30,
@@ -548,7 +548,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '3',
       source: 'server',
-      description: 'Evergreen',
+      text: 'Evergreen',
       x: 199,
       y: 70,
       width: 122,
@@ -558,7 +558,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '4',
       source: 'server',
-      description: 'Wellness',
+      text: 'Wellness',
       x: 328,
       y: 70,
       width: 109,
@@ -568,7 +568,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '5',
       source: 'server',
-      description: 'Hospital',
+      text: 'Hospital',
       x: 444,
       y: 70,
       width: 99,
@@ -578,7 +578,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '6',
       source: 'server',
-      description: '123',
+      text: '123',
       x: 253,
       y: 97,
       width: 18,
@@ -588,7 +588,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '7',
       source: 'server',
-      description: 'Harmony',
+      text: 'Harmony',
       x: 273,
       y: 97,
       width: 49,
@@ -598,7 +598,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '8',
       source: 'server',
-      description: 'Street',
+      text: 'Street',
       x: 322,
       y: 97,
       width: 33,
@@ -608,7 +608,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '9',
       source: 'server',
-      description: 'Sunnyville',
+      text: 'Sunnyville',
       x: 356,
       y: 97,
       width: 54,
@@ -618,7 +618,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '10',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 409,
       y: 97,
       width: 3,
@@ -628,7 +628,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '11',
       source: 'server',
-      description: 'CA',
+      text: 'CA',
       x: 415,
       y: 97,
       width: 15,
@@ -638,7 +638,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '12',
       source: 'server',
-      description: '90210',
+      text: '90210',
       x: 432,
       y: 97,
       width: 33,
@@ -648,7 +648,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '13',
       source: 'server',
-      description: 'USA',
+      text: 'USA',
       x: 468,
       y: 97,
       width: 21,
@@ -658,7 +658,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '14',
       source: 'server',
-      description: 'MEDICAL',
+      text: 'MEDICAL',
       x: 262,
       y: 146,
       width: 113,
@@ -668,7 +668,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '15',
       source: 'server',
-      description: 'REPORT',
+      text: 'REPORT',
       x: 382,
       y: 146,
       width: 98,
@@ -678,7 +678,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '16',
       source: 'server',
-      description: "Doctor's",
+      text: "Doctor's",
       x: 109,
       y: 223,
       width: 55,
@@ -688,7 +688,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '17',
       source: 'server',
-      description: 'Name',
+      text: 'Name',
       x: 167,
       y: 223,
       width: 40,
@@ -698,7 +698,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '18',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 207,
       y: 223,
       width: 5,
@@ -708,7 +708,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '19',
       source: 'server',
-      description: 'Dr.',
+      text: 'Dr.',
       x: 231,
       y: 223,
       width: 17,
@@ -718,7 +718,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '20',
       source: 'server',
-      description: 'Olivia',
+      text: 'Olivia',
       x: 253,
       y: 222,
       width: 35,
@@ -728,7 +728,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '21',
       source: 'server',
-      description: 'Greene',
+      text: 'Greene',
       x: 291,
       y: 222,
       width: 50,
@@ -738,7 +738,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '22',
       source: 'server',
-      description: 'Visit',
+      text: 'Visit',
       x: 418,
       y: 224,
       width: 30,
@@ -748,7 +748,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '23',
       source: 'server',
-      description: 'Date',
+      text: 'Date',
       x: 452,
       y: 224,
       width: 31,
@@ -758,7 +758,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '24',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 483,
       y: 224,
       width: 4,
@@ -768,7 +768,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '25',
       source: 'server',
-      description: '14.11.2023',
+      text: '14.11.2023',
       x: 500,
       y: 224,
       width: 72,
@@ -778,7 +778,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '26',
       source: 'server',
-      description: 'Specialization',
+      text: 'Specialization',
       x: 109,
       y: 254,
       width: 91,
@@ -788,7 +788,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '27',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 201,
       y: 254,
       width: 5,
@@ -798,7 +798,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '28',
       source: 'server',
-      description: 'Cardiology',
+      text: 'Cardiology',
       x: 231,
       y: 253,
       width: 70,
@@ -808,7 +808,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '29',
       source: 'server',
-      description: 'Patient',
+      text: 'Patient',
       x: 109,
       y: 317,
       width: 55,
@@ -818,7 +818,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '30',
       source: 'server',
-      description: 'Info',
+      text: 'Info',
       x: 168,
       y: 317,
       width: 30,
@@ -828,7 +828,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '31',
       source: 'server',
-      description: 'Full',
+      text: 'Full',
       x: 109,
       y: 350,
       width: 25,
@@ -838,7 +838,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '32',
       source: 'server',
-      description: 'Name',
+      text: 'Name',
       x: 137,
       y: 350,
       width: 40,
@@ -848,7 +848,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '33',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 177,
       y: 350,
       width: 5,
@@ -858,7 +858,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '34',
       source: 'server',
-      description: 'Sarah',
+      text: 'Sarah',
       x: 231,
       y: 349,
       width: 36,
@@ -868,7 +868,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '35',
       source: 'server',
-      description: 'Anderson',
+      text: 'Anderson',
       x: 269,
       y: 349,
       width: 64,
@@ -878,7 +878,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '36',
       source: 'server',
-      description: 'Birth',
+      text: 'Birth',
       x: 415,
       y: 349,
       width: 31,
@@ -888,7 +888,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '37',
       source: 'server',
-      description: 'Date',
+      text: 'Date',
       x: 451,
       y: 349,
       width: 31,
@@ -898,7 +898,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '38',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 482,
       y: 349,
       width: 5,
@@ -908,7 +908,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '39',
       source: 'server',
-      description: '01.01.1989',
+      text: '01.01.1989',
       x: 499,
       y: 348,
       width: 72,
@@ -918,7 +918,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '40',
       source: 'server',
-      description: 'Med',
+      text: 'Med',
       x: 109,
       y: 380,
       width: 31,
@@ -928,7 +928,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '41',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 140,
       y: 380,
       width: 4,
@@ -938,7 +938,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '42',
       source: 'server',
-      description: 'Number',
+      text: 'Number',
       x: 148,
       y: 380,
       width: 56,
@@ -948,7 +948,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '43',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 203,
       y: 380,
       width: 5,
@@ -958,7 +958,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '44',
       source: 'server',
-      description: 'MA567891',
+      text: 'MA567891',
       x: 232,
       y: 380,
       width: 70,
@@ -968,7 +968,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '45',
       source: 'server',
-      description: 'Phone',
+      text: 'Phone',
       x: 109,
       y: 409,
       width: 42,
@@ -978,7 +978,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '46',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 152,
       y: 409,
       width: 5,
@@ -988,7 +988,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '47',
       source: 'server',
-      description: '+1',
+      text: '+1',
       x: 231,
       y: 408,
       width: 16,
@@ -998,7 +998,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '48',
       source: 'server',
-      description: '(',
+      text: '(',
       x: 250,
       y: 408,
       width: 4,
@@ -1008,7 +1008,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '49',
       source: 'server',
-      description: '555',
+      text: '555',
       x: 255,
       y: 408,
       width: 24,
@@ -1018,7 +1018,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '50',
       source: 'server',
-      description: ')',
+      text: ')',
       x: 279,
       y: 408,
       width: 5,
@@ -1028,7 +1028,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '51',
       source: 'server',
-      description: '789-0123',
+      text: '789-0123',
       x: 288,
       y: 408,
       width: 61,
@@ -1038,7 +1038,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '52',
       source: 'server',
-      description: 'IHI',
+      text: 'IHI',
       x: 465,
       y: 380,
       width: 17,
@@ -1048,7 +1048,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '53',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 483,
       y: 380,
       width: 5,
@@ -1058,7 +1058,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '54',
       source: 'server',
-      description: '5556-9669-9654-7788',
+      text: '5556-9669-9654-7788',
       x: 499,
       y: 380,
       width: 146,
@@ -1068,7 +1068,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '55',
       source: 'server',
-      description: 'Email',
+      text: 'Email',
       x: 446,
       y: 409,
       width: 37,
@@ -1078,7 +1078,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '56',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 484,
       y: 409,
       width: 5,
@@ -1088,7 +1088,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '57',
       source: 'server',
-      description: 's.anderson@mail.com',
+      text: 's.anderson@mail.com',
       x: 500,
       y: 409,
       width: 144,
@@ -1098,7 +1098,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '58',
       source: 'server',
-      description: 'Assessment',
+      text: 'Assessment',
       x: 108,
       y: 473,
       width: 90,
@@ -1108,7 +1108,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '59',
       source: 'server',
-      description: 'Ms.',
+      text: 'Ms.',
       x: 109,
       y: 505,
       width: 21,
@@ -1118,7 +1118,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '60',
       source: 'server',
-      description: 'Anderson',
+      text: 'Anderson',
       x: 132,
       y: 505,
       width: 55,
@@ -1128,7 +1128,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '61',
       source: 'server',
-      description: 'appears',
+      text: 'appears',
       x: 190,
       y: 505,
       width: 44,
@@ -1138,7 +1138,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '62',
       source: 'server',
-      description: 'in',
+      text: 'in',
       x: 237,
       y: 505,
       width: 10,
@@ -1148,7 +1148,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '63',
       source: 'server',
-      description: 'good',
+      text: 'good',
       x: 251,
       y: 505,
       width: 27,
@@ -1158,7 +1158,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '64',
       source: 'server',
-      description: 'health',
+      text: 'health',
       x: 283,
       y: 505,
       width: 34,
@@ -1168,7 +1168,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '65',
       source: 'server',
-      description: 'with',
+      text: 'with',
       x: 321,
       y: 505,
       width: 24,
@@ -1178,7 +1178,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '66',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 349,
       y: 505,
       width: 14,
@@ -1188,7 +1188,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '67',
       source: 'server',
-      description: 'immediate',
+      text: 'immediate',
       x: 366,
       y: 505,
       width: 61,
@@ -1198,7 +1198,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '68',
       source: 'server',
-      description: 'concerns',
+      text: 'concerns',
       x: 430,
       y: 505,
       width: 50,
@@ -1208,7 +1208,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '69',
       source: 'server',
-      description: 'during',
+      text: 'during',
       x: 483,
       y: 505,
       width: 37,
@@ -1218,7 +1218,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '70',
       source: 'server',
-      description: 'the',
+      text: 'the',
       x: 522,
       y: 505,
       width: 19,
@@ -1228,7 +1228,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '71',
       source: 'server',
-      description: 'examination',
+      text: 'examination',
       x: 544,
       y: 505,
       width: 69,
@@ -1238,7 +1238,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '72',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 613,
       y: 505,
       width: 4,
@@ -1248,7 +1248,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '73',
       source: 'server',
-      description: 'Based',
+      text: 'Based',
       x: 109,
       y: 530,
       width: 33,
@@ -1258,7 +1258,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '74',
       source: 'server',
-      description: 'on',
+      text: 'on',
       x: 146,
       y: 530,
       width: 14,
@@ -1268,7 +1268,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '75',
       source: 'server',
-      description: 'the',
+      text: 'the',
       x: 163,
       y: 530,
       width: 19,
@@ -1278,7 +1278,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '76',
       source: 'server',
-      description: 'assessment',
+      text: 'assessment',
       x: 185,
       y: 530,
       width: 65,
@@ -1288,7 +1288,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '77',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 249,
       y: 530,
       width: 4,
@@ -1298,7 +1298,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '78',
       source: 'server',
-      description: 'there',
+      text: 'there',
       x: 256,
       y: 530,
       width: 32,
@@ -1308,7 +1308,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '79',
       source: 'server',
-      description: 'are',
+      text: 'are',
       x: 290,
       y: 530,
       width: 18,
@@ -1318,7 +1318,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '80',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 311,
       y: 530,
       width: 14,
@@ -1328,7 +1328,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '81',
       source: 'server',
-      description: 'significant',
+      text: 'significant',
       x: 329,
       y: 530,
       width: 57,
@@ -1338,7 +1338,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '82',
       source: 'server',
-      description: 'issues',
+      text: 'issues',
       x: 388,
       y: 530,
       width: 35,
@@ -1348,7 +1348,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '83',
       source: 'server',
-      description: 'detected',
+      text: 'detected',
       x: 425,
       y: 530,
       width: 49,
@@ -1358,7 +1358,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '84',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 475,
       y: 530,
       width: 4,
@@ -1368,7 +1368,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '85',
       source: 'server',
-      description: 'and',
+      text: 'and',
       x: 481,
       y: 530,
       width: 21,
@@ -1378,7 +1378,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '86',
       source: 'server',
-      description: 'vital',
+      text: 'vital',
       x: 505,
       y: 530,
       width: 24,
@@ -1388,7 +1388,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '87',
       source: 'server',
-      description: 'signs',
+      text: 'signs',
       x: 533,
       y: 530,
       width: 27,
@@ -1398,7 +1398,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '88',
       source: 'server',
-      description: 'are',
+      text: 'are',
       x: 563,
       y: 530,
       width: 19,
@@ -1408,7 +1408,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '89',
       source: 'server',
-      description: 'within',
+      text: 'within',
       x: 585,
       y: 530,
       width: 35,
@@ -1418,7 +1418,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '90',
       source: 'server',
-      description: 'normal',
+      text: 'normal',
       x: 109,
       y: 555,
       width: 40,
@@ -1428,7 +1428,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '91',
       source: 'server',
-      description: 'ranges',
+      text: 'ranges',
       x: 153,
       y: 555,
       width: 37,
@@ -1438,7 +1438,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '92',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 189,
       y: 555,
       width: 4,
@@ -1448,7 +1448,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '93',
       source: 'server',
-      description: 'Diagnosis',
+      text: 'Diagnosis',
       x: 109,
       y: 582,
       width: 73,
@@ -1458,7 +1458,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '94',
       source: 'server',
-      description: 'After',
+      text: 'After',
       x: 108,
       y: 613,
       width: 30,
@@ -1468,7 +1468,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '95',
       source: 'server',
-      description: 'thorough',
+      text: 'thorough',
       x: 140,
       y: 613,
       width: 51,
@@ -1478,7 +1478,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '96',
       source: 'server',
-      description: 'examination',
+      text: 'examination',
       x: 195,
       y: 613,
       width: 69,
@@ -1488,7 +1488,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '97',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 264,
       y: 613,
       width: 4,
@@ -1498,7 +1498,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '98',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 271,
       y: 613,
       width: 14,
@@ -1508,7 +1508,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '99',
       source: 'server',
-      description: 'specific',
+      text: 'specific',
       x: 288,
       y: 613,
       width: 43,
@@ -1518,7 +1518,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '100',
       source: 'server',
-      description: 'medical',
+      text: 'medical',
       x: 334,
       y: 613,
       width: 43,
@@ -1528,7 +1528,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '101',
       source: 'server',
-      description: 'conditions',
+      text: 'conditions',
       x: 380,
       y: 613,
       width: 58,
@@ -1538,7 +1538,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '102',
       source: 'server',
-      description: 'or',
+      text: 'or',
       x: 441,
       y: 613,
       width: 13,
@@ -1548,7 +1548,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '103',
       source: 'server',
-      description: 'acute',
+      text: 'acute',
       x: 457,
       y: 613,
       width: 31,
@@ -1558,7 +1558,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '104',
       source: 'server',
-      description: 'illnesses',
+      text: 'illnesses',
       x: 490,
       y: 613,
       width: 48,
@@ -1568,7 +1568,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '105',
       source: 'server',
-      description: 'were',
+      text: 'were',
       x: 539,
       y: 613,
       width: 30,
@@ -1578,7 +1578,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '106',
       source: 'server',
-      description: 'identified',
+      text: 'identified',
       x: 572,
       y: 613,
       width: 53,
@@ -1588,7 +1588,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '107',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 625,
       y: 613,
       width: 3,
@@ -1598,7 +1598,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '108',
       source: 'server',
-      description: 'The',
+      text: 'The',
       x: 108,
       y: 638,
       width: 23,
@@ -1608,7 +1608,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '109',
       source: 'server',
-      description: 'diagnosis',
+      text: 'diagnosis',
       x: 133,
       y: 638,
       width: 52,
@@ -1618,7 +1618,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '110',
       source: 'server',
-      description: 'indicates',
+      text: 'indicates',
       x: 188,
       y: 638,
       width: 50,
@@ -1628,7 +1628,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '111',
       source: 'server',
-      description: 'a',
+      text: 'a',
       x: 241,
       y: 638,
       width: 6,
@@ -1638,7 +1638,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '112',
       source: 'server',
-      description: 'healthy',
+      text: 'healthy',
       x: 251,
       y: 638,
       width: 42,
@@ -1648,7 +1648,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '113',
       source: 'server',
-      description: 'status',
+      text: 'status',
       x: 295,
       y: 638,
       width: 33,
@@ -1658,7 +1658,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '114',
       source: 'server',
-      description: 'with',
+      text: 'with',
       x: 332,
       y: 638,
       width: 25,
@@ -1668,7 +1668,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '115',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 360,
       y: 638,
       width: 14,
@@ -1678,7 +1678,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '116',
       source: 'server',
-      description: 'evidence',
+      text: 'evidence',
       x: 378,
       y: 638,
       width: 50,
@@ -1688,7 +1688,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '117',
       source: 'server',
-      description: 'of',
+      text: 'of',
       x: 431,
       y: 638,
       width: 13,
@@ -1698,7 +1698,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '118',
       source: 'server',
-      description: 'underlying',
+      text: 'underlying',
       x: 446,
       y: 638,
       width: 59,
@@ -1708,7 +1708,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '119',
       source: 'server',
-      description: 'health',
+      text: 'health',
       x: 509,
       y: 638,
       width: 35,
@@ -1718,7 +1718,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '120',
       source: 'server',
-      description: 'issues',
+      text: 'issues',
       x: 547,
       y: 638,
       width: 34,
@@ -1728,7 +1728,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '121',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 581,
       y: 638,
       width: 3,
@@ -1738,7 +1738,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '122',
       source: 'server',
-      description: 'Prescription',
+      text: 'Prescription',
       x: 109,
       y: 666,
       width: 92,
@@ -1748,7 +1748,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '123',
       source: 'server',
-      description: 'No',
+      text: 'No',
       x: 109,
       y: 697,
       width: 17,
@@ -1758,7 +1758,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '124',
       source: 'server',
-      description: 'prescription',
+      text: 'prescription',
       x: 128,
       y: 697,
       width: 67,
@@ -1768,7 +1768,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '125',
       source: 'server',
-      description: 'is',
+      text: 'is',
       x: 199,
       y: 697,
       width: 8,
@@ -1778,7 +1778,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '126',
       source: 'server',
-      description: 'necessary',
+      text: 'necessary',
       x: 211,
       y: 697,
       width: 55,
@@ -1788,7 +1788,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '127',
       source: 'server',
-      description: 'at',
+      text: 'at',
       x: 269,
       y: 697,
       width: 11,
@@ -1798,7 +1798,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '128',
       source: 'server',
-      description: 'this',
+      text: 'this',
       x: 283,
       y: 697,
       width: 20,
@@ -1808,7 +1808,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '129',
       source: 'server',
-      description: 'time',
+      text: 'time',
       x: 306,
       y: 697,
       width: 26,
@@ -1818,7 +1818,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '130',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 331,
       y: 697,
       width: 5,
@@ -1828,7 +1828,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '131',
       source: 'server',
-      description: 'as',
+      text: 'as',
       x: 339,
       y: 697,
       width: 12,
@@ -1838,7 +1838,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '132',
       source: 'server',
-      description: 'the',
+      text: 'the',
       x: 353,
       y: 697,
       width: 20,
@@ -1848,7 +1848,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '133',
       source: 'server',
-      description: 'patient',
+      text: 'patient',
       x: 376,
       y: 697,
       width: 40,
@@ -1858,7 +1858,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '134',
       source: 'server',
-      description: 'is',
+      text: 'is',
       x: 419,
       y: 697,
       width: 8,
@@ -1868,7 +1868,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '135',
       source: 'server',
-      description: 'in',
+      text: 'in',
       x: 430,
       y: 697,
       width: 10,
@@ -1878,7 +1878,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '136',
       source: 'server',
-      description: 'good',
+      text: 'good',
       x: 443,
       y: 697,
       width: 29,
@@ -1888,7 +1888,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '137',
       source: 'server',
-      description: 'health',
+      text: 'health',
       x: 475,
       y: 697,
       width: 35,
@@ -1898,7 +1898,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '138',
       source: 'server',
-      description: 'with',
+      text: 'with',
       x: 513,
       y: 697,
       width: 25,
@@ -1908,7 +1908,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '139',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 542,
       y: 697,
       width: 14,
@@ -1918,7 +1918,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '140',
       source: 'server',
-      description: 'identified',
+      text: 'identified',
       x: 559,
       y: 697,
       width: 54,
@@ -1928,7 +1928,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '141',
       source: 'server',
-      description: 'medical',
+      text: 'medical',
       x: 109,
       y: 722,
       width: 45,
@@ -1938,7 +1938,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '142',
       source: 'server',
-      description: 'concerns',
+      text: 'concerns',
       x: 156,
       y: 722,
       width: 51,
@@ -1948,7 +1948,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '143',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 207,
       y: 722,
       width: 4,
@@ -1958,7 +1958,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '144',
       source: 'server',
-      description: 'Given',
+      text: 'Given',
       x: 213,
       y: 722,
       width: 31,
@@ -1968,7 +1968,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '145',
       source: 'server',
-      description: 'the',
+      text: 'the',
       x: 247,
       y: 722,
       width: 20,
@@ -1978,7 +1978,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '146',
       source: 'server',
-      description: 'absence',
+      text: 'absence',
       x: 270,
       y: 722,
       width: 46,
@@ -1988,7 +1988,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '147',
       source: 'server',
-      description: 'of',
+      text: 'of',
       x: 319,
       y: 722,
       width: 13,
@@ -1998,7 +1998,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '148',
       source: 'server',
-      description: 'any',
+      text: 'any',
       x: 334,
       y: 722,
       width: 20,
@@ -2008,7 +2008,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '149',
       source: 'server',
-      description: 'medical',
+      text: 'medical',
       x: 357,
       y: 722,
       width: 43,
@@ -2018,7 +2018,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '150',
       source: 'server',
-      description: 'issues',
+      text: 'issues',
       x: 403,
       y: 722,
       width: 34,
@@ -2028,7 +2028,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '151',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 437,
       y: 722,
       width: 4,
@@ -2038,7 +2038,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '152',
       source: 'server',
-      description: 'no',
+      text: 'no',
       x: 444,
       y: 722,
       width: 14,
@@ -2048,7 +2048,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '153',
       source: 'server',
-      description: 'medication',
+      text: 'medication',
       x: 461,
       y: 722,
       width: 62,
@@ -2058,7 +2058,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '154',
       source: 'server',
-      description: 'is',
+      text: 'is',
       x: 527,
       y: 722,
       width: 8,
@@ -2068,7 +2068,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '155',
       source: 'server',
-      description: 'prescribed',
+      text: 'prescribed',
       x: 539,
       y: 722,
       width: 58,
@@ -2078,7 +2078,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '156',
       source: 'server',
-      description: 'at',
+      text: 'at',
       x: 601,
       y: 722,
       width: 12,
@@ -2088,7 +2088,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '157',
       source: 'server',
-      description: 'present',
+      text: 'present',
       x: 109,
       y: 749,
       width: 43,
@@ -2098,7 +2098,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '158',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 152,
       y: 749,
       width: 3,
@@ -2108,7 +2108,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '159',
       source: 'server',
-      description: 'For',
+      text: 'For',
       x: 219,
       y: 904,
       width: 18,
@@ -2118,7 +2118,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '160',
       source: 'server',
-      description: 'inquiries',
+      text: 'inquiries',
       x: 240,
       y: 904,
       width: 48,
@@ -2128,7 +2128,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '161',
       source: 'server',
-      description: 'and',
+      text: 'and',
       x: 291,
       y: 904,
       width: 21,
@@ -2138,7 +2138,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '162',
       source: 'server',
-      description: 'appointments',
+      text: 'appointments',
       x: 316,
       y: 904,
       width: 77,
@@ -2148,7 +2148,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '163',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 393,
       y: 904,
       width: 3,
@@ -2158,7 +2158,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '164',
       source: 'server',
-      description: 'feel',
+      text: 'feel',
       x: 399,
       y: 904,
       width: 21,
@@ -2168,7 +2168,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '165',
       source: 'server',
-      description: 'free',
+      text: 'free',
       x: 422,
       y: 904,
       width: 23,
@@ -2178,7 +2178,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '166',
       source: 'server',
-      description: 'to',
+      text: 'to',
       x: 447,
       y: 904,
       width: 12,
@@ -2188,7 +2188,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '167',
       source: 'server',
-      description: 'contact',
+      text: 'contact',
       x: 463,
       y: 904,
       width: 42,
@@ -2198,7 +2198,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '168',
       source: 'server',
-      description: 'us',
+      text: 'us',
       x: 508,
       y: 904,
       width: 13,
@@ -2208,7 +2208,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '169',
       source: 'server',
-      description: '.',
+      text: '.',
       x: 520,
       y: 904,
       width: 3,
@@ -2218,7 +2218,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '170',
       source: 'server',
-      description: 'phone',
+      text: 'phone',
       x: 172,
       y: 921,
       width: 35,
@@ -2228,7 +2228,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '171',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 208,
       y: 921,
       width: 3,
@@ -2238,7 +2238,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '172',
       source: 'server',
-      description: '+1',
+      text: '+1',
       x: 215,
       y: 921,
       width: 13,
@@ -2248,7 +2248,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '173',
       source: 'server',
-      description: '(',
+      text: '(',
       x: 232,
       y: 921,
       width: 4,
@@ -2258,7 +2258,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '174',
       source: 'server',
-      description: '555',
+      text: '555',
       x: 236,
       y: 921,
       width: 21,
@@ -2268,7 +2268,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '175',
       source: 'server',
-      description: ')',
+      text: ')',
       x: 257,
       y: 921,
       width: 5,
@@ -2278,7 +2278,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '176',
       source: 'server',
-      description: '123-4567',
+      text: '123-4567',
       x: 265,
       y: 921,
       width: 51,
@@ -2288,7 +2288,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '177',
       source: 'server',
-      description: ',',
+      text: ',',
       x: 316,
       y: 921,
       width: 3,
@@ -2298,7 +2298,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '178',
       source: 'server',
-      description: 'email',
+      text: 'email',
       x: 323,
       y: 921,
       width: 29,
@@ -2308,7 +2308,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '179',
       source: 'server',
-      description: ':',
+      text: ':',
       x: 353,
       y: 921,
       width: 3,
@@ -2318,7 +2318,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '180',
       source: 'server',
-      description: 'info@EvergreenWellnessHospital.com',
+      text: 'info@EvergreenWellnessHospital.com',
       x: 360,
       y: 921,
       width: 209,
@@ -2328,7 +2328,7 @@ export const sampleImageRects: Record<SampleImage, Rect[]> = {
     {
       id: '181',
       source: 'server',
-      description: 'www.EvergreenWellnessHospital.com',
+      text: 'www.EvergreenWellnessHospital.com',
       x: 266,
       y: 938,
       width: 208,

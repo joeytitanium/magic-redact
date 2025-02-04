@@ -16,6 +16,7 @@ export const MobileFooter = ({
   numberOfPages,
   currentPageIndex,
   canvasBox,
+  numberOfRedactions,
   ...flexProps
 }: FlexProps & {
   onDownload: () => void;
@@ -29,6 +30,7 @@ export const MobileFooter = ({
   currentPageIndex: number;
   numberOfPages: number;
   canvasBox: BoundingBox;
+  numberOfRedactions: number;
 }) => (
   <Flex
     justify="space-between"
@@ -47,6 +49,7 @@ export const MobileFooter = ({
         isAnalyzing={isAnalyzing}
         showRedacted={showRedacted}
         onToggleRedacted={onToggleRedacted}
+        numberOfRedactions={numberOfPages}
       />
     </Group>
     <Button

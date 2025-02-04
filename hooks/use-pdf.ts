@@ -4,8 +4,16 @@ import { canvasCoordinates } from '@/utils/image-coordinates';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
+import { GlobalWorkerOptions } from 'pdfjs-dist';
 import { useMemo, useRef, useState } from 'react';
 import { DocumentCallback } from 'react-pdf/dist/cjs/shared/types';
+
+if (typeof window !== 'undefined') {
+  GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url
+  ).toString();
+}
 
 export type Coordinates = {
   x: number;
@@ -27,6 +35,45 @@ export type BoundingBoxWithMetadata = BoundingBox & {
 const bytesToUrl = (bytes: Uint8Array<ArrayBufferLike> | ArrayBuffer) => {
   const blob = new Blob([bytes], { type: 'application/pdf' });
   return URL.createObjectURL(blob);
+};
+
+const isImageFile = (file: File) => file.type.startsWith('image/');
+
+const createPdfFromImage = async (imageFile: File): Promise<Uint8Array> => {
+  const pdfDoc = await PDFDocument.create();
+
+  const img = new Image();
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Could not get 2D context from canvas.');
+  }
+
+  await new Promise((resolve) => {
+    img.onload = resolve;
+    img.src = URL.createObjectURL(imageFile);
+  });
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  const imageData = canvas.toDataURL('image/png');
+  const embeddedImage = await pdfDoc.embedPng(imageData);
+
+  const page = pdfDoc.addPage([img.width, img.height]);
+  page.drawImage(embeddedImage, {
+    x: 0,
+    y: 0,
+    width: img.width,
+    height: img.height,
+  });
+
+  canvas.remove();
+  URL.revokeObjectURL(img.src);
+
+  return pdfDoc.save();
 };
 
 export const usePdf = () => {
@@ -71,14 +118,34 @@ export const usePdf = () => {
 
   const viewportSize = useViewportSize();
 
-  const loadPdf = async (newFile: File) => {
+  const loadFile = async (newFile: File) => {
     setFile(newFile);
-    const pdfArrayBuffer = await newFile.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
-    setPageSize(pdfDoc.getPages()[0].getSize());
-    setCurrentPageIndex(0);
-    setBoxes([]);
-    setPdfUrl(bytesToUrl(pdfArrayBuffer));
+
+    try {
+      if (isImageFile(newFile)) {
+        const pdfBytes = await createPdfFromImage(newFile);
+        const pdfFile = new File([pdfBytes], newFile.name.replace(/\.[^/.]+$/, '.pdf'), {
+          type: 'application/pdf',
+        });
+        setFile(pdfFile); // Update the file state with the new PDF file
+        setPdfUrl(bytesToUrl(pdfBytes));
+        const pdfDoc = await PDFDocument.load(pdfBytes);
+        setPageSize(pdfDoc.getPages()[0].getSize());
+      } else if (newFile.type === 'application/pdf') {
+        const pdfBytes = await newFile.arrayBuffer();
+        setPdfUrl(bytesToUrl(pdfBytes));
+        const pdfDoc = await PDFDocument.load(pdfBytes);
+        setPageSize(pdfDoc.getPages()[0].getSize());
+      } else {
+        throw new Error('Unsupported file type. Please upload a PDF or image file.');
+      }
+
+      setCurrentPageIndex(0);
+      setBoxes([]);
+    } catch (error) {
+      console.error('Error loading file:', error);
+      throw error;
+    }
   };
 
   const canvasBox = useMemo(
@@ -210,7 +277,7 @@ export const usePdf = () => {
     canvasBox,
     currentPageIndex,
     deleteBox,
-    loadPdf,
+    loadFile,
     nextPage,
     numPages,
     onPdfLoaded,

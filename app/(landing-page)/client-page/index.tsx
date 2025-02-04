@@ -32,7 +32,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     canvasBox,
     currentPageIndex,
     deleteBox,
-    loadPdf,
+    loadFile,
     nextPage,
     numPages,
     onPdfLoaded,
@@ -157,7 +157,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
 
   const onSetFile = async (f: File) => {
     // setFile(f);
-    await loadPdf(f);
+    await loadFile(f);
   };
 
   if (!pdfUrl || !pdfFile) {

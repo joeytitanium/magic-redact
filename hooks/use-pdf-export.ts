@@ -1,7 +1,7 @@
 'use client';
 
 import { logError } from '@/utils/logger';
-import { PDFDocument as PdfLibDocument } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { getDocument, GlobalWorkerOptions, PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 
 if (typeof window !== 'undefined') {
@@ -35,7 +35,7 @@ export const usePdfExport = () => {
       }
       const { numPages } = pdfDoc;
 
-      const flattenedPdfDoc = await PdfLibDocument.create();
+      const flattenedPdfDoc = await PDFDocument.create();
 
       for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
         const pdfPage: PDFPageProxy = await pdfDoc.getPage(pageNumber);

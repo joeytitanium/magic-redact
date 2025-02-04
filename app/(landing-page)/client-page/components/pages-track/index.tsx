@@ -15,7 +15,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 type PagesTrackProps = {
-  file: File;
+  file: File | string;
   numberOfPages: number;
   onPageChange: (page: number) => void;
   currentPageIndex: number;

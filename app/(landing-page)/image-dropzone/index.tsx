@@ -19,7 +19,7 @@ export const ImageDropzone = ({
         <Dropzone
           onDrop={(files) => setFile(files[0])}
           onReject={(files) => console.log('rejected files', files)}
-          maxSize={5 * 1024 ** 2}
+          maxSize={20 * 1024 ** 2}
           maw={800}
           accept={[
             'image/png',
@@ -57,7 +57,7 @@ export const ImageDropzone = ({
                 Drag image here or click to select a file
               </Text>
               <Text c="dimmed" ta="center" mt="xs">
-                File should not exceed 5mb
+                File should not exceed 20mb
               </Text>
             </div>
           </Stack>

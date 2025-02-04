@@ -37,6 +37,7 @@ export const Desktop = ({
   onPreviousPage,
   togglePreviewRedacted,
   onPageChange,
+  numberOfRedactions,
   ...containerProps
 }: DesktopMobileProps) => (
   <Container px={0} fluid {...containerProps}>
@@ -81,6 +82,7 @@ export const Desktop = ({
       currentPageIndex={currentPageIndex}
       numberOfPages={numberOfPages}
       canvasBox={canvasBox}
+      numberOfRedactions={numberOfRedactions}
     />
   </Container>
 );

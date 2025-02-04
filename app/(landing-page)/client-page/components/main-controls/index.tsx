@@ -1,5 +1,6 @@
 import { CONFIG } from '@/config';
-import { ActionIcon, ActionIconProps, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, ActionIconProps, Group, Text, Tooltip } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconEye, IconEyeOff, IconTrash, IconWand } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
@@ -35,6 +36,7 @@ type MainControlsProps = {
   isAnalyzing: boolean;
   showRedacted: boolean;
   onToggleRedacted: () => void;
+  numberOfRedactions: number;
 };
 
 export const MainControls = ({
@@ -43,34 +45,55 @@ export const MainControls = ({
   isAnalyzing,
   showRedacted,
   onToggleRedacted,
-}: MainControlsProps) => (
-  <Group>
-    <ActionButton
-      icon={<IconTrash size={CONFIG.icon.size.sm} />}
-      tooltip="Start over"
-      onClick={onReset}
-    />
-    <Tooltip label="Redact" arrowSize={8} offset={8} withArrow>
-      <ActionIcon
-        variant="filled"
-        onClick={onAnalyzeImage}
-        radius="xl"
-        size="xl"
-        loading={isAnalyzing}
-      >
-        <IconWand />
-      </ActionIcon>
-    </Tooltip>
-    <ActionButton
-      icon={
-        showRedacted ? (
-          <IconEye size={CONFIG.icon.size.sm} />
-        ) : (
-          <IconEyeOff size={CONFIG.icon.size.sm} />
-        )
-      }
-      tooltip={showRedacted ? 'Hide redacted' : 'Show redacted'}
-      onClick={onToggleRedacted}
-    />
-  </Group>
-);
+  numberOfRedactions,
+}: MainControlsProps) => {
+  const openModal = () =>
+    modals.openConfirmModal({
+      title: 'Confirm action',
+      children: (
+        <Text size="sm">
+          Are you sure you want to discard your redactions? This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: onReset,
+    });
+
+  return (
+    <Group>
+      <ActionButton
+        icon={<IconTrash size={CONFIG.icon.size.sm} />}
+        tooltip="Discard"
+        onClick={() => {
+          if (numberOfRedactions > 0) {
+            openModal();
+          } else {
+            onReset();
+          }
+        }}
+      />
+      <Tooltip label="Redact" arrowSize={8} offset={8} withArrow>
+        <ActionIcon
+          variant="filled"
+          onClick={onAnalyzeImage}
+          radius="xl"
+          size="xl"
+          loading={isAnalyzing}
+        >
+          <IconWand />
+        </ActionIcon>
+      </Tooltip>
+      <ActionButton
+        icon={
+          showRedacted ? (
+            <IconEye size={CONFIG.icon.size.sm} />
+          ) : (
+            <IconEyeOff size={CONFIG.icon.size.sm} />
+          )
+        }
+        tooltip={showRedacted ? 'Hide redacted' : 'Show redacted'}
+        onClick={onToggleRedacted}
+      />
+    </Group>
+  );
+};

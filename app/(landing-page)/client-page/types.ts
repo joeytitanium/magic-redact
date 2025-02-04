@@ -26,4 +26,5 @@ export type DesktopMobileProps = ContainerProps & {
   onReset: () => void;
   previewRedacted: boolean;
   togglePreviewRedacted: () => void;
+  numberOfRedactions: number;
 };

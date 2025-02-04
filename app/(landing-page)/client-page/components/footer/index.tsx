@@ -53,6 +53,7 @@ export const Footer = ({
   numberOfPages,
   currentPageIndex,
   canvasBox,
+  numberOfRedactions,
   ...flexProps
 }: FlexProps & {
   onDownload: () => void;
@@ -66,6 +67,7 @@ export const Footer = ({
   currentPageIndex: number;
   numberOfPages: number;
   canvasBox: BoundingBox;
+  numberOfRedactions: number;
 }) => {
   const { width: pageArrowControlWidth, ref: pageArrowControlRef } = useElementSize();
   const { width: downloadButtonWidth, ref: downloadButtonRef } = useElementSize();
@@ -81,6 +83,7 @@ export const Footer = ({
           isAnalyzing={isAnalyzing}
           showRedacted={showRedacted}
           onToggleRedacted={onToggleRedacted}
+          numberOfRedactions={numberOfRedactions}
         />
         <Group align="center" ref={pageArrowControlRef}>
           <ActionButton

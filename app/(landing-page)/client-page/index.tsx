@@ -186,6 +186,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     previewRedacted,
     fauxLoadingSampleImage,
     onPageChange: (page) => goToPage(page),
+    numberOfRedactions: boxes.length,
   };
 
   return (

@@ -9,15 +9,16 @@ import '@mantine/notifications/styles.css';
 //
 import '@/theme/shadcn-style.css';
 
+import { supabaseClient } from '@/lib/supabase/client';
 import { shadcnTheme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 import dynamic from 'next/dynamic';
-import { supabaseClient } from '@/lib/supabase/client';
 import posthog from 'posthog-js';
 import { useEffect, useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
 import { cssVariableResolver } from '@/theme/css-variable-resolver';
 
+import { ModalsProvider } from '@mantine/modals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PHProvider } from './posthog';
 
@@ -64,7 +65,9 @@ export const Providers = ({ children }: { children: ReactNode }) => {
       <PostHogPageView />
       <MantineProvider theme={shadcnTheme} cssVariablesResolver={cssVariableResolver}>
         <Notifications position="top-center" />
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <ModalsProvider modalProps={{ centered: true }}>
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </ModalsProvider>
       </MantineProvider>
     </PHProvider>
     // </ErrorBoundary>

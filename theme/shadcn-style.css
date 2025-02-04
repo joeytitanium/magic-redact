@@ -592,6 +592,7 @@
 .mantine-Modal-title,
 .mantine-Drawer-title {
   letter-spacing: -0.025em;
+  font-weight: 800;
 }
 
 /* Divider */

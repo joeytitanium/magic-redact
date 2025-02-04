@@ -1,19 +1,20 @@
 'use client';
 
-import { CONFIG } from '@/config';
-import { Box } from '@mantine/core';
+import { Container } from '@mantine/core';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { SampleImage } from '@/utils/sample-images';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
-import { Footer } from '@/app/(landing-page)/footer';
 import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
-import { PdfCanvas } from '@/app/(landing-page)/pdf-canvas';
+import { CONFIG } from '@/config';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';
 import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useState } from 'react';
+import { Desktop } from './components/desktop';
+import { Mobile } from './components/mobile';
+import { DesktopMobileProps } from './types';
 
 type ClientPageProps = {
   isDebug: boolean;
@@ -42,6 +43,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     resetPdf,
     togglePreviewRedacted,
     previewRedacted,
+    goToPage,
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
@@ -67,8 +69,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     reset: resetAnalyzing,
   } = useAnalyzeImage({
     onSuccess: async (data) => {
-      // setRectangles((prev) => [...prev, ...r.filter((x) => (isDebug ? true : x.sensitive))]);
-      // setRectangles((prev) => [...prev, ...r.filter((x) => x.sensitive)]);
       await addServerBoxes({ boxes: data });
     },
   });
@@ -160,27 +160,41 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     await loadPdf(f);
   };
 
-  if (pdfUrl) {
-    return (
+  if (!pdfUrl || !pdfFile) {
+    return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
+  }
+
+  const props: DesktopMobileProps = {
+    imageRef: ref,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    canvasBox,
+    currentPageIndex,
+    onPdfLoaded,
+    hoveringOverBox,
+    onDeleteBox: deleteBox,
+    numberOfPages: numPages,
+    draftBox,
+    file: pdfFile,
+    togglePreviewRedacted,
+    onDownload,
+    onReset,
+    onAnalyzeImage,
+    isAnalyzing: isAnalyzing || fauxLoadingSampleImage,
+    onPreviousPage: previousPage,
+    onNextPage: nextPage,
+    previewRedacted,
+    fauxLoadingSampleImage,
+    onPageChange: (page) => goToPage(page),
+  };
+
+  return (
+    <Container px={0} fluid>
+      <Desktop visibleFrom={CONFIG.layout.mobileBreakpoint} {...props} />
+      <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} {...props} />
       <>
-        <Box pos="fixed" top={0} left={0} right={0} bottom={0} />
-        {/* {file.type === 'application/pdf' ? ( */}
-        <PdfCanvas
-          imageRef={ref}
-          file={pdfUrl}
-          handleMouseDown={handleMouseDown}
-          handleMouseMove={handleMouseMove}
-          handleMouseUp={handleMouseUp}
-          draftBox={draftBox}
-          currentPageIndex={currentPageIndex}
-          onPdfLoaded={onPdfLoaded}
-          canvasBox={canvasBox}
-          hoveringOverBox={hoveringOverBox}
-          onDeleteBox={deleteBox}
-        />
-        {/* ) : ( */}
-        <>
-          {/* <ImageCanvas
+        {/* <ImageCanvas
               imageRef={imageRef}
               canvasCoordinates={coordinates}
               handleMouseDown={handleMouseDown}
@@ -195,25 +209,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
               showRedacted={showRedacted}
               isDebug={isDebug}
             /> */}
-        </>
-        {/* )} */}
-        <Box pos="fixed" left={0} right={0} bottom={0} h={CONFIG.layout.footerHeight}>
-          <Footer
-            onDownload={onDownload}
-            onReset={onReset}
-            onAnalyzeImage={onAnalyzeImage}
-            isAnalyzing={isAnalyzing || fauxLoadingSampleImage}
-            showRedacted={previewRedacted}
-            onToggleRedacted={togglePreviewRedacted}
-            onNextPage={nextPage}
-            onPreviousPage={previousPage}
-            currentPageIndex={currentPageIndex}
-            numPages={numPages}
-          />
-        </Box>
       </>
-    );
-  }
-
-  return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
+    </Container>
+  );
 };

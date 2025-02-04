@@ -34,11 +34,15 @@ export type MobileHeaderProps = {
 export const MobileHeader = () => (
   <Box
     component="header"
-    bg="transparent"
     className={clsx(classes.header)}
     hiddenFrom={CONFIG.layout.mobileBreakpoint}
   >
-    <Container size={CONFIG.layout.containerSize} h="100%" px="xs">
+    <Container
+      size={CONFIG.layout.containerSize}
+      h="100%"
+      px="xs"
+      style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}
+    >
       <Flex justify="space-between" align="center" h="100%" gap="xs">
         {/* <Burger size="sm" opened={opened} onClick={onToggle} /> */}
         <Logo width={166} height={24} style={{ flexShrink: 0 }} priority />

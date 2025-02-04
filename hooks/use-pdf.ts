@@ -57,9 +57,16 @@ export const usePdf = () => {
     setCurrentPageIndex((prev) => prev - 1);
   };
 
+  const goToPage = (page: number) => {
+    if (page < 0 || page >= numPages) return;
+    setCurrentPageIndex(page);
+  };
+
   useHotkeys([
     ['ArrowRight', nextPage],
     ['ArrowLeft', previousPage],
+    ['ArrowUp', previousPage],
+    ['ArrowDown', nextPage],
   ]);
 
   const viewportSize = useViewportSize();
@@ -215,5 +222,6 @@ export const usePdf = () => {
     resetPdf,
     togglePreviewRedacted,
     previewRedacted,
+    goToPage,
   };
 };

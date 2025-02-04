@@ -5,7 +5,7 @@ import { CONFIG } from '@/config';
 import { BoundingBox, BoundingBoxWithMetadata } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
 import { convertPdfBoxToCanvasBox } from '@/utils/convert-bounding-box';
-import { Box, Center, Paper, UnstyledButton } from '@mantine/core';
+import { Box, Center, Paper, ScrollArea, Stack, UnstyledButton } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { DocumentCallback, File } from 'react-pdf/dist/cjs/shared/types';
@@ -30,6 +30,7 @@ type PdfCanvasProps = {
   onPdfLoaded: (props: DocumentCallback) => void;
   hoveringOverBox: BoundingBoxWithMetadata | null;
   onDeleteBox: (id: string) => void;
+  numPages: number;
 };
 
 export const PdfCanvas = ({
@@ -44,6 +45,7 @@ export const PdfCanvas = ({
   onPdfLoaded,
   hoveringOverBox,
   onDeleteBox,
+  numPages,
 }: PdfCanvasProps) => {
   const hoverBox = (() => {
     if (!hoveringOverBox) return null;
@@ -52,63 +54,78 @@ export const PdfCanvas = ({
   })();
 
   return (
-    <Paper
-      ref={imageRef}
-      pos="fixed"
-      withBorder
-      radius={0}
-      top={canvasBox.y}
-      left={canvasBox.x}
-      style={{
-        cursor: 'crosshair',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-      }}
-    >
-      <Document file={file} onLoadSuccess={onPdfLoaded}>
-        <Page
-          pageIndex={currentPageIndex}
-          width={canvasBox.width}
-          height={canvasBox.height}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          // onMouseLeave={handleMouseUp}
-        />
-      </Document>
-      {draftBox && (
-        <Box
-          style={{
-            position: 'absolute',
-            top: draftBox.y,
-            left: draftBox.x,
-            width: draftBox.width,
-            height: draftBox.height,
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            border: '1px solid black',
-          }}
-        />
+    <>
+      {numPages > 1 && (
+        <ScrollArea pos="fixed" top={CONFIG.layout.headerHeight} left={0} bottom={0} px="md">
+          <Document file={file}>
+            <Stack align="center" py="md">
+              {Array.from({ length: numPages }).map((_, index) => (
+                <UnstyledButton key={index}>
+                  <Page pageIndex={index} width={256} />
+                </UnstyledButton>
+              ))}
+            </Stack>
+          </Document>
+        </ScrollArea>
       )}
-      {hoverBox && hoveringOverBox && (
-        <UnstyledButton
-          onClick={() => onDeleteBox(hoveringOverBox.id)}
-          style={{
-            cursor: 'pointer',
-            position: 'absolute',
-            top: hoverBox.y,
-            left: hoverBox.x,
-            width: hoverBox.width,
-            height: hoverBox.height,
-            zIndex: CONFIG.zIndex.hoverOverBox,
-          }}
-          variant="filled"
-          color="red"
-        >
-          <Center>
-            <IconTrash size={CONFIG.icon.size.sm} color="var(--mantine-color-red-5)" />
-          </Center>
-        </UnstyledButton>
-      )}
-    </Paper>
+      <Paper
+        ref={imageRef}
+        pos="fixed"
+        withBorder
+        radius={0}
+        top={canvasBox.y}
+        left={canvasBox.x}
+        style={{
+          cursor: 'crosshair',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+        }}
+      >
+        <Document file={file} onLoadSuccess={onPdfLoaded}>
+          <Page
+            pageIndex={currentPageIndex}
+            width={canvasBox.width}
+            height={canvasBox.height}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            // onMouseLeave={handleMouseUp}
+          />
+        </Document>
+        {draftBox && (
+          <Box
+            style={{
+              position: 'absolute',
+              top: draftBox.y,
+              left: draftBox.x,
+              width: draftBox.width,
+              height: draftBox.height,
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid black',
+            }}
+          />
+        )}
+        {hoverBox && hoveringOverBox && (
+          <UnstyledButton
+            onClick={() => onDeleteBox(hoveringOverBox.id)}
+            style={{
+              cursor: 'pointer',
+              position: 'absolute',
+              top: hoverBox.y,
+              left: hoverBox.x,
+              width: hoverBox.width,
+              height: hoverBox.height,
+              zIndex: CONFIG.zIndex.hoverOverBox,
+            }}
+            variant="filled"
+            color="red.5"
+          >
+            <Center>
+              <IconTrash size={CONFIG.icon.size.sm} color="var(--mantine-color-red-5)" />
+            </Center>
+          </UnstyledButton>
+        )}
+      </Paper>
+    </>
   );
 };

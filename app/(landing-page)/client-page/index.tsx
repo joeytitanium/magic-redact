@@ -153,11 +153,12 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     await loadFile(f);
   };
 
-  const onClickSampleImage = (sampleImage: SampleImage) => {
+  const onClickSampleImage = async (sampleImage: SampleImage) => {
     setSelectedSampleImage(sampleImage);
-    void fetch(sampleImage)
-      .then((res) => res.blob())
-      .then((blob) => onSetFile(new File([blob], sampleImage)));
+    const response = await fetch(sampleImage);
+    const blob = await response.blob();
+    const file = new File([blob], sampleImage, { type: blob.type });
+    await loadFile(file);
   };
 
   if (!pdfUrl || !pdfFile) {
@@ -197,23 +198,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
         {...sharedProps}
       />
       <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...sharedProps} />
-      <>
-        {/* <ImageCanvas
-              imageRef={imageRef}
-              canvasCoordinates={coordinates}
-              handleMouseDown={handleMouseDown}
-              handleMouseMove={handleMouseMove}
-              handleMouseUp={handleMouseUp}
-              imageUrl={imageUrl}
-              rectangles={r}
-              hoveredRectId={hoveredRectId}
-              handleDeleteRect={handleDeleteRect}
-              currentRect={currentRect}
-              onHoveredRectIdChange={setHoveredRectId}
-              showRedacted={showRedacted}
-              isDebug={isDebug}
-            /> */}
-      </>
     </>
   );
 };

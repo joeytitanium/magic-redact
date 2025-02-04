@@ -85,7 +85,7 @@ export const usePdf = () => {
   const [pdfUrl, setPdfUrl] = useState<string>();
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
-  const [previewRedacted, setPreviewRedacted] = useState(true);
+  const [previewRedacted, setPreviewRedacted] = useState(false);
 
   const resetPdf = () => {
     setFile(undefined);

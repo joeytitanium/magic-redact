@@ -24,9 +24,10 @@ export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Var
 
       const data = await response.json();
       const parsed = ANALYZE_IMAGE_RESPONSE_SCHEMA.parse(data);
-      return parsed.rectangles.map((page) =>
+      const rectangles = parsed.rectangles.map((page) =>
         page.map((r) => ({ ...r, id: crypto.randomUUID(), source: 'server' }))
       );
+      return rectangles;
     },
     onError: (error) => {
       console.error('Error in useAnalyzeImage', error);

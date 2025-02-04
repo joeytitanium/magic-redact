@@ -1,7 +1,7 @@
 'use client';
 
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
-import { SampleImage } from '@/utils/sample-images';
+import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
 import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
@@ -112,7 +112,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
       setFauxLoadingSampleImage(true);
       setTimeout(() => {
         setFauxLoadingSampleImage(false);
-        // setRectangles(sampleImageRects[selectedSampleImage]);
+        void addServerBoxes({ boxes: sampleImageRects[selectedSampleImage] });
       }, 3500);
       return;
     }

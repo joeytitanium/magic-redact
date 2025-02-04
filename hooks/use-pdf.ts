@@ -93,6 +93,7 @@ export const usePdf = () => {
     setPdfUrl(undefined);
     setCurrentPageIndex(0);
     setBoxes([]);
+    setNumPages(0);
   };
 
   const nextPage = () => {
@@ -120,8 +121,7 @@ export const usePdf = () => {
   const viewportSize = useViewportSize();
 
   const loadFile = async (newFile: File) => {
-    setFile(newFile);
-
+    resetPdf();
     try {
       if (isImageFile(newFile)) {
         const pdfBytes = await createPdfFromImage(newFile);
@@ -133,6 +133,7 @@ export const usePdf = () => {
         const pdfDoc = await PDFDocument.load(pdfBytes);
         setPageSize(pdfDoc.getPages()[0].getSize());
       } else if (newFile.type === 'application/pdf') {
+        setFile(newFile);
         const pdfBytes = await newFile.arrayBuffer();
         setPdfUrl(bytesToUrl(pdfBytes));
         const pdfDoc = await PDFDocument.load(pdfBytes);
@@ -140,9 +141,6 @@ export const usePdf = () => {
       } else {
         throw new Error('Unsupported file type. Please upload a PDF or image file.');
       }
-
-      setCurrentPageIndex(0);
-      setBoxes([]);
     } catch (error) {
       console.error('Error loading file:', error);
       throw error;

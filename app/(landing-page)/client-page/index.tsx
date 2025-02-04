@@ -164,7 +164,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
   }
 
-  const props: Omit<DesktopMobileProps, 'imageRef'> = {
+  const sharedProps: Omit<DesktopMobileProps, 'imageRef'> = {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
@@ -175,7 +175,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     onDeleteBox: deleteBox,
     numberOfPages: numPages,
     draftBox,
-    file: pdfFile,
+    file: pdfUrl,
     togglePreviewRedacted,
     onDownload,
     onReset,
@@ -190,8 +190,12 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
 
   return (
     <>
-      <Desktop visibleFrom={CONFIG.layout.mobileBreakpoint} imageRef={desktopRef} {...props} />
-      <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...props} />
+      <Desktop
+        visibleFrom={CONFIG.layout.mobileBreakpoint}
+        imageRef={desktopRef}
+        {...sharedProps}
+      />
+      <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...sharedProps} />
       <>
         {/* <ImageCanvas
               imageRef={imageRef}

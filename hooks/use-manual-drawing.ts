@@ -48,7 +48,8 @@ export const useManualDrawing = ({
   const [isDrawing, setIsDrawing] = useState(false);
   const [hoveringOverBox, setHoveringOverBox] = useState<BoundingBoxWithMetadata | null>(null);
 
-  const ref = mobileRef.current?.clientWidth === 0 ? desktopRef : mobileRef;
+  const ref =
+    desktopRef.current?.clientWidth && desktopRef.current.clientWidth > 0 ? desktopRef : mobileRef;
 
   // useEffect(() => {
   //   if (!hoveringOverBoxId) return;

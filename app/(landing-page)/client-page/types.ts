@@ -8,7 +8,7 @@ export type DesktopMobileProps = ContainerProps & {
   currentPageIndex: number;
   draftBox: Rect | null;
   fauxLoadingSampleImage: boolean;
-  file: File;
+  file: File | string;
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleMouseUp: () => void;

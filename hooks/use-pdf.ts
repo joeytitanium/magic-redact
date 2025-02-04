@@ -77,7 +77,8 @@ const createPdfFromImage = async (imageFile: File): Promise<Uint8Array> => {
 };
 
 export const usePdf = () => {
-  const ref = useRef<HTMLDivElement>(null);
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const desktopRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File>();
   const [numPages, setNumPages] = useState(0);
   const [pageSize, setPageSize] = useState<Size>({ width: 0, height: 0 });
@@ -285,7 +286,8 @@ export const usePdf = () => {
     pdfFile: file,
     pdfUrl,
     previousPage,
-    ref,
+    mobileRef,
+    desktopRef,
     resetPdf,
     togglePreviewRedacted,
     previewRedacted,

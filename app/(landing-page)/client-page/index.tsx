@@ -1,7 +1,5 @@
 'use client';
 
-import { Container } from '@mantine/core';
-
 import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { SampleImage } from '@/utils/sample-images';
 import { notifications } from '@mantine/notifications';
@@ -39,7 +37,8 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     pdfFile,
     pdfUrl,
     previousPage,
-    ref,
+    mobileRef,
+    desktopRef,
     resetPdf,
     togglePreviewRedacted,
     previewRedacted,
@@ -57,7 +56,8 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     resetDraftBox,
   } = useManualDrawing({
     boxes,
-    ref,
+    mobileRef,
+    desktopRef,
     currentPageIndex,
     addBox: (box) => addManualBox({ box, pageNumber: currentPageIndex }),
     canvasBox,
@@ -164,8 +164,7 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
     return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
   }
 
-  const props: DesktopMobileProps = {
-    imageRef: ref,
+  const props: Omit<DesktopMobileProps, 'imageRef'> = {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
@@ -190,9 +189,9 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   };
 
   return (
-    <Container px={0} fluid>
-      <Desktop visibleFrom={CONFIG.layout.mobileBreakpoint} {...props} />
-      <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} {...props} />
+    <>
+      <Desktop visibleFrom={CONFIG.layout.mobileBreakpoint} imageRef={desktopRef} {...props} />
+      <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...props} />
       <>
         {/* <ImageCanvas
               imageRef={imageRef}
@@ -210,6 +209,6 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
               isDebug={isDebug}
             /> */}
       </>
-    </Container>
+    </>
   );
 };

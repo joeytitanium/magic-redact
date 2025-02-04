@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { BoundingBox, BoundingBoxWithMetadata, Coordinates } from './use-pdf';
 
 type UseManualDrawingProps = {
-  ref: React.RefObject<HTMLDivElement>;
+  desktopRef: React.RefObject<HTMLDivElement>;
+  mobileRef: React.RefObject<HTMLDivElement>;
   addBox: (box: BoundingBoxWithMetadata) => void;
   boxes: BoundingBoxWithMetadata[][];
   currentPageIndex: number;
@@ -35,7 +36,8 @@ const findBoxHoveringOver = ({
 };
 
 export const useManualDrawing = ({
-  ref,
+  mobileRef,
+  desktopRef,
   addBox,
   boxes,
   currentPageIndex,
@@ -45,6 +47,8 @@ export const useManualDrawing = ({
   const [startPoint, setStartPoint] = useState<Coordinates | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hoveringOverBox, setHoveringOverBox] = useState<BoundingBoxWithMetadata | null>(null);
+
+  const ref = mobileRef.current?.clientWidth === 0 ? desktopRef : mobileRef;
 
   // useEffect(() => {
   //   if (!hoveringOverBoxId) return;

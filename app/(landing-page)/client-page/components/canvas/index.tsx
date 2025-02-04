@@ -42,7 +42,6 @@ export const Canvas = ({
   hoveringOverBox,
   onDeleteBox,
   onPdfLoaded,
-
   ...paperProps
 }: CanvasProps) => {
   const hoverBox = (() => {
@@ -54,11 +53,8 @@ export const Canvas = ({
   return (
     <Paper
       ref={imageRef}
-      pos="fixed"
       withBorder
       radius={0}
-      top={canvasBox.y}
-      left={canvasBox.x}
       style={{
         cursor: 'crosshair',
         userSelect: 'none',

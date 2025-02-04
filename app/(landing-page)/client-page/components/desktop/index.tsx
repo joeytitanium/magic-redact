@@ -49,6 +49,9 @@ export const Desktop = ({
       />
     )}
     <Canvas
+      pos="fixed"
+      top={canvasBox.y}
+      left={canvasBox.x}
       file={file}
       handleMouseDown={handleMouseDown}
       handleMouseMove={handleMouseMove}

@@ -3,8 +3,8 @@ import { BoundingBox, BoundingBoxWithMetadata } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
 import { convertPdfBoxToCanvasBox } from '@/utils/convert-bounding-box';
 
-import { Box, Center, Paper, PaperProps, UnstyledButton } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { Box, Paper, PaperProps, Popover, Text, UnstyledButton } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { DocumentCallback } from 'react-pdf/dist/cjs/shared/types';
 
@@ -44,6 +44,8 @@ export const Canvas = ({
   onPdfLoaded,
   ...paperProps
 }: CanvasProps) => {
+  const [opened, { close, open }] = useDisclosure(false);
+
   const hoverBox = (() => {
     if (!hoveringOverBox) return null;
     if (hoveringOverBox.source === 'user') return hoveringOverBox;
@@ -87,24 +89,37 @@ export const Canvas = ({
         />
       )}
       {hoverBox && hoveringOverBox && (
-        <UnstyledButton
-          onClick={() => onDeleteBox(hoveringOverBox.id)}
-          style={{
-            cursor: 'pointer',
-            position: 'absolute',
-            top: hoverBox.y,
-            left: hoverBox.x,
-            width: hoverBox.width,
-            height: hoverBox.height,
-            zIndex: CONFIG.zIndex.hoverOverBox,
+        <Popover
+          opened={opened}
+          styles={{
+            dropdown: {
+              padding: 8,
+            },
           }}
-          variant="filled"
-          color="red.5"
+          withArrow
         >
-          <Center>
-            <IconTrash size={CONFIG.icon.size.sm} color="var(--mantine-color-red-5)" />
-          </Center>
-        </UnstyledButton>
+          <Popover.Target>
+            <UnstyledButton
+              onMouseEnter={open}
+              onMouseLeave={close}
+              onClick={() => onDeleteBox(hoveringOverBox.id)}
+              style={{
+                cursor: 'pointer',
+                position: 'absolute',
+                top: hoverBox.y,
+                left: hoverBox.x,
+                width: hoverBox.width,
+                height: hoverBox.height,
+                zIndex: CONFIG.zIndex.hoverOverBox,
+                opacity: 0.5,
+              }}
+              // bg="red.5"
+            />
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Text fz="xs">Click to delete</Text>
+          </Popover.Dropdown>
+        </Popover>
       )}
     </Paper>
   );

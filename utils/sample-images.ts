@@ -735,7 +735,6 @@ export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> 
         y: 0.09469697,
         width: 0.03431373999999998,
         height: 0.00883838399999999,
-        text: 'John',
         sensitive: true,
         id: '588715cc-4329-4b37-9940-8e12baf7efc8',
         source: 'server',

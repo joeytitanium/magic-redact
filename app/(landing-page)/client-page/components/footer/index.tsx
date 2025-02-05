@@ -15,6 +15,8 @@ import { useElementSize } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconDownload } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
+const PAGE_CONTROL_WIDTH = 84;
+
 const ActionButton = ({
   tooltip,
   onClick,
@@ -69,14 +71,14 @@ export const Footer = ({
   canvasBox: BoundingBox;
   numberOfRedactions: number;
 }) => {
-  const { width: pageArrowControlWidth, ref: pageArrowControlRef } = useElementSize();
+  // const { width: pageArrowControlWidth, ref: pageArrowControlRef } = useElementSize();
   const { width: downloadButtonWidth, ref: downloadButtonRef } = useElementSize();
 
   return (
     <Flex justify="space-between" align="center" h="100%" gap="xs" px="lg" {...flexProps}>
       <Box w={downloadButtonWidth} />
       <Group justify="space-between" w={canvasBox.width}>
-        <Box w={pageArrowControlWidth} />
+        <Box w={PAGE_CONTROL_WIDTH} />
         <MainControls
           onReset={onReset}
           onAnalyzeImage={onAnalyzeImage}
@@ -85,20 +87,24 @@ export const Footer = ({
           onToggleRedacted={onToggleRedacted}
           numberOfRedactions={numberOfRedactions}
         />
-        <Group align="center" ref={pageArrowControlRef}>
-          <ActionButton
-            tooltip="Previous page"
-            onClick={onPreviousPage}
-            icon={<IconChevronLeft />}
-            disabled={currentPageIndex === 0}
-          />
-          <ActionButton
-            tooltip="Next page"
-            onClick={onNextPage}
-            icon={<IconChevronRight />}
-            disabled={currentPageIndex === numberOfPages - 1}
-          />
-        </Group>
+        {numberOfPages > 1 ? (
+          <Group align="center" w={PAGE_CONTROL_WIDTH}>
+            <ActionButton
+              tooltip="Previous page"
+              onClick={onPreviousPage}
+              icon={<IconChevronLeft />}
+              disabled={currentPageIndex === 0}
+            />
+            <ActionButton
+              tooltip="Next page"
+              onClick={onNextPage}
+              icon={<IconChevronRight />}
+              disabled={currentPageIndex === numberOfPages - 1}
+            />
+          </Group>
+        ) : (
+          <Box w={PAGE_CONTROL_WIDTH} />
+        )}
       </Group>
       <Box ref={downloadButtonRef}>
         <Button

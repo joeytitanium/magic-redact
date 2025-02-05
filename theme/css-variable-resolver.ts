@@ -8,7 +8,6 @@ export const cssVariableResolver: CSSVariablesResolver = () => ({
     '--mantine-primary-color-light': 'var(--mantine-color-zinc-light)',
     '--mantine-primary-color-light-hover': 'var(--mantine-color-zinc-light-hover)',
     '--mantine-primary-color-light-color': 'var(--mantine-color-zinc-light-color)',
-    '--mantine-radius-default': 'var(--mantine-radius-lg)',
   },
   light: {
     // all variables that depend on light color scheme

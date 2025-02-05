@@ -213,6 +213,7 @@ export const usePdf = () => {
     const modifiedPdfBytes = await pdfDoc.save();
     const modifiedPdfUrl = bytesToUrl(modifiedPdfBytes);
     setPdfUrl(modifiedPdfUrl);
+    return modifiedPdfUrl;
   };
 
   const addManualBox = async ({
@@ -262,11 +263,20 @@ export const usePdf = () => {
     await drawBoxes({ boxes: boxesCopy, previewRedacted });
   };
 
-  const togglePreviewRedacted = () => {
-    setPreviewRedacted((prev) => {
-      void drawBoxes({ boxes, previewRedacted: !prev });
-      return !prev;
-    });
+  const togglePreviewRedacted = async ({
+    onCompleted,
+  }: {
+    onCompleted?: ({
+      pdfUrl,
+      previewRedacted,
+    }: {
+      pdfUrl: string | undefined;
+      previewRedacted: boolean;
+    }) => void;
+  } = {}) => {
+    setPreviewRedacted((prev) => !prev);
+    const url = await drawBoxes({ boxes, previewRedacted: !previewRedacted });
+    onCompleted?.({ pdfUrl: url, previewRedacted: !previewRedacted });
   };
 
   return {

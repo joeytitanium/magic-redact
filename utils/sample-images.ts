@@ -249,7 +249,7 @@ export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> 
         source: 'server',
       },
     ],
-  ],
+  ] as BoundingBoxWithMetadata[][],
   '/sample-zoom-call.pdf': [
     [
       {
@@ -487,7 +487,7 @@ export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> 
         source: 'server',
       },
     ],
-  ],
+  ] as BoundingBoxWithMetadata[][],
   '/sample-medical-report.pdf': [
     [
       {
@@ -15588,6 +15588,6 @@ export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> 
         id: '912c49e9-14aa-4b15-a3dc-ff0bedcf7fe3',
         source: 'server',
       },
-    ] as BoundingBoxWithMetadata[][],
-  ],
+    ],
+  ] as BoundingBoxWithMetadata[][],
 };

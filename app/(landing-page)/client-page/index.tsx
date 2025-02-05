@@ -133,18 +133,33 @@ export const ClientPage = ({ isDebug }: ClientPageProps) => {
   const onDownload = async () => {
     if (!pdfUrl) return;
 
-    try {
-      await exportPdf(pdfUrl, { fileName: pdfFile?.name ?? 'document' });
-      notifications.show({
-        message: 'File downloaded successfully',
-        color: 'green',
+    const main = async (newPdfUrl: string, onCompleted?: () => void) => {
+      try {
+        await exportPdf(newPdfUrl, { fileName: pdfFile?.name ?? 'document' });
+        notifications.show({
+          message: 'File downloaded successfully',
+          color: 'green',
+        });
+        onCompleted?.();
+      } catch (error) {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to download file',
+          color: 'red',
+        });
+        onCompleted?.();
+      }
+    };
+
+    if (previewRedacted) {
+      await togglePreviewRedacted({
+        onCompleted: async ({ pdfUrl: newPdfUrl }) => {
+          if (!newPdfUrl) return;
+          await main(newPdfUrl);
+        },
       });
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to download file',
-        color: 'red',
-      });
+    } else {
+      await main(pdfUrl);
     }
   };
 

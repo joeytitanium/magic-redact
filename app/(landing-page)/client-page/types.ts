@@ -1,4 +1,4 @@
-import { BoundingBox, BoundingBoxWithMetadata } from '@/hooks/use-pdf';
+import { BoundingBox, BoundingBoxWithMetadata, usePdf } from '@/hooks/use-pdf';
 import { Rect } from '@/types/rectangle';
 import { ContainerProps } from '@mantine/core';
 import { DocumentCallback } from 'react-pdf/dist/cjs/shared/types';
@@ -25,6 +25,6 @@ export type DesktopMobileProps = ContainerProps & {
   onPreviousPage: () => void;
   onReset: () => void;
   previewRedacted: boolean;
-  togglePreviewRedacted: () => void;
+  togglePreviewRedacted: ReturnType<typeof usePdf>['togglePreviewRedacted'];
   numberOfRedactions: number;
 };

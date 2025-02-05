@@ -14,11 +14,12 @@ import { Desktop } from './components/desktop';
 import { Mobile } from './components/mobile';
 import { DesktopMobileProps } from './types';
 
-type ClientPageProps = {
-  isDebug: boolean;
-};
+// type ClientPageProps = {
+//   isDebug: boolean;
+// };
 
-export const ClientPage = ({ isDebug }: ClientPageProps) => {
+export const ClientPage = () => {
+  // export const ClientPage = ({ isDebug }: ClientPageProps) => {
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);

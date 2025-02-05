@@ -47,7 +47,7 @@ export const uploadToGoogleCloudStorage = async ({
     if (base64Data.includes('data:')) {
       const matches = base64Data.match(/^data:([^;]+);base64,/);
       if (matches) {
-        console.log('Detected MIME type:', matches[1]);
+        // eslint-disable-next-line prefer-destructuring
         contentType = matches[1]; // Use the actual MIME type from the data URL
       }
       base64Data = encodedFile.replace(/^data:.*?;base64,/, '');
@@ -86,12 +86,14 @@ export const uploadToGoogleCloudStorage = async ({
     });
 
     // TODO: Cleanup. Get the file metadata to verify upload
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [metadata] = await file.getMetadata();
 
     const gcsUri = `gs://${bucketName}/${filePath}`;
     const publicUrl = `https://storage.cloud.google.com/${bucketName}/${filePath}`;
 
     // TODO: Cleanup. (Verify file exists and is accessible)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [exists] = await file.exists();
 
     return { gsUrl: gcsUri, publicUrl, fileUuid };

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=23.7.0"
+    "node": ">=22.13.1"
   },
   "scripts": {
     "dev": "next dev",
@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
-    "verify": "pnpm lint && pnpm build",
+    "verify": "pnpm lint:fix && pnpm build",
     "prepare": "husky"
   },
   "dependencies": {

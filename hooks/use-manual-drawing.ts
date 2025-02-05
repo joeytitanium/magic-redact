@@ -29,6 +29,7 @@ const findBoxHoveringOver = ({
 }) => {
   const boxesOnPage = boxes[currentPageIndex] ?? [];
   const targetBox = boxesOnPage.find((box) => {
+    if (!box.sensitive) return false;
     const b = box.source === 'user' ? box : convertPdfBoxToCanvasBox({ box, canvasBox });
     return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height;
   });

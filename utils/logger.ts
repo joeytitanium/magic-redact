@@ -1,9 +1,17 @@
+import { NextRequest } from 'next/server';
 import { isDevelopment } from './is-development';
 
-export const logApiError = (
-  message: string,
-  { error, request, context }: { error: Error; request: Request; context?: Record<string, unknown> }
-) => {
+export const logApiError = ({
+  message,
+  error,
+  request,
+  context,
+}: {
+  message: string;
+  error?: Error;
+  request: Request | NextRequest;
+  context?: Record<string, unknown>;
+}) => {
   console.error(
     `🚨 API Error [${request.url}] message: ${message}`,
     error,

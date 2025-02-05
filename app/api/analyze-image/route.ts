@@ -118,7 +118,7 @@ const insertDbRecord = async ({
       deviceInfo,
       variant: 'error',
     });
-    logApiError('Error inserting record into db', { error: insertError, request });
+    logApiError({ message: 'Error inserting record into db', error: insertError, request });
   }
 };
 
@@ -152,7 +152,7 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError('Invalid image URL', { error: new Error('Invalid image URL'), request });
+      logApiError({ message: 'Invalid image URL', request });
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
@@ -173,7 +173,7 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError('Google Cloud Storage upload error', { error: gcsError, request });
+      logApiError({ message: 'Google Cloud Storage upload error', error: gcsError, request });
       return NextResponse.json({ error: gcsError.message }, { status: 400 });
     }
 
@@ -201,7 +201,8 @@ export async function POST(request: Request) {
           },
         ],
       });
-      logApiError('Error detecting text with Google Vision', {
+      logApiError({
+        message: 'Error detecting text with Google Vision',
         error: ocrError ?? new Error('Unknown error'),
         request,
       });
@@ -231,7 +232,7 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError('No text detected', { error: new Error('No text detected'), request });
+      logApiError({ message: 'No text detected', request });
       await insertDbRecord({
         supabase,
         request,
@@ -315,7 +316,7 @@ ${input.join(',')}`;
           },
         ],
       });
-      logApiError('Error parsing OpenAI response', { error: outputResult.error, request });
+      logApiError({ message: 'Error parsing OpenAI response', error: outputResult.error, request });
       await insertDbRecord({
         supabase,
         request,
@@ -400,13 +401,9 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalCost}**`;
     return NextResponse.json({ rectangles });
   } catch (error) {
     if (error instanceof Error) {
-      logApiError('Error analyzing image', { error, request });
+      logApiError({ message: 'Error analyzing image', error, request });
     } else {
-      logApiError('Error analyzing image', {
-        error: new Error('Unknown error'),
-        request,
-        context: { error },
-      });
+      logApiError({ message: 'Unknown error analyzing image', request, context: { error } });
     }
     return NextResponse.json({ error: 'Failed to analyze image' }, { status: 500 });
   }

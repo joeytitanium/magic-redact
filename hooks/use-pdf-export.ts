@@ -77,7 +77,10 @@ export const usePdfExport = () => {
       document.body.removeChild(anchor);
       URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      logError('Error during PDF flattening:', error);
+      logError({
+        message: 'Error during PDF flattening',
+        error,
+      });
       throw error;
     }
   };

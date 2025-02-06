@@ -24,6 +24,7 @@ import {
   Select,
   Stepper,
   Switch,
+  TextInput,
   ThemeIcon,
   Timeline,
   Tooltip,
@@ -575,6 +576,9 @@ export const shadcnTheme: MantineThemeOverride = createTheme({
       },
     }),
     Button: Button.extend({
+      defaultProps: {
+        size: 'md',
+      },
       vars: (theme, props) => {
         const colorKey =
           props.color && Object.keys(theme.colors).includes(props.color) ? props.color : undefined;
@@ -799,6 +803,11 @@ export const shadcnTheme: MantineThemeOverride = createTheme({
               : 'var(--mantine-primary-color-contrast)',
           },
         };
+      },
+    }),
+    TextInput: TextInput.extend({
+      defaultProps: {
+        size: 'md',
       },
     }),
     ThemeIcon: ThemeIcon.extend({

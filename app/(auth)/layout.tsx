@@ -1,4 +1,3 @@
-import { AppShell } from '@/components/app-shell';
 import { Providers } from '@/components/providers';
 import { HeadTrackingScripts, PostHeadTrackingScripts } from '@/components/tracking-scripts';
 import { CONFIG } from '@/config';
@@ -25,9 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <PostHeadTrackingScripts />
       <body>
-        <Providers>
-          <AppShell>{children}</AppShell>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

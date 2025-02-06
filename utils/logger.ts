@@ -1,5 +1,9 @@
+/* eslint-disable no-console */
+
 import { NextRequest } from 'next/server';
 import { isDevelopment } from './is-development';
+
+type LogLevel = 'info' | 'error' | 'warn';
 
 export const logApiError = ({
   message,
@@ -8,62 +12,62 @@ export const logApiError = ({
   context,
 }: {
   message: string;
-  error?: Error;
   request: Request | NextRequest;
+  error?: Error;
   context?: Record<string, unknown>;
 }) => {
   console.error(
     `🚨 API Error [${request.url}] message: ${message}`,
-    error,
-    request,
-    JSON.stringify(context, null, '\t')
+    JSON.stringify({ context, request, error }, null, '\t')
   );
 };
 
-type LogMessageOptions = {
+export const logMessage = ({
+  message,
+  level,
+  request,
+  context,
+}: {
+  message: string;
+  level?: LogLevel;
   request?: Request;
-  level?: 'info' | 'error' | 'warn';
   context?: Record<string, unknown>;
-};
-
-export const logMessage = (message: string, options: LogMessageOptions = { level: 'info' }) => {
-  if (options.level === 'error') {
-    console.error(
-      `🚨 ERROR: ${message}`,
-      options.request,
-      JSON.stringify(options.context, null, '\t')
-    );
+}) => {
+  if (level === 'error') {
+    console.error(`🚨 ERROR: ${message}`, JSON.stringify({ context, request }, null, '\t'));
     return;
   }
 
-  if (options.level === 'info') {
-    console.info(
-      `ℹ INFO: ${message}`,
-      options.request,
-      JSON.stringify(options.context, null, '\t')
-    );
+  if (level === 'info') {
+    console.info(`ℹ INFO: ${message}`, JSON.stringify({ context, request }, null, '\t'));
   }
 
-  if (options.level === 'warn') {
-    console.warn(
-      `⚠ WARN: ${message}`,
-      options.request,
-      JSON.stringify(options.context, null, '\t')
-    );
+  if (level === 'warn') {
+    console.warn(`⚠ WARN: ${message}`, JSON.stringify({ context, request }, null, '\t'));
   }
 
-  console.log(`LOG: ${message}`, options.request, JSON.stringify(options.context, null, '\t'));
+  console.log(`LOG: ${message}`, JSON.stringify({ context, request }, null, '\t'));
 };
 
-export const logDebugMessage = (message: string, options: LogMessageOptions) => {
+export const logDebugMessage = ({
+  message,
+  context,
+}: {
+  message: string;
+  context?: Record<string, unknown>;
+}) => {
   if (!isDevelopment) return;
-  logMessage(message, { ...options });
+  logMessage({ message: `🔫: ${message}`, context, level: 'info' });
 };
 
-export const logError = (
-  message: string,
-  error: unknown,
-  options?: Omit<LogMessageOptions, 'level'>
-) => {
-  logMessage(message, { ...options, level: 'error', context: { error, ...options?.context } });
+export const logError = ({
+  message,
+  error,
+  context,
+}: {
+  message: string;
+  error?: unknown;
+  context?: Record<string, unknown>;
+}) => {
+  logMessage({ message, context: { error, context }, level: 'error' });
 };

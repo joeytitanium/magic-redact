@@ -19,6 +19,12 @@ export const CONFIG: {
     containerSize: MantineSize;
     zIndex: {};
   };
+  auth: {
+    google: {
+      clientId: string;
+      callbackUrl: string;
+    };
+  };
   social: {
     x: Social;
     // bluesky: Social;
@@ -64,6 +70,16 @@ export const CONFIG: {
   localStorageKey: {},
   zIndex: {
     hoverOverBox: 10,
+  },
+  auth: {
+    google: {
+      // also make sure to update the client id and secret on supabase.com (https://supabase.com/dashboard/project/ulrqcmxlifehrtbhuxkq/auth/providers)
+      // clientSecret: // also make sure to update the client secret in config.toml & env variable
+      clientId: isDevelopment
+        ? '679503925703-p3nkj2igonpcehv5mr92auhsli4lvumb.apps.googleusercontent.com'
+        : '679503925703-rnvgqe7k7hoab630n50ld4i19vvfcr2r.apps.googleusercontent.com',
+      callbackUrl: isDevelopment ? 'http://127.0.0.1:54321/auth/v1/callback' : '',
+    },
   },
   social: {
     x: { url: 'https://x.com/joeytitanium', handle: '@joeytitanium' },

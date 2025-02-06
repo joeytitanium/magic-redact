@@ -1,15 +1,18 @@
 import { DeviceInfo } from '@/types/device-info';
-import { logDebugMessage, logError, logMessage } from '@/utils/logger';
+import { logDebugMessage, logError } from '@/utils/logger';
 import { DiscordMessage, DiscordMessageEmbedField } from './types';
 
 const sendDiscordNotification = async (message: DiscordMessage) => {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) {
-    logMessage('Discord webhook URL not configured', { level: 'error' });
+    logError({
+      message: 'Discord webhook URL not configured',
+      context: { message },
+    });
     return;
   }
 
-  logDebugMessage('Sending Discord notification', { context: message });
+  logDebugMessage({ message: 'Sending Discord notification' });
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
@@ -23,7 +26,11 @@ const sendDiscordNotification = async (message: DiscordMessage) => {
       throw new Error(`Discord API responded with status ${response.status}`);
     }
   } catch (error) {
-    logError('Failed to send Discord notification', error);
+    logError({
+      message: 'Failed to send Discord notification',
+      error,
+      context: { message },
+    });
   }
 };
 
@@ -36,10 +43,10 @@ export const sendDiscordAlert = async ({
   imageUrl,
   context = [],
 }: {
-  username: '/analyze-image';
+  username: '/analyze-image' | 'signup';
   title: string;
   description?: string;
-  variant: 'success' | 'error';
+  variant: 'success' | 'error' | 'info';
   deviceInfo?: DeviceInfo;
   imageUrl?: string;
   context?: DiscordMessageEmbedField[];
@@ -66,6 +73,12 @@ export const sendDiscordAlert = async ({
     }
   );
 
+  const color = (() => {
+    if (variant === 'success') return 0x00ff00;
+    if (variant === 'error') return 0xff0000;
+    return 0x0000ff;
+  })();
+
   await sendDiscordNotification({
     username,
     content: description,
@@ -73,7 +86,7 @@ export const sendDiscordAlert = async ({
       {
         title: `${process.env.NODE_ENV !== 'production' ? '[TEST] ' : ''}${title}`,
         // description,
-        color: variant === 'success' ? 0x00ff00 : 0xff0000,
+        color,
         fields,
         image: imageUrl ? { url: imageUrl } : undefined,
       },

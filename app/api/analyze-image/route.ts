@@ -251,8 +251,8 @@ export async function POST(request: Request) {
       .flat()
       .map((x) => x.text)
       .filter((x) => x && x.length > 1);
-    logDebugMessage(`🔫 input: ${JSON.stringify(input, null, '\t')}`, {
-      request,
+    logDebugMessage({
+      message: `Input: ${JSON.stringify(input, null, '\t')}`,
       context: { input },
     });
 
@@ -291,8 +291,8 @@ ${input.join(',')}`;
       max_tokens: 500, // TODO: verify
     });
 
-    logDebugMessage(`🔫 response: ${JSON.stringify(response, null, '\t')}`, {
-      request,
+    logDebugMessage({
+      message: 'OpenAI response',
       context: { response },
     });
     const outputResult = OPEN_AI_RESPONSE_SCHEMA.safeParse(response);

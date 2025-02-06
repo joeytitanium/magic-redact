@@ -18,7 +18,9 @@ import { useEffect, useState, type ReactNode } from 'react';
 // import ErrorBoundary from '../ErrorBoundary';
 import { cssVariableResolver } from '@/theme/css-variable-resolver';
 
+import { CONFIG } from '@/config';
 import { ModalsProvider } from '@mantine/modals';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PHProvider } from './posthog';
 
@@ -45,6 +47,11 @@ export const Providers = ({ children }: { children: ReactNode }) => {
         }
       } else if (event === 'SIGNED_OUT') {
         posthog.reset();
+        [window.localStorage, window.sessionStorage].forEach((storage) => {
+          Object.entries(storage).forEach(([key]) => {
+            storage.removeItem(key);
+          });
+        });
       } else if (event === 'PASSWORD_RECOVERY') {
         // handle password recovery event
       } else if (event === 'TOKEN_REFRESHED') {
@@ -66,7 +73,9 @@ export const Providers = ({ children }: { children: ReactNode }) => {
       <MantineProvider theme={shadcnTheme} cssVariablesResolver={cssVariableResolver}>
         <Notifications position="top-center" />
         <ModalsProvider modalProps={{ centered: true }}>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <GoogleOAuthProvider clientId={CONFIG.auth.google.clientId}>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          </GoogleOAuthProvider>
         </ModalsProvider>
       </MantineProvider>
     </PHProvider>

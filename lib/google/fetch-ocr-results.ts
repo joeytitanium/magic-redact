@@ -56,7 +56,8 @@ const waitForJsonFiles = async ({
     const delayMs = initialDelayMs * 2 ** attempt;
     await sleep(delayMs);
 
-    logDebugMessage(`🔍 Checking for JSON files (attempt ${attempt + 1}/${maxAttempts})...`, {
+    logDebugMessage({
+      message: `🔍 Checking for JSON files (attempt ${attempt + 1}/${maxAttempts})...`,
       context: { filePath, attempt: attempt + 1, maxAttempts },
     });
 
@@ -67,7 +68,8 @@ const waitForJsonFiles = async ({
     const jsonFiles = files.filter((file) => file.name.endsWith('.json'));
 
     if (jsonFiles.length > 0) {
-      logDebugMessage(`✅ Found ${jsonFiles.length} JSON files`, {
+      logDebugMessage({
+        message: `✅ Found ${jsonFiles.length} JSON files`,
         context: { numFiles: jsonFiles.length, fileNames: jsonFiles.map((f) => f.name) },
       });
       return jsonFiles;
@@ -88,7 +90,8 @@ export const fetchOcrResults = async ({
 }): Promise<Rectangle[][]> => {
   try {
     const jsonFiles = await waitForJsonFiles({ storage, bucketName, filePath });
-    logDebugMessage('🔫 Found JSON files in output directory', {
+    logDebugMessage({
+      message: 'Found JSON files in output directory',
       context: {
         filePath,
         bucketName,
@@ -105,7 +108,8 @@ export const fetchOcrResults = async ({
         const pageResults = transformVisionResponse(json);
         allResults.push(...pageResults);
       } catch (err) {
-        logError('Error downloading result', {
+        logError({
+          message: 'Error downloading result',
           context: {
             filePath,
             bucketName,
@@ -117,7 +121,8 @@ export const fetchOcrResults = async ({
 
     return allResults;
   } catch (error) {
-    logError('Error fetching OCR results', {
+    logError({
+      message: 'Error fetching OCR results',
       context: {
         filePath,
         bucketName,

@@ -22,10 +22,9 @@ export const usePostSignInUp = ({
       //   })
       // );
     } else {
-      /* TODO: Perhaps find a better way.
-       * Without this it still thinks there is no user.
-       * router.refresh() invalidates cache but we need a different path
-       * router.push() doesnt have options to revalidate cache either.
+      /*
+        Supabase docs does server-side revalidation but we'll do it this way
+        https://supabase.com/docs/guides/auth/server-side/nextjs
        */
       await revalidateUserSession(routeTo);
       router.push(routeTo);

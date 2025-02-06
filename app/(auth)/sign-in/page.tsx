@@ -2,6 +2,7 @@
 
 import { AuthContainer } from '@/app/(auth)/_components/auth-container';
 import { SocialLogin } from '@/app/(auth)/_components/social-login';
+import { AUTH_EMAIL_LENGTH_RANGE, AUTH_PASSWORD_LENGTH_RANGE } from '@/app/(auth)/constants';
 import { usePostSignInUp } from '@/app/(auth)/use-post-sign-in-up';
 import { supabaseClient } from '@/lib/supabase/client';
 import { getRouteUrl } from '@/routing/get-route-url';
@@ -11,7 +12,6 @@ import { showNotification } from '@mantine/notifications';
 import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { z } from 'zod';
-import { AUTH_EMAIL_LENGTH_RANGE, AUTH_PASSWORD_LENGTH_RANGE } from '../constants';
 
 const SCHEMA = z.object({
   email: z.string().email().max(AUTH_EMAIL_LENGTH_RANGE[1]),

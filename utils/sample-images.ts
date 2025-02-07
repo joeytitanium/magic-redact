@@ -2,25 +2,25 @@ import { BoundingBoxWithMetadata } from '@/hooks/use-pdf';
 
 export const SAMPLE_IMAGES = [
   '/sample-medical-report.pdf',
-  '/sample-lemon-squeezy.pdf',
-  '/sample-zoom-call.pdf',
+  '/sample-lemon-squeezy.jpeg',
+  '/sample-zoom-call.jpg',
 ] as const;
 export type SampleImage = (typeof SAMPLE_IMAGES)[number];
 
 export const sampleImageSize: Record<SampleImage, { width: number; height: number }> = {
-  '/sample-lemon-squeezy.pdf': { width: 521, height: 640 },
-  '/sample-zoom-call.pdf': { width: 1600, height: 1000 },
+  '/sample-lemon-squeezy.jpeg': { width: 521, height: 640 },
+  '/sample-zoom-call.jpg': { width: 1600, height: 1000 },
   '/sample-medical-report.pdf': { width: 760, height: 979 },
 };
 
 export const sampleImageThumbnail: Record<SampleImage, string> = {
-  '/sample-lemon-squeezy.pdf': '/sample-lemon-squeezy-thumbnail.jpg',
-  '/sample-zoom-call.pdf': '/sample-zoom-call-thumbnail.jpg',
+  '/sample-lemon-squeezy.jpeg': '/sample-lemon-squeezy-thumbnail.jpg',
+  '/sample-zoom-call.jpg': '/sample-zoom-call-thumbnail.jpg',
   '/sample-medical-report.pdf': '/sample-medical-report-thumbnail.jpg',
 };
 
 export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> = {
-  '/sample-lemon-squeezy.pdf': [
+  '/sample-lemon-squeezy.jpeg': [
     [
       {
         x: 0.07677543,
@@ -250,7 +250,7 @@ export const sampleImageRects: Record<SampleImage, BoundingBoxWithMetadata[][]> 
       },
     ],
   ] as BoundingBoxWithMetadata[][],
-  '/sample-zoom-call.pdf': [
+  '/sample-zoom-call.jpg': [
     [
       {
         x: 0.13,

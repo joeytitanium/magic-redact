@@ -38,6 +38,7 @@
     "clsx": "2.1.1",
     "date-fns": "4.1.0",
     "dom-to-image": "2.6.0",
+    "heic2any": "^0.0.4",
     "html2canvas": "1.4.1",
     "jspdf": "2.5.2",
     "lodash": "4.17.21",

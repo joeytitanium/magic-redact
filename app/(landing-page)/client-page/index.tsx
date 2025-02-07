@@ -138,10 +138,11 @@ export const ClientPage = () => {
 
     const main = async (newPdfUrl: string, onCompleted?: () => void) => {
       try {
+        const sanitizedFileName = (pdfFile?.name ?? 'document').replace(/^\//, '');
         await exportPdf({
           fileUrl: newPdfUrl,
           fileExtension: fileExtension ?? 'pdf',
-          options: { fileName: pdfFile?.name ?? 'document' },
+          options: { fileName: sanitizedFileName },
         });
         notifications.show({
           message: 'File downloaded successfully',

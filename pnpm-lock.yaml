@@ -68,6 +68,9 @@ importers:
       dom-to-image:
         specifier: 2.6.0
         version: 2.6.0
+      heic2any:
+        specifier: ^0.0.4
+        version: 0.0.4
       html2canvas:
         specifier: 1.4.1
         version: 1.4.1
@@ -2009,6 +2012,9 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  heic2any@0.0.4:
+    resolution: {integrity: sha512-3lLnZiDELfabVH87htnRolZ2iehX9zwpRyGNz22GKXIu0fznlblf0/ftppXKNqS26dqFSeqfIBhAmAj/uSp0cA==}
 
   html-entities@2.5.2:
     resolution: {integrity: sha512-K//PSRMQk4FZ78Kyau+mZurHn3FH0Vwr+H36eE0rPbeYkRRi9YxceYPhuN60UwWorxyKHhqoAJl2OFKa4BVtaA==}
@@ -5832,6 +5838,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  heic2any@0.0.4: {}
 
   html-entities@2.5.2: {}
 

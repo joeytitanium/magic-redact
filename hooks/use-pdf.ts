@@ -3,6 +3,7 @@ import { convertManualBox, convertServerBox } from '@/utils/convert-bounding-box
 import { canvasCoordinates } from '@/utils/image-coordinates';
 import { logError } from '@/utils/logger';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
+import heic2any from 'heic2any';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { GlobalWorkerOptions } from 'pdfjs-dist';
@@ -41,8 +42,16 @@ const bytesToUrl = (bytes: Uint8Array<ArrayBufferLike> | ArrayBuffer) => {
 const isImageFile = (file: File) => file.type.startsWith('image/');
 
 const createPdfFromImage = async (imageFile: File): Promise<Uint8Array> => {
-  const pdfDoc = await PDFDocument.create();
+  const isHeic = imageFile.type === 'image/heic';
 
+  if (isHeic) {
+    const convertedBlob = await heic2any({ blob: imageFile, toType: 'image/jpeg' });
+    imageFile = new File([convertedBlob as Blob], imageFile.name.replace(/\.[^/.]+$/, '.jpg'), {
+      type: 'image/jpeg',
+    });
+  }
+
+  const pdfDoc = await PDFDocument.create();
   const img = new Image();
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -70,7 +79,6 @@ const createPdfFromImage = async (imageFile: File): Promise<Uint8Array> => {
     width: img.width,
     height: img.height,
   });
-
   canvas.remove();
   URL.revokeObjectURL(img.src);
 

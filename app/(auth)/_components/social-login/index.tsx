@@ -2,7 +2,7 @@ import { handleSignUp } from '@/app/(auth)/_utils/handle-sign-up';
 import { CONFIG } from '@/config';
 import { supabaseClient } from '@/lib/supabase/client';
 import { logError } from '@/utils/logger';
-import { Box } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { GoogleLogin } from '@react-oauth/google';
@@ -18,7 +18,7 @@ export const SocialLogin = ({ type, onSuccess }: Props) => {
   const { ref, width } = useElementSize();
 
   return (
-    <Box w="100%" ref={ref}>
+    <Group w="100%" ref={ref} justify="center">
       <GoogleLogin
         width={width}
         use_fedcm_for_prompt
@@ -72,6 +72,6 @@ export const SocialLogin = ({ type, onSuccess }: Props) => {
           });
         }}
       />
-    </Box>
+    </Group>
   );
 };

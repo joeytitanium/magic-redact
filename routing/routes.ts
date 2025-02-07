@@ -1,7 +1,8 @@
 /** Remember to update the Sitemap if applicable */
 export type Route =
-  | { to: '/'; params?: never; fragment?: never }
-  | { to: '/pricing'; params?: never; fragment?: never }
+  | { to: '/'; params?: never; fragment?: 'pricing' }
+  | { to: '/privacy'; params?: never; fragment?: never }
+  | { to: '/terms'; params?: never; fragment?: never }
   | {
       to: '/sign-up';
       params?: {

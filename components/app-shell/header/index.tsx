@@ -34,7 +34,7 @@ export type MobileHeaderProps = {
 export const MobileHeader = () => (
   <Box
     component="header"
-    className={clsx(classes.header)}
+    className={clsx('frosted-glass', classes.header)}
     hiddenFrom={CONFIG.layout.mobileBreakpoint}
   >
     <Container
@@ -57,7 +57,7 @@ export const MobileHeader = () => (
 export const DesktopHeader = () => (
   <Box
     component="header"
-    className={clsx(classes.header)}
+    className={clsx('frosted-glass', classes.header)}
     visibleFrom={CONFIG.layout.mobileBreakpoint}
   >
     <Container size={CONFIG.layout.containerSize} h="100%" fluid>

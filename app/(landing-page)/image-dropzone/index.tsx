@@ -1,3 +1,4 @@
+import { LinksFooter } from '@/app/(landing-page)/client-page/components/links-footer';
 import { CONFIG } from '@/config';
 import { logError } from '@/utils/logger';
 import { SAMPLE_IMAGES, SampleImage, sampleImageThumbnail } from '@/utils/sample-images';
@@ -83,5 +84,6 @@ export const ImageDropzone = ({
         ))}
       </Group>
     </Stack>
+    <LinksFooter pos="fixed" bottom={0} left={0} right={0} />
   </Container>
 );

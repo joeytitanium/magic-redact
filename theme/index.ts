@@ -9,6 +9,7 @@ import {
   Card,
   Checkbox,
   Chip,
+  Container,
   createTheme,
   Dialog,
   Indicator,
@@ -606,6 +607,11 @@ export const shadcnTheme: MantineThemeOverride = createTheme({
             })(),
           },
         };
+      },
+    }),
+    Container: Container.extend({
+      defaultProps: {
+        size: 'xl',
       },
     }),
     Anchor: Anchor.extend({

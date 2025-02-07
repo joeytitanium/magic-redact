@@ -25,7 +25,7 @@ export const ImageDropzone = ({
           maw={800}
           accept={[
             'image/png',
-            'image/gif',
+            // 'image/gif',
             'image/jpeg',
             'image/svg+xml',
             'image/webp',

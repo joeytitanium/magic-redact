@@ -87,6 +87,7 @@ export const usePdf = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [boxes, setBoxes] = useState<BoundingBoxWithMetadata[][]>([]);
   const [previewRedacted, setPreviewRedacted] = useState(false);
+  const [fileExtension, setFileExtension] = useState<string>();
 
   const resetPdf = () => {
     setFile(undefined);
@@ -95,6 +96,7 @@ export const usePdf = () => {
     setCurrentPageIndex(0);
     setBoxes([]);
     setNumPages(0);
+    setFileExtension(undefined);
   };
 
   const nextPage = () => {
@@ -124,6 +126,9 @@ export const usePdf = () => {
   const loadFile = async (newFile: File) => {
     resetPdf();
     try {
+      const extension = newFile.name.split('.').pop() ?? '';
+      setFileExtension(extension);
+
       if (isImageFile(newFile)) {
         const pdfBytes = await createPdfFromImage(newFile);
         const pdfFile = new File([pdfBytes], newFile.name.replace(/\.[^/.]+$/, '.pdf'), {
@@ -287,6 +292,7 @@ export const usePdf = () => {
     canvasBox,
     currentPageIndex,
     deleteBox,
+    fileExtension,
     loadFile,
     nextPage,
     numPages,

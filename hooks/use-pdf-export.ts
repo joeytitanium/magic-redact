@@ -16,23 +16,95 @@ type Options = {
   fileName: string;
 };
 
+const downloadBlob = (blob: Blob, fileName: string) => {
+  const downloadUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = downloadUrl;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(downloadUrl);
+};
+
 export const usePdfExport = () => {
-  const exportPdf = async (fileOrUrl: File | string, options: Options): Promise<void> => {
+  const exportPdf = async ({
+    fileUrl,
+    fileExtension,
+    options,
+  }: {
+    fileUrl: string;
+    fileExtension: string;
+    options: Options;
+  }): Promise<void> => {
     try {
-      let documentUrl: string;
-      let createdUrl = false;
-      if (typeof fileOrUrl === 'string') {
-        documentUrl = fileOrUrl;
-      } else {
-        documentUrl = URL.createObjectURL(fileOrUrl);
-        createdUrl = true;
+      if (fileExtension.toLowerCase() !== 'pdf') {
+        const loadingTask = getDocument({ url: fileUrl });
+        const pdfDoc: PDFDocumentProxy = await loadingTask.promise;
+        // For image files, assume a single page PDF (adjust if you support multi-page images).
+        const pdfPage: PDFPageProxy = await pdfDoc.getPage(1);
+        const viewport = pdfPage.getViewport({ scale: options.scale ?? 2 });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const context = canvas.getContext('2d');
+        if (!context) {
+          throw new Error('Could not get 2D context from canvas.');
+        }
+
+        await pdfPage.render({ canvasContext: context, viewport }).promise;
+
+        const lowerExtension = fileExtension.toLowerCase();
+        let mimeType = 'image/png';
+        if (['jpg', 'jpeg'].includes(lowerExtension)) {
+          mimeType = 'image/jpeg';
+        } else if (lowerExtension === 'webp') {
+          mimeType = 'image/webp';
+        } else if (lowerExtension === 'heic') {
+          // HEIC conversion is not supported by canvas.toDataURL so fallback to JPEG.
+          mimeType = 'image/jpeg';
+        } else if (
+          lowerExtension === 'gif' ||
+          lowerExtension === 'bmp' ||
+          lowerExtension === 'tiff'
+        ) {
+          // Canvas conversion does not natively support GIF (especially animations), BMP, or TIFF.
+          // Fallback to PNG conversion.
+          mimeType = 'image/png';
+        }
+
+        const imageData = canvas.toDataURL(mimeType);
+
+        // Utility to convert a DataURL into a Blob.
+        const dataURLtoBlob = (dataUrl: string): Blob => {
+          const [header, base64Data] = dataUrl.split(',');
+          const mime = (header.match(/:(.*?);/) as RegExpMatchArray | null)?.[1] ?? mimeType;
+          const byteString = atob(base64Data);
+          const arrayBuffer = new ArrayBuffer(byteString.length);
+          const uint8Array = new Uint8Array(arrayBuffer);
+          for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([uint8Array], { type: mime });
+        };
+
+        const blob = dataURLtoBlob(imageData);
+        // Change the file name extension if needed.
+        let finalFileName = options.fileName;
+        if (finalFileName.toLowerCase().endsWith('.pdf')) {
+          finalFileName =
+            lowerExtension === 'heic'
+              ? finalFileName.replace(/\.pdf$/i, '.jpg') // fallback to jpg for heic
+              : finalFileName.replace(/\.pdf$/i, `.${lowerExtension}`);
+        }
+        downloadBlob(blob, finalFileName);
+        canvas.remove();
+        return;
       }
 
-      const loadingTask = getDocument({ url: documentUrl });
+      const loadingTask = getDocument({ url: fileUrl });
       const pdfDoc: PDFDocumentProxy = await loadingTask.promise;
-      if (createdUrl) {
-        URL.revokeObjectURL(documentUrl);
-      }
       const { numPages } = pdfDoc;
 
       const flattenedPdfDoc = await PDFDocument.create();
@@ -68,14 +140,7 @@ export const usePdfExport = () => {
       const pdfBytes = await flattenedPdfDoc.save();
 
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const downloadUrl = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = downloadUrl;
-      anchor.download = options.fileName;
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-      URL.revokeObjectURL(downloadUrl);
+      downloadBlob(blob, options.fileName);
     } catch (error) {
       logError({
         message: 'Error during PDF flattening',

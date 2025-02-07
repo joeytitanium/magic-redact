@@ -31,6 +31,7 @@ export const ClientPage = () => {
     canvasBox,
     currentPageIndex,
     deleteBox,
+    fileExtension,
     loadFile,
     nextPage,
     numPages,
@@ -47,6 +48,7 @@ export const ClientPage = () => {
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
+  console.log(`🔫 fileExtension: ${fileExtension}`);
 
   const {
     handleMouseDown,
@@ -136,7 +138,11 @@ export const ClientPage = () => {
 
     const main = async (newPdfUrl: string, onCompleted?: () => void) => {
       try {
-        await exportPdf(newPdfUrl, { fileName: pdfFile?.name ?? 'document' });
+        await exportPdf({
+          fileUrl: newPdfUrl,
+          fileExtension: fileExtension ?? 'pdf',
+          options: { fileName: pdfFile?.name ?? 'document' },
+        });
         notifications.show({
           message: 'File downloaded successfully',
           color: 'green',

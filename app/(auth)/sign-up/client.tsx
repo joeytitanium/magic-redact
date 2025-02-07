@@ -12,7 +12,7 @@ import NextLink from 'next/link';
 export const SignUpPage = ({ variantId }: { variantId?: number }) => {
   const { handleSignInUp } = usePostSignInUp({
     variantId,
-    routeTo: getRouteUrl({ to: '/pricing' }),
+    routeTo: getRouteUrl({ to: '/', fragment: 'pricing' }),
   });
 
   return (
@@ -42,7 +42,7 @@ export const SignUpPage = ({ variantId }: { variantId?: number }) => {
       <Divider mt="xl" mb="lg" label="Or" />
       <SignupForm
         initialEmailValue=""
-        emailRedirectTo={getRouteUrl({ to: '/pricing' }, { absoluteUrl: true })}
+        emailRedirectTo={getRouteUrl({ to: '/', fragment: 'pricing' }, { absoluteUrl: true })}
         onSuccess={async ({ user }) => {
           await handleSignInUp({ user });
         }}

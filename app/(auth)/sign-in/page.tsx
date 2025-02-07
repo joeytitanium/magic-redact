@@ -39,7 +39,7 @@ const SignInPage = ({ searchParams }: { searchParams?: { variantId: string } }) 
   });
   const { handleSignInUp } = usePostSignInUp({
     variantId: query.data?.variantId,
-    routeTo: getRouteUrl({ to: '/pricing' }),
+    routeTo: getRouteUrl({ to: '/', fragment: 'pricing' }),
   });
 
   const { mutate: signIn, isPending } = useMutation({

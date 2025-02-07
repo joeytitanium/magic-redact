@@ -10,9 +10,13 @@ const COMMON_PROPS: GroupProps = {
 
 const Links = () => (
   <>
-    <Anchor component={NextLink} href={getRouteUrl({ to: '/' })} underline="hover">
+    {/* <Anchor
+      component={NextLink}
+      href={getRouteUrl({ to: '/', params: { pricing: true } })}
+      underline="hover"
+    >
       Pricing
-    </Anchor>
+    </Anchor> */}
     <Anchor component={NextLink} href={getRouteUrl({ to: '/privacy' })} underline="hover">
       Privacy
     </Anchor>

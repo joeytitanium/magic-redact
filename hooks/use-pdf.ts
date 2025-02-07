@@ -3,7 +3,6 @@ import { convertManualBox, convertServerBox } from '@/utils/convert-bounding-box
 import { canvasCoordinates } from '@/utils/image-coordinates';
 import { logError } from '@/utils/logger';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
-import heic2any from 'heic2any';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { GlobalWorkerOptions } from 'pdfjs-dist';
@@ -45,6 +44,8 @@ const createPdfFromImage = async (imageFile: File): Promise<Uint8Array> => {
   const isHeic = imageFile.type === 'image/heic';
 
   if (isHeic) {
+    // Note: We do this import here otherwise we get a window is not defined error.
+    const heic2any = (await import('heic2any')).default;
     const convertedBlob = await heic2any({ blob: imageFile, toType: 'image/jpeg' });
     imageFile = new File([convertedBlob as Blob], imageFile.name.replace(/\.[^/.]+$/, '.jpg'), {
       type: 'image/jpeg',

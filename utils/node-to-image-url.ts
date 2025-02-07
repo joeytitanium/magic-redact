@@ -1,4 +1,5 @@
 import html2canvas from 'html2canvas';
+import { logError } from './logger';
 
 /**
  * Converts a DOM node into a PNG image URL.
@@ -62,7 +63,7 @@ export const nodeToImageUrl = async ({ node }: { node: HTMLElement }): Promise<s
     const dataUrl = canvas.toDataURL('image/png');
     return dataUrl;
   } catch (error) {
-    console.error('Error generating image:', error);
+    logError({ message: 'Error generating image', error });
     throw error; // Re-throw the error after logging
   }
 };

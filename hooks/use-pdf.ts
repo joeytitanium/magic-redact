@@ -1,6 +1,7 @@
 import { CONFIG } from '@/config';
 import { convertManualBox, convertServerBox } from '@/utils/convert-bounding-box';
 import { canvasCoordinates } from '@/utils/image-coordinates';
+import { logError } from '@/utils/logger';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
@@ -142,7 +143,7 @@ export const usePdf = () => {
         throw new Error('Unsupported file type. Please upload a PDF or image file.');
       }
     } catch (error) {
-      console.error('Error loading file:', error);
+      logError({ message: 'Error loading file', error });
       throw error;
     }
   };

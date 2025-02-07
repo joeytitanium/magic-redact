@@ -355,10 +355,6 @@ ${input.join(',')}`;
         sensitive: sensitiveStringSet.has(y.text ?? ''),
       }))
     );
-    // console.log(`🔫 prompt_tokens: ${outputResult.data.usage.prompt_tokens}`);
-    // console.log(`🔫 completion_tokens: ${outputResult.data.usage.completion_tokens}`);
-    // console.log(`🔫 total_tokens: ${outputResult.data.usage.total_tokens}`);
-    // console.log(`🔫 sensitiveRectangles: ${JSON.stringify(rectangles, null, '\t')}`);
 
     await insertDbRecord({
       supabase,

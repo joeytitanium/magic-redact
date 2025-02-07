@@ -48,7 +48,6 @@ export const ClientPage = () => {
   } = usePdf();
 
   const { exportPdf } = usePdfExport();
-  console.log(`🔫 fileExtension: ${fileExtension}`);
 
   const {
     handleMouseDown,

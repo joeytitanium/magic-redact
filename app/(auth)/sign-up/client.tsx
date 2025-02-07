@@ -8,15 +8,6 @@ import { getRouteUrl } from '@/routing/get-route-url';
 import { Anchor, Divider, Text, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import NextLink from 'next/link';
-import { z } from 'zod';
-
-const SCHEMA = z
-  .object({
-    variantId: z.string(),
-  })
-  .transform((data) => ({
-    variantId: Number(data.variantId),
-  }));
 
 export const SignUpPage = ({ variantId }: { variantId?: number }) => {
   const { handleSignInUp } = usePostSignInUp({

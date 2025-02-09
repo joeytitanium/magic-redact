@@ -38,8 +38,8 @@ const SignInPage = ({ searchParams }: { searchParams?: { variantId: string } }) 
     validate: zodResolver(SCHEMA),
   });
   const { handleSignInUp } = usePostSignInUp({
-    variantId: query.data?.variantId,
-    routeTo: getRouteUrl({ to: '/', fragment: 'pricing' }),
+    // variantId: query.data?.variantId,
+    routeTo: getRouteUrl({ to: '/', params: { pricing: true } }),
   });
 
   const { mutate: signIn, isPending } = useMutation({

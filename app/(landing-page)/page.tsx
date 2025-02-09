@@ -1,16 +1,12 @@
 import { ClientPage } from './client-page';
 
-export default async function HomePage() {
-//   {
-//   searchParams,
-// }: {
-//    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-// }
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   // const isDebug = (await searchParams).debug === 'true';
+  const showPricing = (await searchParams).pricing === 'true';
 
-  return (
-    <ClientPage
-    // isDebug={isDebug}
-    />
-  );
+  return <ClientPage showPricing={showPricing} />;
 }

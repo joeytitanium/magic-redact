@@ -1,6 +1,10 @@
 /** Remember to update the Sitemap if applicable */
 export type Route =
-  | { to: '/'; params?: never; fragment?: 'pricing' }
+  | {
+      to: '/';
+      params?: { pricing?: boolean };
+      fragment?: never;
+    }
   | { to: '/privacy'; params?: never; fragment?: never }
   | { to: '/terms'; params?: never; fragment?: never }
   | {

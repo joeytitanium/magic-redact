@@ -6,6 +6,13 @@ type Social = {
   handle: string;
 };
 
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+};
+
 export const CONFIG: {
   site: {
     url: string;
@@ -23,6 +30,16 @@ export const CONFIG: {
     google: {
       clientId: string;
       callbackUrl: string;
+    };
+  };
+  products: {
+    monthly: {
+      starter: Product;
+      pro: Product;
+    };
+    yearly: {
+      starter: Product;
+      pro: Product;
     };
   };
   social: {
@@ -79,6 +96,36 @@ export const CONFIG: {
         ? '679503925703-p3nkj2igonpcehv5mr92auhsli4lvumb.apps.googleusercontent.com'
         : '679503925703-rnvgqe7k7hoab630n50ld4i19vvfcr2r.apps.googleusercontent.com',
       callbackUrl: isDevelopment ? 'http://127.0.0.1:54321/auth/v1/callback' : '',
+    },
+  },
+  products: {
+    monthly: {
+      starter: {
+        id: isDevelopment ? 'prod_RjXlVxtaGZjLAZ' : '',
+        name: 'Starter',
+        price: 5,
+        description: 'Starter plan',
+      },
+      pro: {
+        id: isDevelopment ? '' : '',
+        name: 'Pro',
+        price: 10,
+        description: 'Pro plan',
+      },
+    },
+    yearly: {
+      starter: {
+        id: isDevelopment ? '' : '',
+        name: 'Starter',
+        price: 5,
+        description: 'Starter plan',
+      },
+      pro: {
+        id: isDevelopment ? '' : '',
+        name: 'Pro',
+        price: 10,
+        description: 'Pro plan',
+      },
     },
   },
   social: {

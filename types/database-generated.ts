@@ -46,6 +46,7 @@ export interface Database {
           ip_address: string | null;
           ocr_error: Json | null;
           ocr_response: Json | null;
+          user_id: string | null;
         };
         Insert: {
           ai_completion_tokens?: number | null;
@@ -64,6 +65,7 @@ export interface Database {
           ip_address?: string | null;
           ocr_error?: Json | null;
           ocr_response?: Json | null;
+          user_id?: string | null;
         };
         Update: {
           ai_completion_tokens?: number | null;
@@ -82,8 +84,16 @@ export interface Database {
           ip_address?: string | null;
           ocr_error?: Json | null;
           ocr_response?: Json | null;
+          user_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'documents_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       profiles: {
         Row: {
@@ -93,8 +103,8 @@ export interface Database {
           id: string;
           name: string;
           provider: string | null;
-          user_id: string;
           stripe_customer_id: string | null;
+          user_id: string;
         };
         Insert: {
           avatar_url?: string | null;
@@ -103,8 +113,8 @@ export interface Database {
           id?: string;
           name: string;
           provider?: string | null;
-          user_id: string;
           stripe_customer_id?: string | null;
+          user_id: string;
         };
         Update: {
           avatar_url?: string | null;
@@ -113,14 +123,75 @@ export interface Database {
           id?: string;
           name?: string;
           provider?: string | null;
-          user_id?: string;
           stripe_customer_id?: string | null;
+          user_id?: string;
         };
         Relationships: [
           {
             foreignKeyName: 'profiles_user_id_fkey';
             columns: ['user_id'];
             referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      subscriptions: {
+        Row: {
+          cancel_at: string | null;
+          cancel_at_period_end: boolean | null;
+          canceled_at: string | null;
+          created: string;
+          current_period_end: string;
+          current_period_start: string;
+          ended_at: string | null;
+          id: string;
+          metadata: Json | null;
+          price_id: string | null;
+          quantity: number | null;
+          subscription_status: string | null;
+          trial_end: string | null;
+          trial_start: string | null;
+          user_id: string;
+        };
+        Insert: {
+          cancel_at?: string | null;
+          cancel_at_period_end?: boolean | null;
+          canceled_at?: string | null;
+          created?: string;
+          current_period_end?: string;
+          current_period_start?: string;
+          ended_at?: string | null;
+          id: string;
+          metadata?: Json | null;
+          price_id?: string | null;
+          quantity?: number | null;
+          subscription_status?: string | null;
+          trial_end?: string | null;
+          trial_start?: string | null;
+          user_id: string;
+        };
+        Update: {
+          cancel_at?: string | null;
+          cancel_at_period_end?: boolean | null;
+          canceled_at?: string | null;
+          created?: string;
+          current_period_end?: string;
+          current_period_start?: string;
+          ended_at?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          price_id?: string | null;
+          quantity?: number | null;
+          subscription_status?: string | null;
+          trial_end?: string | null;
+          trial_start?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_user_id_fkey';
+            columns: ['user_id'];
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
         ];

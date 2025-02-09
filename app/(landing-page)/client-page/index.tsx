@@ -9,20 +9,32 @@ import { CONFIG } from '@/config';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';
 import { usePdfExport } from '@/hooks/use-pdf-export';
-import { useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
 import { Desktop } from './components/desktop';
 import { Mobile } from './components/mobile';
+import { PricingModal, PricingModalProps } from './components/pricing-modal';
 import { DesktopMobileProps } from './types';
 
-// type ClientPageProps = {
-//   isDebug: boolean;
-// };
+type ClientPageProps = {
+  // isDebug: boolean;
+  showPricing: boolean;
+};
 
-export const ClientPage = () => {
-  // export const ClientPage = ({ isDebug }: ClientPageProps) => {
+export const ClientPage = ({ showPricing }: ClientPageProps) => {
+  const [opened, { open, close }] = useDisclosure(showPricing);
+
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
+
+  useEffect(() => {
+    if (showPricing) {
+      setTimeout(() => {
+        open();
+      }, 3000);
+    }
+  }, [open, showPricing]);
 
   const {
     addManualBox,
@@ -183,10 +195,19 @@ export const ClientPage = () => {
     await loadFile(file);
   };
 
-  if (!pdfUrl || !pdfFile) {
-    return <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
-  }
+  const pricingModalProps: PricingModalProps = {
+    opened,
+    onClose: close,
+  };
 
+  if (!pdfUrl || !pdfFile) {
+    return (
+      <>
+        <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />
+        <PricingModal {...pricingModalProps} />
+      </>
+    );
+  }
   const sharedProps: Omit<DesktopMobileProps, 'imageRef'> = {
     handleMouseDown,
     handleMouseMove,
@@ -220,6 +241,7 @@ export const ClientPage = () => {
         {...sharedProps}
       />
       <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...sharedProps} />
+      <PricingModal {...pricingModalProps} />
     </>
   );
 };

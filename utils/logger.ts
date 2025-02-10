@@ -5,7 +5,11 @@ import { isDevelopment } from './is-development';
 
 type LogLevel = 'info' | 'error' | 'warn';
 
-export type LogDomain = 'stripe-webhook' | 'create-checkout-session' | 'sign-up';
+export type LogDomain =
+  | 'stripe-webhook'
+  | 'create-checkout-session'
+  | 'sign-up'
+  | 'api-analyze-image';
 
 export const logApiError = ({
   message,

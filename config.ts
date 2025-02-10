@@ -28,6 +28,9 @@ export const CONFIG: {
   stripe: {
     apiVersion: '2025-01-27.acacia';
   };
+  google: {
+    storageBucketName: string;
+  };
   auth: {
     google: {
       clientId: string;
@@ -67,6 +70,9 @@ export const CONFIG: {
   },
   stripe: {
     apiVersion: '2025-01-27.acacia',
+  },
+  google: {
+    storageBucketName: 'magic-redact',
   },
   layout: {
     headerHeight: 60,

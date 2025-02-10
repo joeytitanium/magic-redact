@@ -1,4 +1,5 @@
 {
+  "license": "AGPL-3.0-or-later",
   "name": "magic-redact",
   "version": "0.1.0",
   "private": true,

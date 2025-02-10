@@ -1,31 +1,20 @@
 import { generateFilepath } from '@/utils/generate-filepath';
-import { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
-
-const storage = new Storage({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-  credentials: {
-    type: 'service_account',
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    universe_domain: 'googleapis.com',
-  },
-});
+import { googleStorageClient } from './google-storage-client';
 
 type UploadToGCSResponse =
   | {
       gsUrl: string;
       publicUrl: string;
       fileUuid: string;
+      outputFolderPath: string;
       error?: never;
     }
   | {
       gsUrl?: never;
       publicUrl?: never;
       fileUuid?: never;
+      outputFolderPath?: never;
       error: Error;
     };
 
@@ -38,7 +27,7 @@ export const uploadToGoogleCloudStorage = async ({
 }): Promise<UploadToGCSResponse> => {
   try {
     const bucketName = 'magic-redact';
-    const bucket = storage.bucket(bucketName);
+    const bucket = googleStorageClient.bucket(bucketName);
 
     // Validate and process the base64 data
     let base64Data = encodedFile;
@@ -70,13 +59,12 @@ export const uploadToGoogleCloudStorage = async ({
     }
 
     const fileUuid = uuidv4();
-    const filePath = generateFilepath({
+    const { inputPath, outputFolderPath } = generateFilepath({
       uuid: fileUuid,
       fileType,
       date: new Date(),
-      type: 'input',
     });
-    const file = bucket.file(filePath);
+    const file = bucket.file(inputPath);
 
     await file.save(buffer, {
       contentType,
@@ -89,14 +77,14 @@ export const uploadToGoogleCloudStorage = async ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [metadata] = await file.getMetadata();
 
-    const gcsUri = `gs://${bucketName}/${filePath}`;
-    const publicUrl = `https://storage.cloud.google.com/${bucketName}/${filePath}`;
+    const gcsUri = `gs://${bucketName}/${inputPath}`;
+    const publicUrl = `https://storage.cloud.google.com/${bucketName}/${inputPath}`;
 
     // TODO: Cleanup. (Verify file exists and is accessible)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [exists] = await file.exists();
 
-    return { gsUrl: gcsUri, publicUrl, fileUuid };
+    return { gsUrl: gcsUri, publicUrl, fileUuid, outputFolderPath };
   } catch (error) {
     if (error instanceof Error) {
       return { error };

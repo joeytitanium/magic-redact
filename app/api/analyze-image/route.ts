@@ -1,12 +1,13 @@
 import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
+import { deleteGoogleCloudStoragePath } from '@/lib/google/delete-google-cloud-storage-file';
 import { ocrDetectText } from '@/lib/google/ocr-detect-text';
 import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
-import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
+import { supabaseServerClient } from '@/lib/supabase/server';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
-import { logApiError, logDebugMessage } from '@/utils/logger';
+import { logApiError, logDebugMessage, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
 import { isNil } from 'lodash';
@@ -17,6 +18,7 @@ import { UAParser } from 'ua-parser-js';
 import { z } from 'zod';
 
 const AI_MODEL: AiModel = 'gpt-4o';
+const DOMAIN: LogDomain = 'api-analyze-image';
 
 const INPUT_SCHEMA = z.object({
   imageUrl: z.string().url(),
@@ -118,7 +120,12 @@ const insertDbRecord = async ({
       deviceInfo,
       variant: 'error',
     });
-    logApiError({ message: 'Error inserting record into db', error: insertError, request });
+    logApiError({
+      domain: DOMAIN,
+      message: 'Error inserting record into db',
+      error: insertError,
+      request,
+    });
   }
 };
 
@@ -127,7 +134,11 @@ export async function POST(request: Request) {
   // - Block requests from IP addresses that have been flagged as suspicious
   // - Limit requests by IP
 
-  const supabase = supabaseServiceRoleClient();
+  const supabase = await supabaseServerClient();
+  // const { data: userData } = await supabase.auth.getUser();
+  // if (isNil(userData.user)) {
+  //   // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // }
 
   const userAgent = request.headers.get('user-agent') || '';
   const ua = new UAParser(userAgent);
@@ -152,7 +163,11 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError({ message: 'Invalid image URL', request });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Invalid image URL',
+        request,
+      });
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
@@ -160,6 +175,7 @@ export async function POST(request: Request) {
       gsUrl: gsImageUrl,
       publicUrl: publicImageUrl,
       fileUuid,
+      outputFolderPath,
       error: gcsError,
     } = await uploadToGoogleCloudStorage({
       encodedFile: base64Image,
@@ -173,7 +189,12 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError({ message: 'Google Cloud Storage upload error', error: gcsError, request });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Google Cloud Storage upload error',
+        error: gcsError,
+        request,
+      });
       return NextResponse.json({ error: gcsError.message }, { status: 400 });
     }
 
@@ -202,6 +223,7 @@ export async function POST(request: Request) {
         ],
       });
       logApiError({
+        domain: DOMAIN,
         message: 'Error detecting text with Google Vision',
         error: ocrError ?? new Error('Unknown error'),
         request,
@@ -220,6 +242,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: ocrError?.message ?? 'Unknown error' }, { status: 400 });
     }
 
+    const { error: deleteError } = await deleteGoogleCloudStoragePath({
+      folderPath: outputFolderPath,
+    });
+    if (deleteError) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Error deleting Google Cloud Storage file',
+        deviceInfo,
+        variant: 'error',
+      });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Error deleting Google Cloud Storage file',
+        error: deleteError,
+        request,
+      });
+    }
+    logDebugMessage({
+      domain: DOMAIN,
+      message: `🔫 deleteError: ${JSON.stringify(deleteError, null, '\t')}`,
+      context: { deleteError },
+    });
+
     // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
     //   request,
     //   context: { ocrResults },
@@ -232,7 +277,11 @@ export async function POST(request: Request) {
         deviceInfo,
         variant: 'error',
       });
-      logApiError({ message: 'No text detected', request });
+      logApiError({
+        domain: DOMAIN,
+        message: 'No text detected',
+        request,
+      });
       await insertDbRecord({
         supabase,
         request,
@@ -251,10 +300,11 @@ export async function POST(request: Request) {
       .flat()
       .map((x) => x.text)
       .filter((x) => x && x.length > 1);
-    logDebugMessage({
-      message: `Input: ${JSON.stringify(input, null, '\t')}`,
-      context: { input },
-    });
+    // logDebugMessage({
+    //   domain: DOMAIN,
+    //   message: `Input: ${JSON.stringify(input, null, '\t')}`,
+    //   context: { input },
+    // });
 
     // OPEN AI
     const openaiPrompt = `You are a world class data protection expert. Analyze the following strings and determine which ones contain sensitive information. 
@@ -291,10 +341,11 @@ ${input.join(',')}`;
       max_tokens: 500, // TODO: verify
     });
 
-    logDebugMessage({
-      message: 'OpenAI response',
-      context: { response },
-    });
+    // logDebugMessage({
+    //   domain: DOMAIN,
+    //   message: 'OpenAI response',
+    //   context: { response },
+    // });
     const outputResult = OPEN_AI_RESPONSE_SCHEMA.safeParse(response);
     if (!outputResult.success) {
       await sendDiscordAlert({
@@ -316,7 +367,12 @@ ${input.join(',')}`;
           },
         ],
       });
-      logApiError({ message: 'Error parsing OpenAI response', error: outputResult.error, request });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Error parsing OpenAI response',
+        error: outputResult.error,
+        request,
+      });
       await insertDbRecord({
         supabase,
         request,
@@ -397,9 +453,19 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalCost}**`;
     return NextResponse.json({ rectangles });
   } catch (error) {
     if (error instanceof Error) {
-      logApiError({ message: 'Error analyzing image', error, request });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Error analyzing image',
+        error,
+        request,
+      });
     } else {
-      logApiError({ message: 'Unknown error analyzing image', request, context: { error } });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Unknown error analyzing image',
+        request,
+        context: { error },
+      });
     }
     return NextResponse.json({ error: 'Failed to analyze image' }, { status: 500 });
   }

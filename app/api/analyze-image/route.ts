@@ -2,7 +2,6 @@ import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
 import { deleteGoogleCloudStoragePath } from '@/lib/google/delete-google-cloud-storage-file';
 import { ocrDetectText } from '@/lib/google/ocr-detect-text';
 import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
-import { supabaseServerClient } from '@/lib/supabase/server';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
@@ -144,7 +143,7 @@ export async function POST(request: Request) {
   // - Block requests from IP addresses that have been flagged as suspicious
   // - Limit requests by IP
 
-  const supabaseServer = await supabaseServerClient();
+  // const supabaseServer = await supabaseServerClient();
   const supabaseServiceRole = supabaseServiceRoleClient();
   // const { data: userData } = await supabase.auth.getUser();
   // if (isNil(userData.user)) {

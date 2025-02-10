@@ -1,3 +1,12 @@
+# Getting started
+
+You will need to set up environment variables from various providers such as OpenAI, Google, Supabase, etc.
+Copy over the variables from `.env.example`.
+
+# Stripe
+
+In order to test subscriptions locally you'll need to set up ngrok and provide the url to stripe so you can receive webhooks.
+
 # TODO
 
 - Posthog
@@ -8,7 +17,6 @@
 
 - Paste keyboard shortcut
 - Save as (png/jpg/etc)
-- Size 1x/2x
 - Pixelated, Blur, Black bar
 -
 

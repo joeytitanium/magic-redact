@@ -5,13 +5,13 @@ export type Route =
       params?: { pricing?: boolean };
       fragment?: never;
     }
+  | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }
   | { to: '/privacy'; params?: never; fragment?: never }
   | { to: '/terms'; params?: never; fragment?: never }
   | {
       to: '/sign-up';
       params?: {
         redirect?: 'checkout';
-        variantId?: string;
         priceId?: string;
       };
       fragment?: never;
@@ -19,7 +19,7 @@ export type Route =
   | {
       to: '/sign-in';
       params?: {
-        variantId?: string;
+        priceId?: string;
       };
       fragment?: never;
     }

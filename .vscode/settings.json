@@ -1,5 +1,4 @@
 {
-  "css.customData": [".vscode/tailwind.json"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
@@ -14,11 +13,6 @@
     "**/*.less",
     "node_modules/@mantine/core/styles.css"
   ],
-  "cSpell.words": ["mantine", "posthog"],
-  "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
-  "tailwindCSS.experimental.configFile": "./tailwind.config.ts",
+  "cSpell.words": ["mantine", "posthog", "supabase"],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -220,7 +220,10 @@ export default function TermsAndConditions() {
           {/* Contact Us */}
           <Title order={2}>Contact Us</Title>
           <Text>
-            If you have any questions about these Terms, please contact us at joeytitanium@gmail.com
+            If you have any questions about these Terms, please contact us at{' '}
+            <Anchor component={NextLink} href={`mailto:${CONFIG.support.email}`}>
+              {CONFIG.support.email}
+            </Anchor>
           </Text>
         </Stack>
       </Container>

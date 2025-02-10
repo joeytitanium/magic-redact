@@ -1,4 +1,5 @@
 import type { MantineSize } from '@mantine/core';
+import { Product } from './types/product';
 import { isDevelopment } from './utils/is-development';
 
 type Social = {
@@ -6,18 +7,15 @@ type Social = {
   handle: string;
 };
 
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-};
-
 export const CONFIG: {
   site: {
     url: string;
     name: string;
     description: string;
+    version: string;
+  };
+  support: {
+    email: string;
   };
   layout: {
     headerHeight: number;
@@ -26,22 +24,17 @@ export const CONFIG: {
     containerSize: MantineSize;
     zIndex: {};
   };
+  products: Product[];
+  stripe: {
+    apiVersion: '2025-01-27.acacia';
+  };
   auth: {
     google: {
       clientId: string;
       callbackUrl: string;
     };
   };
-  products: {
-    monthly: {
-      starter: Product;
-      pro: Product;
-    };
-    yearly: {
-      starter: Product;
-      pro: Product;
-    };
-  };
+
   social: {
     x: Social;
     // bluesky: Social;
@@ -64,9 +57,16 @@ export const CONFIG: {
   };
 } = {
   site: {
+    version: '0.0.1',
     url: isDevelopment ? 'http://localhost:3000' : 'https://www.magicredact.com',
     name: 'MagicRedact',
     description: 'Automatically redact sensitive information from images',
+  },
+  support: {
+    email: 'joeytitanium@gmail.com',
+  },
+  stripe: {
+    apiVersion: '2025-01-27.acacia',
   },
   layout: {
     headerHeight: 60,
@@ -75,6 +75,28 @@ export const CONFIG: {
     containerSize: 'xl',
     zIndex: {},
   },
+  products: [
+    {
+      stripePriceId: isDevelopment
+        ? 'price_1Qq4g7Am5zvWraF48ljnp1BH'
+        : 'price_1Qq4g7Am5zvWraF48ljnp1BH',
+      name: 'Starter',
+      price: 5,
+      description: 'Starter plan',
+      mode: 'subscription',
+      trialPeriodDays: undefined,
+    },
+    {
+      stripePriceId: isDevelopment
+        ? 'price_1Qq4g7Am5zvWraF48ljnp1BH'
+        : 'price_1Qq4g7Am5zvWraF48ljnp1BH',
+      name: 'Pro',
+      price: 10,
+      description: 'Pro plan',
+      mode: 'subscription',
+      trialPeriodDays: undefined,
+    },
+  ],
   icon: {
     size: {
       xs: 16,
@@ -96,36 +118,6 @@ export const CONFIG: {
         ? '679503925703-p3nkj2igonpcehv5mr92auhsli4lvumb.apps.googleusercontent.com'
         : '679503925703-rnvgqe7k7hoab630n50ld4i19vvfcr2r.apps.googleusercontent.com',
       callbackUrl: isDevelopment ? 'http://127.0.0.1:54321/auth/v1/callback' : '',
-    },
-  },
-  products: {
-    monthly: {
-      starter: {
-        id: isDevelopment ? 'prod_RjXlVxtaGZjLAZ' : '',
-        name: 'Starter',
-        price: 5,
-        description: 'Starter plan',
-      },
-      pro: {
-        id: isDevelopment ? '' : '',
-        name: 'Pro',
-        price: 10,
-        description: 'Pro plan',
-      },
-    },
-    yearly: {
-      starter: {
-        id: isDevelopment ? '' : '',
-        name: 'Starter',
-        price: 5,
-        description: 'Starter plan',
-      },
-      pro: {
-        id: isDevelopment ? '' : '',
-        name: 'Pro',
-        price: 10,
-        description: 'Pro plan',
-      },
     },
   },
   social: {

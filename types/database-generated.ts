@@ -152,6 +152,8 @@ export interface Database {
           trial_end: string | null;
           trial_start: string | null;
           user_id: string;
+          brand: string | null;
+          last4: string | null;
         };
         Insert: {
           cancel_at?: string | null;
@@ -169,6 +171,8 @@ export interface Database {
           trial_end?: string | null;
           trial_start?: string | null;
           user_id: string;
+          brand?: string | null;
+          last4?: string | null;
         };
         Update: {
           cancel_at?: string | null;
@@ -186,6 +190,8 @@ export interface Database {
           trial_end?: string | null;
           trial_start?: string | null;
           user_id?: string;
+          brand?: string | null;
+          last4?: string | null;
         };
         Relationships: [
           {

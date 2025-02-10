@@ -1,8 +1,10 @@
 'use server';
 
 import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
-import { logError } from '@/utils/logger';
+import { LogDomain, logError } from '@/utils/logger';
 import posthog from 'posthog-js';
+
+const DOMAIN: LogDomain = 'sign-up';
 
 export const handleSignUp = async ({
   name,
@@ -49,6 +51,7 @@ export const handleSignUp = async ({
     });
   } catch (error) {
     logError({
+      domain: DOMAIN,
       message: 'Error capturing user-created event',
       error,
     });

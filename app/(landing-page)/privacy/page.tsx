@@ -1,7 +1,9 @@
 'use client';
 
 import { LinksFooter } from '@/app/(landing-page)/client-page/components/links-footer';
-import { Container, List, Paper, Stack, Text, Title } from '@mantine/core';
+import { CONFIG } from '@/config';
+import { Anchor, Container, List, Paper, Stack, Text, Title } from '@mantine/core';
+import NextLink from 'next/link';
 
 export default function PrivacyPolicy() {
   return (
@@ -226,7 +228,9 @@ export default function PrivacyPolicy() {
           <Title order={2}>Contact Us</Title>
           <Text>
             If you have any questions or concerns about this Privacy Policy, please contact me at
-            joeytitanium@gmail.com
+            <Anchor component={NextLink} href={`mailto:${CONFIG.support.email}`}>
+              {CONFIG.support.email}
+            </Anchor>
           </Text>
 
           <Title order={2}>State Specific Addendums</Title>

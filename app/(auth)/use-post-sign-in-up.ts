@@ -1,19 +1,21 @@
 import { stripeClient } from '@/lib/stripe/client';
-import { supabaseClient } from '@/lib/supabase/client';
-import { getUser } from '@/lib/supabase/queries/get-user';
-import { User } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
+import { createCheckoutSession } from '@/lib/stripe/create-checkout-session';
+import { getRouteUrl } from '@/routing/get-route-url';
+import { PriceId } from '@/types/product';
+import { isNil } from 'lodash';
+import { redirect } from 'next/navigation';
 
-export const usePostSignInUp = ({
-  // variantId,
-  routeTo,
-}: {
-  // variantId: number | undefined;
-  routeTo: string;
-}) => {
-  const router = useRouter();
+export const usePostSignInUp = ({ priceId }: { priceId: PriceId | undefined }) => {
+  const handleSignInUp = async () => {
+    if (!isNil(priceId)) {
+      const stripe = await stripeClient();
+      const { sessionId } = await createCheckoutSession({ priceId });
+      void stripe?.redirectToCheckout({ sessionId });
+      return;
+    }
 
-  const handleSignInUp = async ({ user: authUser }: { user: User }) => {
+    redirect(getRouteUrl({ to: '/', params: { pricing: true } }));
+
     // const user = await getUser(supabaseClient());
     // if (!user?.stripe_customer_id) {
     //   const stripe = await stripeClient();

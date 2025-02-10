@@ -5,12 +5,14 @@ import {
   AUTH_PASSWORD_LENGTH_RANGE,
 } from '@/app/(auth)/constants';
 import { supabaseClient } from '@/lib/supabase/client';
-import { logDebugMessage } from '@/utils/logger';
+import { logDebugMessage, LogDomain } from '@/utils/logger';
 import { Button, Flex, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { Session, User } from '@supabase/supabase-js';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
+
+const DOMAIN: LogDomain = 'sign-up';
 
 const SCHEMA = z
   .object({
@@ -94,7 +96,7 @@ export const SignupForm = ({
       onSuccess(data);
     },
     onError: (error) => {
-      logDebugMessage({ message: 'error', context: { error } });
+      logDebugMessage({ message: 'error', context: { error }, domain: DOMAIN });
       onError(error);
     },
   });

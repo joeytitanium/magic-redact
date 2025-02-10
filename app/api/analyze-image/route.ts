@@ -3,11 +3,12 @@ import { deleteGoogleCloudStoragePath } from '@/lib/google/delete-google-cloud-s
 import { ocrDetectText } from '@/lib/google/ocr-detect-text';
 import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
 import { supabaseServerClient } from '@/lib/supabase/server';
+import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
-import { logApiError, logDebugMessage, LogDomain } from '@/utils/logger';
+import { logApiError, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
 import { isNil } from 'lodash';
@@ -29,9 +30,12 @@ const openai = new OpenAI({
 });
 
 type TokenCostResponse = {
-  inputTokenCost: string;
-  outputTokenCost: string;
-  totalCost: string;
+  inputTokenCost: number;
+  outputTokenCost: number;
+  totalTokenCost: number;
+  inputTokenCostDisplay: string;
+  outputTokenCostDisplay: string;
+  totalTokenCostDisplay: string;
 };
 
 export const estimatedTokenCost = ({
@@ -53,11 +57,14 @@ export const estimatedTokenCost = ({
     const totalTokenCost = inputTokenCost + outputTokenCost;
     const inputTokenCostDisplay = `$${Number(inputTokenCost).toFixed(fixedDecimal)}`;
     const outputTokenCostDisplay = `$${Number(outputTokenCost).toFixed(fixedDecimal)}`;
-    const totalCostDisplay = `$${Number(totalTokenCost).toFixed(fixedDecimal)}`;
+    const totalTokenCostDisplay = `$${Number(totalTokenCost).toFixed(fixedDecimal)}`;
     return {
-      inputTokenCost: inputTokenCostDisplay,
-      outputTokenCost: outputTokenCostDisplay,
-      totalCost: totalCostDisplay,
+      inputTokenCost,
+      outputTokenCost,
+      totalTokenCost,
+      inputTokenCostDisplay,
+      outputTokenCostDisplay,
+      totalTokenCostDisplay,
     };
   }
 
@@ -66,14 +73,17 @@ export const estimatedTokenCost = ({
   // $0.600 / 1M output tokens
   const inputTokenCost = (inputTokens / 1_000_000) * 0.15;
   const outputTokenCost = (outputTokens / 1_000_000) * 0.6;
-  const totalCost = inputTokenCost + outputTokenCost;
+  const totalTokenCost = inputTokenCost + outputTokenCost;
   const inputTokenCostDisplay = `$${Number(inputTokenCost).toFixed(fixedDecimal)}`;
   const outputTokenCostDisplay = `$${Number(outputTokenCost).toFixed(fixedDecimal)}`;
-  const totalCostDisplay = `$${Number(totalCost).toFixed(fixedDecimal)}`;
+  const totalTokenCostDisplay = `$${Number(totalTokenCost).toFixed(fixedDecimal)}`;
   return {
-    inputTokenCost: inputTokenCostDisplay,
-    outputTokenCost: outputTokenCostDisplay,
-    totalCost: totalCostDisplay,
+    inputTokenCost,
+    outputTokenCost,
+    totalTokenCost,
+    inputTokenCostDisplay,
+    outputTokenCostDisplay,
+    totalTokenCostDisplay,
   };
   // }
 };
@@ -134,7 +144,8 @@ export async function POST(request: Request) {
   // - Block requests from IP addresses that have been flagged as suspicious
   // - Limit requests by IP
 
-  const supabase = await supabaseServerClient();
+  const supabaseServer = await supabaseServerClient();
+  const supabaseServiceRole = supabaseServiceRoleClient();
   // const { data: userData } = await supabase.auth.getUser();
   // if (isNil(userData.user)) {
   //   // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -199,11 +210,7 @@ export async function POST(request: Request) {
     }
 
     // OCR
-    const {
-      data: ocrResults,
-      originalResponse,
-      error: ocrError,
-    } = await ocrDetectText({
+    const { data: ocrResults, error: ocrError } = await ocrDetectText({
       gsImageUrl,
       fileUuid,
     });
@@ -229,12 +236,11 @@ export async function POST(request: Request) {
         request,
       });
       await insertDbRecord({
-        supabase,
+        supabase: supabaseServiceRole,
         request,
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: publicImageUrl,
           document_type: documentType,
           ocr_error: ocrError?.message ?? 'Unknown error',
         },
@@ -259,11 +265,6 @@ export async function POST(request: Request) {
         request,
       });
     }
-    logDebugMessage({
-      domain: DOMAIN,
-      message: `🔫 deleteError: ${JSON.stringify(deleteError, null, '\t')}`,
-      context: { deleteError },
-    });
 
     // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
     //   request,
@@ -283,14 +284,12 @@ export async function POST(request: Request) {
         request,
       });
       await insertDbRecord({
-        supabase,
+        supabase: supabaseServiceRole,
         request,
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: publicImageUrl,
           document_type: documentType,
-          ocr_response: originalResponse,
         },
       });
       return NextResponse.json({ error: 'No text detected' }, { status: 400 });
@@ -374,14 +373,12 @@ ${input.join(',')}`;
         request,
       });
       await insertDbRecord({
-        supabase,
+        supabase: supabaseServiceRole,
         request,
         deviceInfo,
         document: {
           ip_address: deviceInfo.ipAddress,
-          document_url: publicImageUrl,
           document_type: documentType,
-          ocr_response: originalResponse,
           ai_error: response as any,
         },
       });
@@ -411,23 +408,8 @@ ${input.join(',')}`;
         sensitive: sensitiveStringSet.has(y.text ?? ''),
       }))
     );
+    const numPages = ocrResults.length;
 
-    await insertDbRecord({
-      supabase,
-      request,
-      deviceInfo,
-      document: {
-        ip_address: deviceInfo.ipAddress,
-        document_url: publicImageUrl,
-        document_type: documentType,
-        ocr_response: originalResponse,
-        ai_completion_tokens: outputResult.data.usage.completion_tokens,
-        ai_prompt_tokens: outputResult.data.usage.prompt_tokens,
-        ai_total_tokens: outputResult.data.usage.total_tokens,
-        ai_prompt: openaiPrompt,
-        ai_response: response as any,
-      },
-    });
     const tokenCost = estimatedTokenCost({
       inputTokens: outputResult.data.usage.prompt_tokens,
       outputTokens: outputResult.data.usage.completion_tokens,
@@ -435,7 +417,25 @@ ${input.join(',')}`;
     });
     const tokenSummary = `Prompt: ${outputResult.data.usage.prompt_tokens} = **${tokenCost.inputTokenCost}**,
 Completion: ${outputResult.data.usage.completion_tokens} = **${tokenCost.outputTokenCost}**,
-Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalCost}**`;
+Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**`;
+
+    await insertDbRecord({
+      supabase: supabaseServiceRole,
+      request,
+      deviceInfo,
+      document: {
+        ip_address: deviceInfo.ipAddress,
+        document_type: documentType,
+        num_pages: numPages,
+        ai_input_tokens: outputResult.data.usage.prompt_tokens,
+        ai_output_tokens: outputResult.data.usage.completion_tokens,
+        ai_total_tokens: outputResult.data.usage.total_tokens,
+        ai_input_cost: tokenCost.inputTokenCost,
+        ai_output_cost: tokenCost.outputTokenCost,
+        ai_total_cost: tokenCost.totalTokenCost,
+      },
+    });
+
     await sendDiscordAlert({
       username: '/analyze-image',
       title: 'Image successfully analyzed',

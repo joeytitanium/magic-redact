@@ -9,7 +9,8 @@ export type LogDomain =
   | 'stripe-webhook'
   | 'create-checkout-session'
   | 'sign-up'
-  | 'api-analyze-image';
+  | 'api-analyze-image'
+  | 'social-login';
 
 export const logApiError = ({
   message,

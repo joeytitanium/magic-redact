@@ -1,12 +1,14 @@
 import { handleSignUp } from '@/app/(auth)/_utils/handle-sign-up';
 import { CONFIG } from '@/config';
 import { supabaseClient } from '@/lib/supabase/client';
-import { logError } from '@/utils/logger';
+import { LogDomain, logError } from '@/utils/logger';
 import { Group } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { GoogleLogin } from '@react-oauth/google';
 import { Session, User } from '@supabase/supabase-js';
+
+const DOMAIN: LogDomain = 'social-login';
 
 type Props = {
   type: 'signup' | 'signin';
@@ -29,6 +31,7 @@ export const SocialLogin = ({ type, onSuccess }: Props) => {
             logError({
               message: 'Missing Google credential',
               context: { response },
+              domain: DOMAIN,
             });
             notifications.show({
               message: 'Error signing in with Google',
@@ -43,7 +46,11 @@ export const SocialLogin = ({ type, onSuccess }: Props) => {
           });
 
           if (signInError) {
-            logError({ message: 'Error signing in with Google', error: signInError });
+            logError({
+              message: 'Error signing in with Google',
+              error: signInError,
+              domain: DOMAIN,
+            });
             notifications.show({
               message: 'Error signing in with Google',
               color: 'red',
@@ -65,6 +72,7 @@ export const SocialLogin = ({ type, onSuccess }: Props) => {
         onError={() => {
           logError({
             message: 'Error signing in with Google',
+            domain: DOMAIN,
           });
           notifications.show({
             message: 'Error signing in with Google',

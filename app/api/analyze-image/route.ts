@@ -139,7 +139,7 @@ const insertDbRecord = async ({
 };
 
 export async function POST(request: Request) {
-  // TODO:
+  // TODO: 1
   // - Block requests from IP addresses that have been flagged as suspicious
   // - Limit requests by IP
 

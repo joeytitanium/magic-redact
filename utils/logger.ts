@@ -6,11 +6,16 @@ import { isDevelopment } from './is-development';
 type LogLevel = 'info' | 'error' | 'warn';
 
 export type LogDomain =
-  | 'stripe-webhook'
-  | 'create-checkout-session'
-  | 'sign-up'
   | 'api-analyze-image'
-  | 'social-login';
+  | 'create-checkout-session'
+  | 'discord-send-notification'
+  | 'google-fetch-ocr-results'
+  | 'sign-up'
+  | 'social-login'
+  | 'stripe-webhook'
+  | 'use-analyze-image'
+  | 'use-pdf'
+  | 'use-pdf-export';
 
 export const logApiError = ({
   message,

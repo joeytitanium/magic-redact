@@ -1,8 +1,10 @@
 'use client';
 
-import { logError } from '@/utils/logger';
+import { LogDomain, logError } from '@/utils/logger';
 import { PDFDocument } from 'pdf-lib';
 import { getDocument, GlobalWorkerOptions, PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
+
+const DOMAIN: LogDomain = 'use-pdf-export';
 
 if (typeof window !== 'undefined') {
   GlobalWorkerOptions.workerSrc = new URL(
@@ -143,6 +145,7 @@ export const usePdfExport = () => {
       downloadBlob(blob, options.fileName);
     } catch (error) {
       logError({
+        domain: DOMAIN,
         message: 'Error during PDF flattening',
         error,
       });

@@ -1,18 +1,21 @@
 import { DeviceInfo } from '@/types/device-info';
-import { logDebugMessage, logError } from '@/utils/logger';
+import { LogDomain, logDebugMessage, logError } from '@/utils/logger';
 import { DiscordMessage, DiscordMessageEmbedField } from './types';
+
+const DOMAIN: LogDomain = 'discord-send-notification';
 
 const sendDiscordNotification = async (message: DiscordMessage) => {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) {
     logError({
+      domain: DOMAIN,
       message: 'Discord webhook URL not configured',
       context: { message },
     });
     return;
   }
 
-  logDebugMessage({ message: 'Sending Discord notification' });
+  logDebugMessage({ domain: DOMAIN, message: 'Sending Discord notification' });
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
@@ -27,6 +30,7 @@ const sendDiscordNotification = async (message: DiscordMessage) => {
     }
   } catch (error) {
     logError({
+      domain: DOMAIN,
       message: 'Failed to send Discord notification',
       error,
       context: { message },

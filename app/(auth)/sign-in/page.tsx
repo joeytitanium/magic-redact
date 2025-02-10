@@ -1,134 +1,21 @@
-'use client';
-
-import { AuthContainer } from '@/app/(auth)/_components/auth-container';
-import { SocialLogin } from '@/app/(auth)/_components/social-login';
-import { AUTH_EMAIL_LENGTH_RANGE, AUTH_PASSWORD_LENGTH_RANGE } from '@/app/(auth)/constants';
-import { usePostSignInUp } from '@/app/(auth)/use-post-sign-in-up';
-import { supabaseClient } from '@/lib/supabase/client';
-import { getRouteUrl } from '@/routing/get-route-url';
-import { Anchor, Button, Divider, Flex, Text, TextInput, Title } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
-import { useMutation } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import { PRICE_IDS } from '@/types/product';
+import { SearchParams } from '@/types/search-params';
+import { Suspense } from 'react';
 import { z } from 'zod';
+import SignInPage from './client';
 
 const SCHEMA = z.object({
-  email: z.string().email().max(AUTH_EMAIL_LENGTH_RANGE[1]),
-  password: z.string().min(AUTH_PASSWORD_LENGTH_RANGE[0]).max(AUTH_PASSWORD_LENGTH_RANGE[1]),
+  priceId: z.enum(PRICE_IDS).optional(),
 });
-type FormValues = z.infer<typeof SCHEMA>;
 
-const SEARCH_PARAMS_SCHEMA = z
-  .object({
-    variantId: z.string(),
-  })
-  .transform((data) => ({
-    variantId: Number(data.variantId),
-  }));
-
-const SignInPage = ({ searchParams }: { searchParams?: { variantId: string } }) => {
-  const query = SEARCH_PARAMS_SCHEMA.safeParse(searchParams);
-  const supabase = supabaseClient();
-  const form = useForm<FormValues>({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validate: zodResolver(SCHEMA),
-  });
-  const { handleSignInUp } = usePostSignInUp({
-    // variantId: query.data?.variantId,
-    routeTo: getRouteUrl({ to: '/', params: { pricing: true } }),
-  });
-
-  const { mutate: signIn, isPending } = useMutation({
-    mutationFn: async ({ email, password }: FormValues) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      return data;
-    },
-    onSuccess: async ({ user }) => {
-      await handleSignInUp({ user });
-    },
-    onError: () => {
-      showNotification({
-        message: 'Invalid credentials',
-        color: 'red',
-      });
-    },
-  });
-
-  const onSubmit = async (values: FormValues) => {
-    signIn(values);
-  };
+const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
+  const query = SCHEMA.safeParse(await searchParams);
 
   return (
-    <AuthContainer
-      bottomSection={
-        <Text ta="center" mt="xl">
-          Don't have an account?{' '}
-          <Anchor
-            component={NextLink}
-            href={getRouteUrl({
-              to: '/sign-up',
-              params: {
-                variantId: searchParams?.variantId,
-              },
-            })}
-          >
-            Sign up
-          </Anchor>
-        </Text>
-      }
-    >
-      <Title mb="xl">Sign-in</Title>
-      <SocialLogin
-        type="signin"
-        onSuccess={async ({ user }) => {
-          await handleSignInUp({ user });
-        }}
-      />
-      <Divider mt="xl" mb="lg" label="Or" />
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <Flex direction="column" gap="md">
-          <TextInput
-            type="email"
-            label="Email"
-            placeholder="john@gmail.com"
-            {...form.getInputProps('email')}
-            required
-          />
-          <TextInput
-            type="password"
-            label="Password"
-            {...form.getInputProps('password')}
-            required
-          />
-          <Button fullWidth mt="md" type="submit" loading={isPending}>
-            Sign-in
-          </Button>
-          {/* <Button
-            component={NextLink}
-            href={getRouteUrl({
-              to: '/reset-password',
-              params: { email: form.getValues().email },
-            })}
-            variant="white"
-          >
-            Reset password
-          </Button> */}
-        </Flex>
-      </form>
-    </AuthContainer>
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInPage priceId={query.data?.priceId} />
+    </Suspense>
   );
 };
 
-export default SignInPage;
+export default Page;

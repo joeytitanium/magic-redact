@@ -1,6 +1,5 @@
 import { LinksFooter } from '@/app/(landing-page)/client-page/components/links-footer';
 import { CONFIG } from '@/config';
-import { logError } from '@/utils/logger';
 import { SAMPLE_IMAGES, SampleImage, sampleImageThumbnail } from '@/utils/sample-images';
 import { Card, Container, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
@@ -20,7 +19,6 @@ export const ImageDropzone = ({
       <Card p="calc(2 * var(--mantine-spacing-xl))" mx="lg" radius="lg" withBorder>
         <Dropzone
           onDrop={(files) => setFile(files[0])}
-          onReject={() => logError({ message: 'rejected files' })}
           maxSize={20 * 1024 ** 2}
           maw={800}
           accept={[

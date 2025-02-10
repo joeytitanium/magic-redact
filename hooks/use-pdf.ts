@@ -1,13 +1,15 @@
 import { CONFIG } from '@/config';
 import { convertManualBox, convertServerBox } from '@/utils/convert-bounding-box';
 import { canvasCoordinates } from '@/utils/image-coordinates';
-import { logError } from '@/utils/logger';
+import { LogDomain, logError } from '@/utils/logger';
 import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { cloneDeep } from 'lodash';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { GlobalWorkerOptions } from 'pdfjs-dist';
 import { useMemo, useRef, useState } from 'react';
 import { DocumentCallback } from 'react-pdf/dist/cjs/shared/types';
+
+const DOMAIN: LogDomain = 'use-pdf';
 
 if (typeof window !== 'undefined') {
   GlobalWorkerOptions.workerSrc = new URL(
@@ -157,7 +159,7 @@ export const usePdf = () => {
         throw new Error('Unsupported file type. Please upload a PDF or image file.');
       }
     } catch (error) {
-      logError({ message: 'Error loading file', error });
+      logError({ domain: DOMAIN, message: 'Error loading file', error });
       throw error;
     }
   };

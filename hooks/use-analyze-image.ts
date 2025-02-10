@@ -1,8 +1,10 @@
 import { ANALYZE_IMAGE_RESPONSE_SCHEMA } from '@/types/rectangle';
-import { logError } from '@/utils/logger';
+import { LogDomain, logError } from '@/utils/logger';
 import { notifications } from '@mantine/notifications';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { BoundingBoxWithMetadata } from './use-pdf';
+
+const DOMAIN: LogDomain = 'use-analyze-image';
 
 type Variables = {
   imageUrl: string;
@@ -31,7 +33,7 @@ export const useAnalyzeImage = (options: UseMutationOptions<Response, Error, Var
       return rectangles;
     },
     onError: (error) => {
-      logError({ message: 'Error in useAnalyzeImage', error });
+      logError({ domain: DOMAIN, message: 'Error in useAnalyzeImage', error });
       notifications.show({
         title: 'Error',
         message: 'Failed to analyze image. Please try again.',

@@ -2,7 +2,7 @@
 export type Route =
   | {
       to: '/';
-      params?: { pricing?: boolean };
+      params?: { pricing?: string };
       fragment?: never;
     }
   | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }

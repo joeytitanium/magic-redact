@@ -14,7 +14,7 @@ export const usePostSignInUp = ({ priceId }: { priceId: PriceId | undefined }) =
       return;
     }
 
-    redirect(getRouteUrl({ to: '/', params: { pricing: true } }));
+    redirect(getRouteUrl({ to: '/', params: { pricing: 'true' } }));
 
     // const user = await getUser(supabaseClient());
     // if (!user?.stripe_customer_id) {

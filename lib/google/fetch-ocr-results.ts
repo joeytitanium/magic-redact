@@ -1,8 +1,10 @@
 import { Rectangle } from '@/types/rectangle';
-import { logDebugMessage, logError } from '@/utils/logger';
+import { logDebugMessage, LogDomain, logError } from '@/utils/logger';
 import { File, Storage } from '@google-cloud/storage';
 import { protos } from '@google-cloud/vision';
 import { isNil } from 'lodash';
+
+const DOMAIN: LogDomain = 'google-fetch-ocr-results';
 
 type BatchAnnotateFilesResponse = protos.google.cloud.vision.v1.IAnnotateFileResponse;
 
@@ -57,6 +59,7 @@ const waitForJsonFiles = async ({
     await sleep(delayMs);
 
     logDebugMessage({
+      domain: DOMAIN,
       message: `🔍 Checking for JSON files (attempt ${attempt + 1}/${maxAttempts})...`,
       context: { filePath, attempt: attempt + 1, maxAttempts },
     });
@@ -69,6 +72,7 @@ const waitForJsonFiles = async ({
 
     if (jsonFiles.length > 0) {
       logDebugMessage({
+        domain: DOMAIN,
         message: `✅ Found ${jsonFiles.length} JSON files`,
         context: { numFiles: jsonFiles.length, fileNames: jsonFiles.map((f) => f.name) },
       });
@@ -91,6 +95,7 @@ export const fetchOcrResults = async ({
   try {
     const jsonFiles = await waitForJsonFiles({ storage, bucketName, filePath });
     logDebugMessage({
+      domain: DOMAIN,
       message: 'Found JSON files in output directory',
       context: {
         filePath,
@@ -109,6 +114,7 @@ export const fetchOcrResults = async ({
         allResults.push(...pageResults);
       } catch (err) {
         logError({
+          domain: DOMAIN,
           message: 'Error downloading result',
           context: {
             filePath,
@@ -122,6 +128,7 @@ export const fetchOcrResults = async ({
     return allResults;
   } catch (error) {
     logError({
+      domain: DOMAIN,
       message: 'Error fetching OCR results',
       context: {
         filePath,

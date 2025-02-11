@@ -10,6 +10,8 @@ export const RECTANGLE_SCHEMA = z.object({
 });
 export type Rectangle = z.infer<typeof RECTANGLE_SCHEMA>;
 
+// TODO: Organize this better
+
 export const OPEN_AI_REQUESTED_SCHEMA = z.object({
   sensitiveStrings: z.array(z.string()),
 });
@@ -38,4 +40,4 @@ export const ANALYZE_IMAGE_RESPONSE_SCHEMA = z.object({
 export type AnalyzeImageResponse = z.infer<typeof ANALYZE_IMAGE_RESPONSE_SCHEMA>;
 
 export type RectSource = 'user' | 'server';
-export type Rect = Rectangle & { id: string; source: RectSource };
+export type Rect = Rectangle & { id: string; source: RectSource }; // TODO: Remove

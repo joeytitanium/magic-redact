@@ -10,6 +10,7 @@ import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';
 import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useDisclosure } from '@mantine/hooks';
+import { isNil } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Desktop } from './components/desktop';
 import { Mobile } from './components/mobile';
@@ -83,6 +84,7 @@ export const ClientPage = ({ showPricing }: ClientPageProps) => {
     reset: resetAnalyzing,
   } = useAnalyzeImage({
     onSuccess: async (data) => {
+      if (isNil(data)) return;
       await addServerBoxes({ boxes: data });
     },
   });
@@ -183,7 +185,6 @@ export const ClientPage = ({ showPricing }: ClientPageProps) => {
   };
 
   const onSetFile = async (f: File) => {
-    // setFile(f);
     await loadFile(f);
   };
 

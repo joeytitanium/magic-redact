@@ -14,6 +14,7 @@ export const CONFIG: {
     description: string;
     version: string;
   };
+  dailyRequestLimit: number;
   support: {
     email: string;
   };
@@ -37,7 +38,6 @@ export const CONFIG: {
       callbackUrl: string;
     };
   };
-
   social: {
     x: Social;
     // bluesky: Social;
@@ -65,6 +65,7 @@ export const CONFIG: {
     name: 'MagicRedact',
     description: 'Automatically redact sensitive information from images',
   },
+  dailyRequestLimit: 3,
   support: {
     email: 'joeytitanium@gmail.com',
   },

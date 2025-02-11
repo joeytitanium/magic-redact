@@ -1,17 +1,20 @@
+import { CONFIG } from '@/config';
 import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
 import { deleteGoogleCloudStoragePath } from '@/lib/google/delete-google-cloud-storage-file';
 import { ocrDetectText } from '@/lib/google/ocr-detect-text';
 import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
+import { recentDocumentCountByIpAddress } from '@/lib/supabase/queries/recent-document-count-by-ip-address';
+import { supabaseServerClient } from '@/lib/supabase/server';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { AiModel } from '@/types/ai-model';
 import { DocumentInsert } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
+import { createApiResponse } from '@/utils/api-response';
 import { logApiError, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
 import { isNil } from 'lodash';
-import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { UAParser } from 'ua-parser-js';
@@ -111,14 +114,17 @@ const insertDbRecord = async ({
   document,
   request,
   deviceInfo,
+  userId,
 }: {
   supabase: SupabaseClient;
   document: Omit<DocumentInsert, 'device_info' | 'ai_model'>;
   request: Request;
   deviceInfo: DeviceInfo;
+  userId: string | undefined;
 }) => {
   const { error: insertError } = await supabase.from('documents').insert({
     ...document,
+    user_id: userId,
     ai_model: AI_MODEL,
     device_info: deviceInfo,
   });
@@ -139,16 +145,10 @@ const insertDbRecord = async ({
 };
 
 export async function POST(request: Request) {
-  // TODO:
-  // - Block requests from IP addresses that have been flagged as suspicious
-  // - Limit requests by IP
-
-  // const supabaseServer = await supabaseServerClient();
+  const supabaseServer = await supabaseServerClient();
   const supabaseServiceRole = supabaseServiceRoleClient();
-  // const { data: userData } = await supabase.auth.getUser();
-  // if (isNil(userData.user)) {
-  //   // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  // }
+  const { data: userData } = await supabaseServer.auth.getUser();
+  const userId = userData.user?.id;
 
   const userAgent = request.headers.get('user-agent') || '';
   const ua = new UAParser(userAgent);
@@ -158,11 +158,47 @@ export async function POST(request: Request) {
     ipAddress: ipAddress(request),
   };
 
+  if (isNil(userId) && !isNil(deviceInfo.ipAddress)) {
+    const { count, error } = await recentDocumentCountByIpAddress({
+      supabase: supabaseServiceRole,
+      ipAddress: deviceInfo.ipAddress,
+    });
+    if (error) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Error getting recent document count by ip address',
+        deviceInfo,
+        variant: 'error',
+      });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Error getting recent document count by ip address',
+        error,
+        request,
+      });
+      return createApiResponse({ type: '400-bad-request' });
+    }
+    if (count > CONFIG.dailyRequestLimit) {
+      return createApiResponse({
+        type: '429-too-many-requests',
+        internalErrorCode: 'max-request-limit-reached',
+      });
+    }
+  }
+
   try {
     const body = await request.json();
     const inputResult = INPUT_SCHEMA.safeParse(body);
     if (!inputResult.success) {
-      return NextResponse.json({ error: inputResult.error.message }, { status: 400 });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Invalid input',
+        error: inputResult.error,
+        request,
+      });
+      return createApiResponse({
+        type: '400-bad-request',
+      });
     }
     const { imageUrl: base64Image } = inputResult.data;
     const documentType = getDocumentTypeFromDataUrl(base64Image);
@@ -178,7 +214,9 @@ export async function POST(request: Request) {
         message: 'Invalid image URL',
         request,
       });
-      return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+      return createApiResponse({
+        type: '400-bad-request',
+      });
     }
 
     const {
@@ -205,7 +243,7 @@ export async function POST(request: Request) {
         error: gcsError,
         request,
       });
-      return NextResponse.json({ error: gcsError.message }, { status: 400 });
+      return createApiResponse({ type: '400-bad-request' });
     }
 
     // OCR
@@ -238,13 +276,14 @@ export async function POST(request: Request) {
         supabase: supabaseServiceRole,
         request,
         deviceInfo,
+        userId: userData.user?.id,
         document: {
           ip_address: deviceInfo.ipAddress,
           document_type: documentType,
           ocr_error: ocrError?.message ?? 'Unknown error',
         },
       });
-      return NextResponse.json({ error: ocrError?.message ?? 'Unknown error' }, { status: 400 });
+      return createApiResponse({ type: '400-bad-request' });
     }
 
     const { error: deleteError } = await deleteGoogleCloudStoragePath({
@@ -286,12 +325,16 @@ export async function POST(request: Request) {
         supabase: supabaseServiceRole,
         request,
         deviceInfo,
+        userId,
         document: {
           ip_address: deviceInfo.ipAddress,
           document_type: documentType,
         },
       });
-      return NextResponse.json({ error: 'No text detected' }, { status: 400 });
+      return createApiResponse({
+        type: '400-bad-request',
+        publicFacingMessage: 'No text was detected.',
+      });
     }
 
     const input = ocrResults
@@ -375,13 +418,16 @@ ${input.join(',')}`;
         supabase: supabaseServiceRole,
         request,
         deviceInfo,
+        userId,
         document: {
           ip_address: deviceInfo.ipAddress,
           document_type: documentType,
           ai_error: response as any,
         },
       });
-      return NextResponse.json({ error: outputResult.error.message }, { status: 400 });
+      return createApiResponse({
+        type: '400-bad-request',
+      });
     }
 
     const { sensitiveStrings } = outputResult.data.choices[0].message.parsed;
@@ -422,6 +468,7 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**
       supabase: supabaseServiceRole,
       request,
       deviceInfo,
+      userId,
       document: {
         ip_address: deviceInfo.ipAddress,
         document_type: documentType,
@@ -449,7 +496,10 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**
         },
       ],
     });
-    return NextResponse.json({ rectangles });
+    return createApiResponse({
+      type: '200-success',
+      data: { rectangles },
+    });
   } catch (error) {
     if (error instanceof Error) {
       logApiError({
@@ -466,6 +516,6 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**
         context: { error },
       });
     }
-    return NextResponse.json({ error: 'Failed to analyze image' }, { status: 500 });
+    return createApiResponse({ type: '500-internal-server-error' });
   }
 }

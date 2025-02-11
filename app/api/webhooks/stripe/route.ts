@@ -1,7 +1,7 @@
 import { stripeServerClient } from '@/lib/stripe/server';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
+import { createApiResponse } from '@/utils/api-response';
 import { logApiError, LogDomain, logError, logMessage } from '@/utils/logger';
-import { createNextResponse } from '@/utils/next-response';
 import { isNil } from 'lodash';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -139,14 +139,18 @@ const processEvent = async (event: Stripe.Event) => {
   });
 };
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.text();
+    const body = await request.text();
     const sig = (await headers()).get('Stripe-Signature');
     if (isNil(sig) || typeof sig !== 'string') {
-      return createNextResponse({
+      logApiError({
+        domain: DOMAIN,
+        request,
+        message: 'Invalid or missing signature',
+      });
+      return createApiResponse({
         type: '400-bad-request',
-        errorMessage: 'Stripe signature not found.',
       });
     }
 
@@ -160,17 +164,16 @@ export async function POST(req: Request) {
     }
 
     await processEvent(event);
-    return new Response(JSON.stringify({ received: true }));
+    return NextResponse.json({ received: true });
   } catch (error) {
     logApiError({
       domain: DOMAIN,
       message: 'Error handling Stripe webhook',
-      request: req,
+      request,
       error,
     });
-    return createNextResponse({
+    return createApiResponse({
       type: '400-bad-request',
-      errorMessage: 'Error handling Stripe webhook',
     });
   }
 }

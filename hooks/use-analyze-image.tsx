@@ -1,0 +1,79 @@
+import { getRouteUrl } from '@/routing/get-route-url';
+import { RECTANGLE_SCHEMA } from '@/types/rectangle';
+import { API_DATA_SCHEMA } from '@/utils/api-response';
+import { LogDomain, logError } from '@/utils/logger';
+import { Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { BoundingBoxWithMetadata } from './use-pdf';
+
+const DOMAIN: LogDomain = 'use-analyze-image';
+
+type Variables = {
+  imageUrl: string;
+};
+
+const ANALYZE_SUCCESS_SCHEMA = z.object({
+  rectangles: z.array(z.array(RECTANGLE_SCHEMA)),
+});
+
+export const useAnalyzeImage = (
+  options: UseMutationOptions<BoundingBoxWithMetadata[][] | undefined, Error, Variables>
+) => {
+  const router = useRouter();
+
+  return useMutation<BoundingBoxWithMetadata[][] | undefined, Error, Variables>({
+    mutationFn: async (args) => {
+      try {
+        const response = await fetch('/api/analyze-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imageUrl: args.imageUrl }),
+        });
+        const data = await response.json();
+        const parsed = API_DATA_SCHEMA(ANALYZE_SUCCESS_SCHEMA).parse(data);
+        if (parsed.success) {
+          const rectangles: BoundingBoxWithMetadata[][] = parsed.data.rectangles.map((page) =>
+            page.map((r) => ({ ...r, id: crypto.randomUUID(), source: 'server' }))
+          );
+          return rectangles;
+        }
+
+        if (parsed.internalErrorCode === 'max-request-limit-reached') {
+          modals.openConfirmModal({
+            title: 'Daily limit reached',
+            children: (
+              <Text size="sm">
+                You have reached the daily limit. If you'd like to automatically redact more
+                documents please check out our pricing section.
+              </Text>
+            ),
+            labels: { confirm: 'See Pricing', cancel: 'Cancel' },
+            onConfirm: () => router.push(getRouteUrl({ to: '/', params: { pricing: 'true' } })),
+          });
+          return undefined;
+        }
+
+        throw new Error('An unknown error has occurred.');
+      } catch (err) {
+        logError({ domain: DOMAIN, message: 'Error in useAnalyzeImage', error: err });
+        throw err;
+      }
+    },
+    onError: (error, variables, context) => {
+      logError({ domain: DOMAIN, message: 'Error in useAnalyzeImage', error });
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to analyze image. Please try again.',
+        color: 'red',
+      });
+      options.onError?.(error, variables, context);
+    },
+    ...options,
+  });
+};

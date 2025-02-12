@@ -10,4 +10,5 @@ export type Product = {
   description: string;
   mode: Stripe.Checkout.SessionCreateParams.Mode;
   trialPeriodDays: number | undefined;
+  billingCycleDocumentPageLimit: number;
 };

@@ -28,3 +28,4 @@ export type Database = MergeDeep<
 
 export type DocumentRecord = Database['public']['Tables']['documents']['Row'];
 export type DocumentInsert = Database['public']['Tables']['documents']['Insert'];
+export type SubscriptionRecord = Database['public']['Tables']['subscriptions']['Row'];

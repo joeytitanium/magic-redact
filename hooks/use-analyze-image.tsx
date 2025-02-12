@@ -1,3 +1,4 @@
+import { CONFIG } from '@/config';
 import { getRouteUrl } from '@/routing/get-route-url';
 import { RECTANGLE_SCHEMA } from '@/types/rectangle';
 import { API_DATA_SCHEMA } from '@/utils/api-response';
@@ -44,7 +45,7 @@ export const useAnalyzeImage = (
           return rectangles;
         }
 
-        if (parsed.internalErrorCode === 'max-request-limit-reached') {
+        if (parsed.internalErrorCode === 'max-free-request-limit-reached') {
           modals.openConfirmModal({
             title: 'Daily limit reached',
             children: (
@@ -55,6 +56,28 @@ export const useAnalyzeImage = (
             ),
             labels: { confirm: 'See Pricing', cancel: 'Cancel' },
             onConfirm: () => router.push(getRouteUrl({ to: '/', params: { pricing: 'true' } })),
+          });
+          return undefined;
+        }
+        if (parsed.internalErrorCode === 'max-premium-request-limit-reached') {
+          modals.openConfirmModal({
+            title: 'Subscription limit reached',
+            children: (
+              <>
+                <Text size="sm">
+                  You have reached the subscription limit. You must wait until the next billing
+                  period to continue.
+                </Text>
+                <Text mt="xs" size="sm">
+                  If you'd like to upgrade please reach out to me at{' '}
+                  <a href={`mailto:${CONFIG.support.email}`}>{CONFIG.support.email}</a>.
+                </Text>
+              </>
+            ),
+            labels: { confirm: 'Send email', cancel: 'Got it' },
+            onConfirm: () => {
+              window.open(`mailto:${CONFIG.support.email}`, '_blank');
+            },
           });
           return undefined;
         }

@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const API_INTERNAL_CODES = ['max-request-limit-reached'] as const;
+const API_INTERNAL_CODES = [
+  'max-free-request-limit-reached',
+  'max-premium-request-limit-reached',
+] as const;
 
 const API_SUCCESS_PAYLOAD_SCHEMA = <T>(schema: z.ZodType<T>) =>
   z.object({
@@ -25,15 +28,15 @@ const API_RESPONSE_TYPES = [SUCCESS_RESPONSE_CODE, ...ERROR_RESPONSE_CODES] as c
 type ApiResponseType = (typeof API_RESPONSE_TYPES)[number];
 
 const API_VARIABLES_SCHEMA = <T>(dataSchema: z.ZodType<T>) =>
-  z.discriminatedUnion('type', [
+  z.discriminatedUnion('code', [
     z
       .object({
-        type: z.literal(SUCCESS_RESPONSE_CODE),
+        code: z.literal(SUCCESS_RESPONSE_CODE),
       })
       .merge(API_SUCCESS_PAYLOAD_SCHEMA(dataSchema)),
     z
       .object({
-        type: z.enum(ERROR_RESPONSE_CODES),
+        code: z.enum(ERROR_RESPONSE_CODES),
       })
       .merge(API_ERROR_PAYLOAD_SCHEMA),
   ]);
@@ -53,12 +56,12 @@ const responseCode: Record<ApiResponseType, number> = {
 };
 
 export const createApiResponse = <T>(response: ApiVariables<T>) => {
-  const { type, ...payload } = response;
+  const { code, ...payload } = response;
   return NextResponse.json(
     {
       ...payload,
-      success: type === SUCCESS_RESPONSE_CODE,
+      success: code === SUCCESS_RESPONSE_CODE,
     },
-    { status: responseCode[type] }
+    { status: responseCode[code] }
   );
 };

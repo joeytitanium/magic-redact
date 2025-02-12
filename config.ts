@@ -86,22 +86,36 @@ export const CONFIG: {
     {
       stripePriceId: isDevelopment
         ? 'price_1Qq4g7Am5zvWraF48ljnp1BH'
-        : 'price_1Qq4g7Am5zvWraF48ljnp1BH',
+        : 'price_1Qq4g7Am5zvWraF48ljnp1BH', // TODO: add price id
       name: 'Starter',
       price: 5,
       description: 'Starter plan',
       mode: 'subscription',
       trialPeriodDays: undefined,
+      // billingCycleDocumentPageLimit: 50,
+      billingCycleDocumentPageLimit: 3,
     },
     {
       stripePriceId: isDevelopment
-        ? 'price_1Qq4g7Am5zvWraF48ljnp1BH'
-        : 'price_1Qq4g7Am5zvWraF48ljnp1BH',
+        ? 'price_1Qq4g7Am5zvWraF48ljnp1BH' // TODO: add price id
+        : 'price_1Qq4g7Am5zvWraF48ljnp1BH', // TODO: add price id
       name: 'Pro',
-      price: 10,
+      price: 15,
       description: 'Pro plan',
       mode: 'subscription',
       trialPeriodDays: undefined,
+      billingCycleDocumentPageLimit: 200,
+    },
+    {
+      stripePriceId: isDevelopment
+        ? 'price_1Qq4g7Am5zvWraF48ljnp1BH' // TODO: add price id
+        : 'price_1Qq4g7Am5zvWraF48ljnp1BH', // TODO: add price id
+      name: 'Enterprise',
+      price: 50,
+      description: 'Enterprise plan',
+      mode: 'subscription',
+      trialPeriodDays: undefined,
+      billingCycleDocumentPageLimit: 1000,
     },
   ],
   icon: {

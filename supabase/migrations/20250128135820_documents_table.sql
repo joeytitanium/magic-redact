@@ -18,3 +18,7 @@ create table documents (
 );
 alter table documents enable row level security;
 -- No policies as this is a private table that the user must not have access to.
+
+-- Enable aggregates for the public schema since they are disabled by default.
+alter role authenticator set pgrst.db_aggregates_enabled = 'true';
+notify pgrst, 'reload config';

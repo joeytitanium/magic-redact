@@ -150,7 +150,7 @@ export async function POST(request: Request) {
         message: 'Invalid or missing signature',
       });
       return createApiResponse({
-        type: '400-bad-request',
+        code: '400-bad-request',
       });
     }
 
@@ -173,7 +173,7 @@ export async function POST(request: Request) {
       error,
     });
     return createApiResponse({
-      type: '400-bad-request',
+      code: '400-bad-request',
     });
   }
 }

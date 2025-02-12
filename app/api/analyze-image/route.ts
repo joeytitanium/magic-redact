@@ -3,6 +3,8 @@ import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
 import { deleteGoogleCloudStoragePath } from '@/lib/google/delete-google-cloud-storage-file';
 import { ocrDetectText } from '@/lib/google/ocr-detect-text';
 import { uploadToGoogleCloudStorage } from '@/lib/google/upload-to-google-cloud-storage';
+import { documentCountForBillingPeriod } from '@/lib/supabase/queries/document-count-for-billing-period';
+import { getSubscription } from '@/lib/supabase/queries/get-subscription';
 import { recentDocumentCountByIpAddress } from '@/lib/supabase/queries/recent-document-count-by-ip-address';
 import { supabaseServerClient } from '@/lib/supabase/server';
 import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
@@ -11,6 +13,7 @@ import { DocumentInsert } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { OPEN_AI_REQUESTED_SCHEMA, OPEN_AI_RESPONSE_SCHEMA } from '@/types/rectangle';
 import { createApiResponse } from '@/utils/api-response';
+import { isDevelopment } from '@/utils/is-development';
 import { logApiError, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { geolocation, ipAddress } from '@vercel/functions';
@@ -155,10 +158,37 @@ export async function POST(request: Request) {
   const deviceInfo: DeviceInfo = {
     ...ua.getResult(),
     geolocation: geolocation(request),
-    ipAddress: ipAddress(request),
+    ipAddress: isDevelopment ? '127.0.0.1' : ipAddress(request),
   };
 
-  if (isNil(userId) && !isNil(deviceInfo.ipAddress)) {
+  if (isNil(deviceInfo.ipAddress)) {
+    return createApiResponse({
+      code: '400-bad-request',
+      publicFacingMessage: 'IP address missing.',
+    });
+  }
+
+  const { subscription, subscriptionError } = await getSubscription({
+    userId: userId ?? '',
+    supabase: supabaseServiceRole,
+  });
+  if (subscriptionError) {
+    await sendDiscordAlert({
+      username: '/analyze-image',
+      title: 'Error getting subscription',
+      deviceInfo,
+      variant: 'error',
+    });
+    logApiError({
+      domain: DOMAIN,
+      message: 'Error getting subscription',
+      error: subscriptionError,
+      request,
+    });
+    return createApiResponse({ code: '400-bad-request' });
+  }
+
+  if (isNil(subscription)) {
     const { count, error } = await recentDocumentCountByIpAddress({
       supabase: supabaseServiceRole,
       ipAddress: deviceInfo.ipAddress,
@@ -176,12 +206,52 @@ export async function POST(request: Request) {
         error,
         request,
       });
-      return createApiResponse({ type: '400-bad-request' });
+      return createApiResponse({ code: '400-bad-request' });
     }
     if (count > CONFIG.dailyRequestLimit) {
       return createApiResponse({
-        type: '429-too-many-requests',
-        internalErrorCode: 'max-request-limit-reached',
+        code: '429-too-many-requests',
+        internalErrorCode: 'max-free-request-limit-reached',
+      });
+    }
+  } else if (!isNil(userId)) {
+    const { pageCount, limit, error } = await documentCountForBillingPeriod({
+      supabase: supabaseServiceRole,
+      userId,
+      subscription,
+    });
+    if (error) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Error getting document count for billing period',
+        deviceInfo,
+        variant: 'error',
+      });
+      logApiError({
+        domain: DOMAIN,
+        message: 'Error getting document count for billing period',
+        error,
+        request,
+      });
+      return createApiResponse({ code: '400-bad-request' });
+    }
+    if (pageCount >= limit) {
+      await sendDiscordAlert({
+        username: '/analyze-image',
+        title: 'Customer subscription limit reached',
+        deviceInfo,
+        variant: 'error',
+        context: [
+          {
+            name: 'User Id',
+            value: userId,
+            inline: true,
+          },
+        ],
+      });
+      return createApiResponse({
+        code: '429-too-many-requests',
+        internalErrorCode: 'max-premium-request-limit-reached',
       });
     }
   }
@@ -197,7 +267,7 @@ export async function POST(request: Request) {
         request,
       });
       return createApiResponse({
-        type: '400-bad-request',
+        code: '400-bad-request',
       });
     }
     const { imageUrl: base64Image } = inputResult.data;
@@ -215,7 +285,7 @@ export async function POST(request: Request) {
         request,
       });
       return createApiResponse({
-        type: '400-bad-request',
+        code: '400-bad-request',
       });
     }
 
@@ -243,7 +313,7 @@ export async function POST(request: Request) {
         error: gcsError,
         request,
       });
-      return createApiResponse({ type: '400-bad-request' });
+      return createApiResponse({ code: '400-bad-request' });
     }
 
     // OCR
@@ -283,7 +353,7 @@ export async function POST(request: Request) {
           ocr_error: ocrError?.message ?? 'Unknown error',
         },
       });
-      return createApiResponse({ type: '400-bad-request' });
+      return createApiResponse({ code: '400-bad-request' });
     }
 
     const { error: deleteError } = await deleteGoogleCloudStoragePath({
@@ -304,10 +374,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // logDebugMessage(`🔫 ocrResults: ${JSON.stringify(ocrResults, null, '\t')}`, {
-    //   request,
-    //   context: { ocrResults },
-    // });
     if (ocrResults.length === 0) {
       await sendDiscordAlert({
         username: '/analyze-image',
@@ -332,7 +398,7 @@ export async function POST(request: Request) {
         },
       });
       return createApiResponse({
-        type: '400-bad-request',
+        code: '400-bad-request',
         publicFacingMessage: 'No text was detected.',
       });
     }
@@ -341,11 +407,6 @@ export async function POST(request: Request) {
       .flat()
       .map((x) => x.text)
       .filter((x) => x && x.length > 1);
-    // logDebugMessage({
-    //   domain: DOMAIN,
-    //   message: `Input: ${JSON.stringify(input, null, '\t')}`,
-    //   context: { input },
-    // });
 
     // OPEN AI
     const openaiPrompt = `You are a world class data protection expert. Analyze the following strings and determine which ones contain sensitive information. 
@@ -382,11 +443,6 @@ ${input.join(',')}`;
       max_tokens: 500, // TODO: verify
     });
 
-    // logDebugMessage({
-    //   domain: DOMAIN,
-    //   message: 'OpenAI response',
-    //   context: { response },
-    // });
     const outputResult = OPEN_AI_RESPONSE_SCHEMA.safeParse(response);
     if (!outputResult.success) {
       await sendDiscordAlert({
@@ -426,7 +482,7 @@ ${input.join(',')}`;
         },
       });
       return createApiResponse({
-        type: '400-bad-request',
+        code: '400-bad-request',
       });
     }
 
@@ -439,13 +495,6 @@ ${input.join(',')}`;
           .filter((s) => s.length > 0)
       )
     );
-    // logDebugMessage(
-    //   `🔫 sensitiveStringSet: ${JSON.stringify(Array.from(sensitiveStringSet), null, '\t')}`,
-    //   {
-    //     request,
-    //     context: { sensitiveStringSet },
-    //   }
-    // );
 
     const rectangles = ocrResults.map((page) =>
       page.map((y) => ({
@@ -497,7 +546,7 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**
       ],
     });
     return createApiResponse({
-      type: '200-success',
+      code: '200-success',
       data: { rectangles },
     });
   } catch (error) {
@@ -516,6 +565,6 @@ Total: ${outputResult.data.usage.total_tokens} = **${tokenCost.totalTokenCost}**
         context: { error },
       });
     }
-    return createApiResponse({ type: '500-internal-server-error' });
+    return createApiResponse({ code: '500-internal-server-error' });
   }
 }

@@ -4,7 +4,7 @@ import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
-import { ImageDropzone } from '@/app/(landing-page)/image-dropzone';
+import { ImageDropzone } from '@/app/(landing-page)/_components/image-dropzone';
 import { CONFIG } from '@/config';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';

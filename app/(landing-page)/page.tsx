@@ -1,6 +1,6 @@
 import { SearchParams } from '@/types/search-params';
 import { generateMetadata } from '@/utils/metadata';
-import { ClientPage } from './client-page';
+import { ClientPage } from './_components/client-page';
 
 export const metadata = generateMetadata();
 

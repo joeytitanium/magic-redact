@@ -1,4 +1,4 @@
-import { MainControls } from '@/app/(landing-page)/client-page/components/main-controls';
+import { MainControls } from '@/app/(landing-page)/_components/client-page/components/main-controls';
 import { CONFIG } from '@/config';
 import { BoundingBox } from '@/hooks/use-pdf';
 import { Button, Flex, FlexProps, Group } from '@mantine/core';

@@ -4,7 +4,11 @@ import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { SampleImage, sampleImageRects } from '@/utils/sample-images';
 import { notifications } from '@mantine/notifications';
 // import { useSearchParams } from 'next/navigation';
-import { ImageDropzone } from '@/app/(landing-page)/_components/image-dropzone';
+import { ImageDropzone } from '@/components/image-dropzone';
+import { Desktop } from '@/components/editor/components/desktop';
+import { Mobile } from '@/components/editor/components/mobile';
+import { PricingModal, PricingModalProps } from '@/components/editor/components/pricing-modal';
+import { DesktopMobileProps } from '@/components/editor/types';
 import { CONFIG } from '@/config';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';
@@ -12,17 +16,13 @@ import { usePdfExport } from '@/hooks/use-pdf-export';
 import { useDisclosure } from '@mantine/hooks';
 import { isNil } from 'lodash';
 import { useEffect, useState } from 'react';
-import { Desktop } from './components/desktop';
-import { Mobile } from './components/mobile';
-import { PricingModal, PricingModalProps } from './components/pricing-modal';
-import { DesktopMobileProps } from './types';
 
 type ClientPageProps = {
   // isDebug: boolean;
   showPricing: boolean;
 };
 
-export const ClientPage = ({ showPricing }: ClientPageProps) => {
+export const Editor = ({ showPricing }: ClientPageProps) => {
   const [opened, { open, close }] = useDisclosure(showPricing);
 
   // Demo vars

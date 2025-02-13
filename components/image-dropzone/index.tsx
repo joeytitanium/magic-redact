@@ -1,4 +1,4 @@
-import { LinksFooter } from '@/app/(landing-page)/_components/client-page/components/links-footer';
+import { LinksFooter } from '@/components/editor/components/links-footer';
 import { CONFIG } from '@/config';
 import { SAMPLE_IMAGES, SampleImage, sampleImageThumbnail } from '@/utils/sample-images';
 import { Card, Container, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core';

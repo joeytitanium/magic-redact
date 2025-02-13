@@ -1,0 +1,19 @@
+.xl {
+  font-size: clamp(rem(54px), calc(3rem + 5vw), rem(120px));
+}
+
+.lg {
+  font-size: clamp(rem(48px), calc(2.5rem + 4vw), rem(90px));
+}
+
+.md {
+  font-size: clamp(rem(42px), calc(2rem + 3vw), rem(70px));
+}
+
+.sm {
+  font-size: clamp(rem(38px), calc(1.75rem + 2vw), rem(55px));
+}
+
+.xs {
+  font-size: clamp(rem(34px), calc(1.5rem + 1.5vw), rem(45px));
+}

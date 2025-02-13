@@ -1,9 +1,10 @@
 import { Container } from '@mantine/core';
 import { pdfjs } from 'react-pdf';
 
-import { MobileCanvas } from '@/app/(landing-page)/_components/client-page/components/canvas/mobile';
-import { MobileFooter } from '@/app/(landing-page)/_components/client-page/components/footer/mobile';
-import { DesktopMobileProps } from '@/app/(landing-page)/_components/client-page/types';
+import { Canvas } from '@/components/editor/components/canvas';
+import { Footer } from '@/components/editor/components/footer';
+import { PagesTrack } from '@/components/editor/components/pages-track';
+import { DesktopMobileProps } from '@/components/editor/types';
 import { CONFIG } from '@/config';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -13,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-export const Mobile = ({
+export const Desktop = ({
   file,
   handleMouseDown,
   handleMouseMove,
@@ -40,7 +41,18 @@ export const Mobile = ({
   ...containerProps
 }: DesktopMobileProps) => (
   <Container px={0} fluid {...containerProps}>
-    <MobileCanvas
+    {numberOfPages > 1 && (
+      <PagesTrack
+        file={file}
+        numberOfPages={numberOfPages}
+        onPageChange={onPageChange}
+        currentPageIndex={currentPageIndex}
+      />
+    )}
+    <Canvas
+      pos="fixed"
+      top={canvasBox.y}
+      left={canvasBox.x}
       file={file}
       handleMouseDown={handleMouseDown}
       handleMouseMove={handleMouseMove}
@@ -52,10 +64,8 @@ export const Mobile = ({
       onPdfLoaded={onPdfLoaded}
       hoveringOverBox={hoveringOverBox}
       onDeleteBox={onDeleteBox}
-      numberOfPages={numberOfPages}
-      onPageChange={onPageChange}
     />
-    <MobileFooter
+    <Footer
       pos="fixed"
       left={0}
       right={0}

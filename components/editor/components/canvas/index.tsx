@@ -111,7 +111,7 @@ export const Canvas = ({
                 left: hoverBox.x,
                 width: hoverBox.width,
                 height: hoverBox.height,
-                zIndex: CONFIG.zIndex.hoverOverBox,
+                zIndex: CONFIG.layout.zIndex.hoverOverBox,
                 opacity: 0.5,
               }}
               // bg="red.5"

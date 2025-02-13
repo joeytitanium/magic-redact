@@ -57,6 +57,7 @@ export const Mobile = ({
     />
     <MobileFooter
       pos="fixed"
+      style={{ zIndex: CONFIG.layout.zIndex.mobileFooter }}
       left={0}
       right={0}
       bottom={0}

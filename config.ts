@@ -23,7 +23,10 @@ export const CONFIG: {
     footerHeight: number;
     mobileBreakpoint: MantineSize;
     containerSize: MantineSize;
-    zIndex: {};
+    zIndex: {
+      hoverOverBox: number;
+      mobileFooter: number;
+    };
   };
   products: Product[];
   stripe: {
@@ -51,9 +54,6 @@ export const CONFIG: {
     };
   };
   localStorageKey: {};
-  zIndex: {
-    hoverOverBox: number;
-  };
 } = {
   site: {
     version: '0.0.1',
@@ -76,7 +76,10 @@ export const CONFIG: {
     footerHeight: 64,
     mobileBreakpoint: 'lg',
     containerSize: 'xl',
-    zIndex: {},
+    zIndex: {
+      hoverOverBox: 10,
+      mobileFooter: 2,
+    },
   },
   products: [
     {
@@ -117,9 +120,6 @@ export const CONFIG: {
     },
   },
   localStorageKey: {},
-  zIndex: {
-    hoverOverBox: 10,
-  },
   auth: {
     google: {
       // also make sure to update the client id and secret on supabase.com (https://supabase.com/dashboard/project/ulrqcmxlifehrtbhuxkq/auth/providers)

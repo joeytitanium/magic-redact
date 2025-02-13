@@ -1,4 +1,4 @@
-import { LinksFooter } from '@/app/(landing-page)/client-page/components/links-footer';
+import { LinksFooter } from '@/components/editor/components/links-footer';
 import { CONFIG } from '@/config';
 import { generateMetadata } from '@/utils/metadata';
 import { Anchor, Container, Stack, Text, Title } from '@mantine/core';

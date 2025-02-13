@@ -1,0 +1,3 @@
+.background {
+  background-color: light-dark(var(--mantine-color-default), var(--mantine-color-dark-9));
+}

@@ -1,0 +1,19 @@
+.graph-paper {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-9));
+  background-size: 8px 8px;
+  background-image: radial-gradient(
+      light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7)) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7)) 1px,
+      transparent 1px
+    );
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .frosted-glass {
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    backdrop-filter: saturate(180%) blur(10px);
+  }
+}

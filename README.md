@@ -9,6 +9,11 @@ This means that if you modify this software and use it to provide a service over
 You will need to set up environment variables from various providers such as OpenAI, Google, Supabase, etc.
 Copy over the variables from `.env.example` and replace them with your own.
 
+# TODO
+
+- [ ] Alert about limited functionality on mobile
+- [ ] Error when signed in ( Error getting subscription context)
+
 # ROADMAP
 
 - [ ] Account page with stripe account link

@@ -52,7 +52,7 @@ export const uploadToGoogleCloudStorage = async ({
   fileType: string;
 }): Promise<UploadToGCSResponse> => {
   try {
-    const bucketName = 'magic-redact';
+    const bucketName = process.env.GOOGLE_STORAGE_BUCKET_NAME;
     const bucket = googleStorageClient.bucket(bucketName);
 
     // Validate and process the base64 data

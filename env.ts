@@ -10,6 +10,7 @@ const ENV_SCHEMA = z.object({
   GOOGLE_CLIENT_EMAIL: z.string().min(1),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_X509_CERT_URL: z.string().min(1).url(),
+  GOOGLE_STORAGE_BUCKET_NAME: z.string().min(1),
 
   NEXT_PUBLIC_SUPABASE_URL: z.string().min(1).url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),

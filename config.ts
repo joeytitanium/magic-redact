@@ -69,7 +69,7 @@ export const CONFIG: {
     apiVersion: '2025-01-27.acacia',
   },
   google: {
-    storageBucketName: 'magic-redact',
+    storageBucketName: process.env.GOOGLE_STORAGE_BUCKET_NAME,
   },
   layout: {
     headerHeight: 60,

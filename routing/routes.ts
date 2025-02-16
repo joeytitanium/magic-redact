@@ -3,7 +3,7 @@ export type Route =
   | {
       to: '/';
       params?: { pricing?: string };
-      fragment?: never;
+      fragment?: 'editor';
     }
   | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }
   | { to: '/privacy'; params?: never; fragment?: never }

@@ -669,6 +669,11 @@ export const shadcnTheme: MantineThemeOverride = createTheme({
       },
     }),
     Badge: Badge.extend({
+      styles: () => ({
+        label: {
+          textTransform: 'initial',
+        },
+      }),
       vars: (theme, props) => {
         const colorKey =
           props.color && Object.keys(theme.colors).includes(props.color) ? props.color : undefined;

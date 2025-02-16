@@ -1,41 +1,25 @@
 'use client';
 
-import { useAnalyzeImage } from '@/hooks/use-analyze-image';
-import { SampleImage, sampleImageRects } from '@/utils/sample-images';
-import { notifications } from '@mantine/notifications';
-// import { useSearchParams } from 'next/navigation';
-import { ImageDropzone } from '@/components/image-dropzone';
+import { LandingPage } from '@/app/(main)/_components/landing-page';
 import { Desktop } from '@/components/editor/components/desktop';
 import { Mobile } from '@/components/editor/components/mobile';
-import { PricingModal, PricingModalProps } from '@/components/editor/components/pricing-modal';
 import { DesktopMobileProps } from '@/components/editor/types';
+import { ImageDropzone } from '@/components/image-dropzone';
 import { CONFIG } from '@/config';
+import { useAnalyzeImage } from '@/hooks/use-analyze-image';
 import { useManualDrawing } from '@/hooks/use-manual-drawing';
 import { usePdf } from '@/hooks/use-pdf';
 import { usePdfExport } from '@/hooks/use-pdf-export';
-import { useDisclosure } from '@mantine/hooks';
+import { SampleImage, sampleImageRects } from '@/utils/sample-images';
+import { notifications } from '@mantine/notifications';
 import { isNil } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-type ClientPageProps = {
-  // isDebug: boolean;
-  showPricing: boolean;
-};
-
-export const Editor = ({ showPricing }: ClientPageProps) => {
-  const [opened, { open, close }] = useDisclosure(showPricing);
-
+export const Editor = () => {
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
-
-  useEffect(() => {
-    if (showPricing) {
-      setTimeout(() => {
-        open();
-      }, 3000);
-    }
-  }, [open, showPricing]);
+  const [hasInitiatedEditing, setHasInitiatedEditing] = useState(false);
 
   const {
     addManualBox,
@@ -186,9 +170,11 @@ export const Editor = ({ showPricing }: ClientPageProps) => {
 
   const onSetFile = async (f: File) => {
     await loadFile(f);
+    setHasInitiatedEditing(true);
   };
 
   const onClickSampleImage = async (sampleImage: SampleImage) => {
+    setHasInitiatedEditing(true);
     setSelectedSampleImage(sampleImage);
     const response = await fetch(sampleImage);
     const blob = await response.blob();
@@ -196,17 +182,19 @@ export const Editor = ({ showPricing }: ClientPageProps) => {
     await loadFile(file);
   };
 
-  const pricingModalProps: PricingModalProps = {
-    opened,
-    onClose: close,
-  };
+  if (!hasInitiatedEditing) {
+    return <LandingPage setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
+  }
 
   if (!pdfUrl || !pdfFile) {
     return (
-      <>
-        <ImageDropzone setFile={onSetFile} onClickSampleImage={onClickSampleImage} />
-        <PricingModal {...pricingModalProps} />
-      </>
+      <ImageDropzone
+        setFile={onSetFile}
+        onClickSampleImage={onClickSampleImage}
+        containerProps={{
+          h: `calc(100vh - ${CONFIG.layout.headerHeight}px)`,
+        }}
+      />
     );
   }
   const sharedProps: Omit<DesktopMobileProps, 'imageRef'> = {
@@ -242,7 +230,6 @@ export const Editor = ({ showPricing }: ClientPageProps) => {
         {...sharedProps}
       />
       <Mobile hiddenFrom={CONFIG.layout.mobileBreakpoint} imageRef={mobileRef} {...sharedProps} />
-      <PricingModal {...pricingModalProps} />
     </>
   );
 };

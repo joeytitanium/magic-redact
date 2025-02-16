@@ -1,20 +1,22 @@
 'use client';
 
+import { ImageDropzone, ImageDropzoneProps } from '@/components/image-dropzone';
 import { JumboTitle } from '@/components/titanium/mantine/components/jumbo-title';
-import { Badge, Button, Container, Image, Stack, Text } from '@mantine/core';
+import { Badge, Button, Container, Stack, Text } from '@mantine/core';
 import { motion } from 'motion/react';
-import NextImage from 'next/image';
 import NextLink from 'next/link';
 import classes from './index.module.css';
 
-export const Hero01 = () => (
+export type Hero01Props = Pick<ImageDropzoneProps, 'setFile' | 'onClickSampleImage'>;
+
+export const Hero01 = ({ setFile, onClickSampleImage }: Hero01Props) => (
   <Container
     bg="var(--mantine-color-body)"
     px={0}
     py={{
-      base: 'calc(var(--mantine-spacing-lg) * 4)',
-      xs: 'calc(var(--mantine-spacing-lg) * 5)',
-      lg: 'calc(var(--mantine-spacing-lg) * 6)',
+      base: 'calc(var(--mantine-spacing-lg) * 3)',
+      xs: 'calc(var(--mantine-spacing-lg) * 4)',
+      lg: 'calc(var(--mantine-spacing-lg) * 5)',
     }}
     fluid
   >
@@ -27,7 +29,7 @@ export const Hero01 = () => (
           whileInView={{ opacity: 1 }}
         >
           <Badge variant="light" size="xl" mb="lg">
-            October 31, 2024
+            🔒 Auto-Redact Sensitive Info
           </Badge>
         </motion.div>
         <motion.div
@@ -36,8 +38,15 @@ export const Hero01 = () => (
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           viewport={{ once: true }}
         >
-          <JumboTitle order={1} fz="lg" ta="center" style={{ textWrap: 'balance' }} mb="sm">
-            Introducing ChatGPT search
+          <JumboTitle
+            order={1}
+            fz="lg"
+            ta="center"
+            style={{ textWrap: 'balance' }}
+            mb="sm"
+            maw={700}
+          >
+            Redact PDFs & Images Instantly. Free & Secure
           </JumboTitle>
         </motion.div>
         <motion.div
@@ -47,7 +56,9 @@ export const Hero01 = () => (
           viewport={{ once: true }}
         >
           <Text c="dimmed" fz="xl" ta="center" mb="xl" style={{ textWrap: 'balance' }}>
-            Get fast, timely answers with links to relevant web sources.
+            Need to hide confidential data from PDFs or images? Our free redaction tool makes it
+            easy. Just upload your file, and we'll automatically detect and remove sensitive text.
+            No manual work required.
           </Text>
         </motion.div>
         <motion.div
@@ -58,32 +69,20 @@ export const Hero01 = () => (
         >
           <motion.div whileHover={{ scale: 1.1 }}>
             <Button component={NextLink} href="#" radius="xl" size="xl" className={classes.cta}>
-              Plus and team users can try it now
+              Redact Your PDF or Image Now!
             </Button>
           </motion.div>
         </motion.div>
       </Stack>
     </Container>
-    <Container size="xl" mt="calc(var(--mantine-spacing-xl) * 2)" px={0}>
+    <Container size="xl" pt="calc(var(--mantine-spacing-xl) * 2)" px={0} id="editor">
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: 'easeInOut' }}
         viewport={{ once: true }}
       >
-        <motion.div
-          whileHover={{ scale: 1.05, boxShadow: 'var(--mantine-shadow-xl)' }}
-          transition={{ type: 'spring' }}
-        >
-          <Image
-            component={NextImage}
-            src="https://images.unsplash.com/photo-1471520201477-47a62a269a87?q=80&w=1920&h=800&auto=format&fit=crop&crop=focalpoint&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            radius="sm"
-            alt="Hero 01"
-            width={1920}
-            height={800}
-          />
-        </motion.div>
+        <ImageDropzone onClickSampleImage={onClickSampleImage} setFile={setFile} />
       </motion.div>
     </Container>
   </Container>

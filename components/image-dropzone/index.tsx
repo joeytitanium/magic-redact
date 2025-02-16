@@ -1,31 +1,41 @@
-import { LinksFooter } from '@/components/editor/components/links-footer';
-import { CONFIG } from '@/config';
 import { SAMPLE_IMAGES, SampleImage, sampleImageThumbnail } from '@/utils/sample-images';
-import { Card, Container, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core';
+import {
+  Card,
+  Container,
+  ContainerProps,
+  Group,
+  Image,
+  Stack,
+  Text,
+  UnstyledButton,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 
 // TODO: Add paste from clipboard
 
+export type ImageDropzoneProps = {
+  containerProps?: ContainerProps;
+  setFile: (image: File) => void;
+  onClickSampleImage: (image: SampleImage) => void;
+};
+
 export const ImageDropzone = ({
   setFile,
   onClickSampleImage,
-}: {
-  setFile: (image: File) => void;
-  onClickSampleImage: (image: SampleImage) => void;
-}) => (
-  <Container px={0} h={`calc(100vh - ${CONFIG.layout.headerHeight}px)`} fluid>
+  containerProps,
+}: ImageDropzoneProps) => (
+  <Container w={800} fluid {...containerProps}>
     <Stack h="100%" justify="center" align="center">
-      <Card p="calc(2 * var(--mantine-spacing-xl))" mx="lg" radius="lg" withBorder>
+      <Card p="calc(2 * var(--mantine-spacing-xl))" mx="lg" radius="lg" w="100%" withBorder>
         <Dropzone
           onDrop={(files) => setFile(files[0])}
           maxSize={20 * 1024 ** 2}
-          maw={800}
           accept={[
             'image/png',
             // 'image/gif',
             'image/jpeg',
-            'image/svg+xml',
+            // 'image/svg+xml',
             'image/webp',
             'image/avif',
             'image/heic',
@@ -53,7 +63,7 @@ export const ImageDropzone = ({
             </Dropzone.Idle>
 
             <div>
-              <Text size="xl" fw="bold" ta="center" inline>
+              <Text size="xl" fw="bold" ta="center" style={{ textWrap: 'balance' }} inline>
                 Drag image here or click to select a file
               </Text>
               <Text c="dimmed" ta="center" mt="xs">
@@ -64,7 +74,7 @@ export const ImageDropzone = ({
         </Dropzone>
       </Card>
       <Text c="dimmed" fz="sm">
-        Or select from sample images
+        Or select a sample
       </Text>
       <Group justify="center">
         {SAMPLE_IMAGES.map((imageName, idx) => (
@@ -82,6 +92,5 @@ export const ImageDropzone = ({
         ))}
       </Group>
     </Stack>
-    <LinksFooter pos="fixed" bottom={0} left={0} right={0} />
   </Container>
 );

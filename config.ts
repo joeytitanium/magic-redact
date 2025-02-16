@@ -59,7 +59,8 @@ export const CONFIG: {
     version: '0.0.1',
     url: isDevelopment ? 'http://localhost:3000' : 'https://www.magicredact.com',
     name: 'MagicRedact',
-    description: 'Automatically redact sensitive information from images',
+    description:
+      'Instantly redact sensitive information from PDFs and images for free. No sign-ups, no hidden fees. Just fast, secure, and open-source redaction',
   },
   dailyRequestLimit: 3,
   support: {

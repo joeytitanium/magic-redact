@@ -1,6 +1,7 @@
 import { CONFIG } from '@/config';
 import type { Metadata } from 'next';
 import { isDevelopment } from './is-development';
+import { pageTitle } from './page-title';
 
 export const openGraph: Metadata['openGraph'] = {
   title: isDevelopment ? `[DEV] ${CONFIG.site.name}` : CONFIG.site.name,
@@ -19,7 +20,9 @@ export const openGraph: Metadata['openGraph'] = {
 };
 
 export const generateMetadata = (metadata: Metadata = {}): Metadata => ({
-  title: isDevelopment ? `[DEV] ${CONFIG.site.name}` : CONFIG.site.name,
+  title: metadata.title
+    ? pageTitle(metadata.title)
+    : pageTitle('Free PDF & Image Redaction Tool - Secure, Fast, & Open Source'),
   description: CONFIG.site.description,
   keywords: ['MagicRedact', 'AI', 'Image', 'Redact', 'Sensitive', 'Information'].join(', '),
   openGraph,

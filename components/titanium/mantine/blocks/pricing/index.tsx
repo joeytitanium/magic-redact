@@ -556,9 +556,8 @@ const DEMO_DATA: RowData[] = [
         key: 'free',
         children: (
           <Cell iconVariant="check-off">
-            No{' '}
             <Text c="dimmed" inherit span>
-              Account required
+              No Account required
             </Text>
           </Cell>
         ),

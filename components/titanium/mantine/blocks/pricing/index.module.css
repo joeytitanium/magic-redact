@@ -1,6 +1,6 @@
 .highlightedHeaderCell {
   @media (min-width: $mantine-breakpoint-md) {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-9));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
     border-radius: var(--mantine-radius-md) var(--mantine-radius-md) 0 0;
     border-left: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
     border-right: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
@@ -10,7 +10,7 @@
 
 .highlightedFooterCell {
   @media (min-width: $mantine-breakpoint-md) {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-9));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
     border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
     border-left: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
     border-right: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
@@ -25,7 +25,7 @@
 .highlightedRow {
   border-left: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
   border-right: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-9));
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
 }
 
 .iconOn {

@@ -132,6 +132,7 @@ export const UseCases01 = ({
   iconSize = 20,
 }: Feature02Props) => (
   <Container
+    id="use-cases"
     bg="var(--mantine-color-body)"
     py={{
       base: 'calc(var(--mantine-spacing-lg) * 4)',

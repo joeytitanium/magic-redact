@@ -14,12 +14,12 @@ export const CallToAction01 = () => (
     }}
     fluid
   >
-    <Container size="lg">
+    <Container>
       <Card radius="lg" mih={400} p="xl">
         <Stack align="center" justify="center" h="100%" gap="xl" flex={1} p="xl">
           <Stack align="center" gap="sm">
             <JumboTitle order={3} fz="xs" ta="center" style={{ textWrap: 'balance' }} maw="80%">
-              Redact Smarter. Faster. For Free.
+              Redact Smarter. Faster.
             </JumboTitle>
             <Text ta="center" fz="lg" maw="80%" style={{ textWrap: 'balance' }}>
               No sign-ups, no hassle. Just instant, AI-powered redaction. Try it for free or upgrade

@@ -1,4 +1,6 @@
 import { CallToAction01 } from '@/components/titanium/mantine/blocks/call-to-action';
+import { Faq01 } from '@/components/titanium/mantine/blocks/faq-01';
+import { Footer01 } from '@/components/titanium/mantine/blocks/footer-01';
 import { Hero01, Hero01Props } from '@/components/titanium/mantine/blocks/hero-01';
 import { HowItWorks01 } from '@/components/titanium/mantine/blocks/how-it-works';
 import { Pricing02 } from '@/components/titanium/mantine/blocks/pricing';
@@ -31,7 +33,7 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
   };
 
   return (
-    <Container>
+    <Container fluid>
       <Hero01 setFile={setFile} onClickSampleImage={onClickSampleImage} />
       <UseCases01 />
       <HowItWorks01 />
@@ -46,6 +48,8 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
         ]}
       />
       <CallToAction01 />
+      <Faq01 />
+      <Footer01 />
     </Container>
   );
 };

@@ -59,13 +59,13 @@ export const HowItWorks01 = ({
 
   return (
     <Container
+      id="how-it-works"
       bg="var(--mantine-color-body)"
       py={{
         base: 'calc(var(--mantine-spacing-lg) * 4)',
         xs: 'calc(var(--mantine-spacing-lg) * 5)',
         lg: 'calc(var(--mantine-spacing-lg) * 6)',
       }}
-      fluid
     >
       <Container size="lg" px={0}>
         <JumboTitle order={2} ta="center" fz="md" style={{ textWrap: 'balance' }}>

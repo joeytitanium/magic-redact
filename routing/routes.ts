@@ -3,7 +3,12 @@ export type Route =
   | {
       to: '/';
       params?: { pricing?: string };
-      fragment?: 'editor';
+      fragment?:
+        | 'editor'
+        | 'use-cases'
+        | 'how-it-works'
+        | 'plans-and-features'
+        | 'frequently-asked-questions';
     }
   | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }
   | { to: '/privacy'; params?: never; fragment?: never }

@@ -1,0 +1,8 @@
+.container {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-9));
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
+}
+
+.link:hover {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white)) !important;
+}

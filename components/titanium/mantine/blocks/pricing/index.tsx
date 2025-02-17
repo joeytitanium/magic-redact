@@ -260,6 +260,7 @@ export const Pricing02 = ({
 
   return (
     <Container
+      id="plans-and-features"
       bg="var(--mantine-color-body)"
       py={{
         base: 'calc(var(--mantine-spacing-lg) * 4)',
@@ -455,7 +456,7 @@ const DEMO_DATA: RowData[] = [
         key: 'free',
         children: (
           <Cell iconVariant="check-off">
-            3{' '}
+            <strong>3</strong>{' '}
             <Text c="dimmed" inherit span>
               AI auto-redactions per day
             </Text>
@@ -466,7 +467,7 @@ const DEMO_DATA: RowData[] = [
         key: 'plus',
         children: (
           <Cell iconVariant="check-off">
-            250{' '}
+            <strong>250</strong>{' '}
             <Text c="dimmed" inherit span>
               AI auto-redacted pages/images per month
             </Text>
@@ -477,7 +478,7 @@ const DEMO_DATA: RowData[] = [
         key: 'pro',
         children: (
           <Cell iconVariant="check-off">
-            1,000{' '}
+            <strong>1,000</strong>{' '}
             <Text c="dimmed" inherit span>
               AI auto-redacted pages/images per month
             </Text>
@@ -488,7 +489,7 @@ const DEMO_DATA: RowData[] = [
         key: 'enterprise',
         children: (
           <Cell iconVariant="check-on">
-            Unlimited{' '}
+            <strong>Unlimited</strong>{' '}
             <Text c="dimmed" inherit span>
               AI auto-redacted pages/images per month
             </Text>
@@ -605,19 +606,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">PDF</Cell>,
+        children: <Cell iconVariant="check-off">PDF</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">PDF</Cell>,
+        children: <Cell iconVariant="check-off">PDF</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">PDF</Cell>,
+        children: <Cell iconVariant="check-off">PDF</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">PDF</Cell>,
+        children: <Cell iconVariant="check-off">PDF</Cell>,
       },
     ],
   },
@@ -627,19 +628,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">JPG</Cell>,
+        children: <Cell iconVariant="check-off">JPG</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">JPG</Cell>,
+        children: <Cell iconVariant="check-off">JPG</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">JPG</Cell>,
+        children: <Cell iconVariant="check-off">JPG</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">JPG</Cell>,
+        children: <Cell iconVariant="check-off">JPG</Cell>,
       },
     ],
   },
@@ -649,19 +650,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">PNG</Cell>,
+        children: <Cell iconVariant="check-off">PNG</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">PNG</Cell>,
+        children: <Cell iconVariant="check-off">PNG</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">PNG</Cell>,
+        children: <Cell iconVariant="check-off">PNG</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">PNG</Cell>,
+        children: <Cell iconVariant="check-off">PNG</Cell>,
       },
     ],
   },
@@ -671,19 +672,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">WEBP</Cell>,
+        children: <Cell iconVariant="check-off">WEBP</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">WEBP</Cell>,
+        children: <Cell iconVariant="check-off">WEBP</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">WEBP</Cell>,
+        children: <Cell iconVariant="check-off">WEBP</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">WEBP</Cell>,
+        children: <Cell iconVariant="check-off">WEBP</Cell>,
       },
     ],
   },
@@ -693,19 +694,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">HEIC</Cell>,
+        children: <Cell iconVariant="check-off">HEIC</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">HEIC</Cell>,
+        children: <Cell iconVariant="check-off">HEIC</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">HEIC</Cell>,
+        children: <Cell iconVariant="check-off">HEIC</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">HEIC</Cell>,
+        children: <Cell iconVariant="check-off">HEIC</Cell>,
       },
     ],
   },
@@ -715,19 +716,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">HEIF</Cell>,
+        children: <Cell iconVariant="check-off">HEIF</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">HEIF</Cell>,
+        children: <Cell iconVariant="check-off">HEIF</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">HEIF</Cell>,
+        children: <Cell iconVariant="check-off">HEIF</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">HEIF</Cell>,
+        children: <Cell iconVariant="check-off">HEIF</Cell>,
       },
     ],
   },
@@ -737,19 +738,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">AVIF</Cell>,
+        children: <Cell iconVariant="check-off">AVIF</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">AVIF</Cell>,
+        children: <Cell iconVariant="check-off">AVIF</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">AVIF</Cell>,
+        children: <Cell iconVariant="check-off">AVIF</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">AVIF</Cell>,
+        children: <Cell iconVariant="check-off">AVIF</Cell>,
       },
     ],
   },
@@ -759,19 +760,19 @@ const DEMO_DATA: RowData[] = [
     items: [
       {
         key: 'free',
-        children: <Cell iconVariant="check-on">SVG</Cell>,
+        children: <Cell iconVariant="check-off">SVG</Cell>,
       },
       {
         key: 'plus',
-        children: <Cell iconVariant="check-on">SVG</Cell>,
+        children: <Cell iconVariant="check-off">SVG</Cell>,
       },
       {
         key: 'pro',
-        children: <Cell iconVariant="check-on">SVG</Cell>,
+        children: <Cell iconVariant="check-off">SVG</Cell>,
       },
       {
         key: 'business',
-        children: <Cell iconVariant="check-on">SVG</Cell>,
+        children: <Cell iconVariant="check-off">SVG</Cell>,
       },
     ],
   },

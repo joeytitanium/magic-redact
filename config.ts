@@ -43,6 +43,7 @@ export const CONFIG: {
   };
   social: {
     x: Social;
+    github: Social;
   };
   icon: {
     size: {
@@ -131,5 +132,6 @@ export const CONFIG: {
   },
   social: {
     x: { url: 'https://x.com/joeytitanium', handle: '@joeytitanium' },
+    github: { url: 'https://github.com/joeytitanium', handle: '@joeytitanium' },
   },
 } as const;

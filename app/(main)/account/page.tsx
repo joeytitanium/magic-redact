@@ -7,10 +7,17 @@ import { Box, Button, Container, Divider, Flex, Group, Text, Title } from '@mant
 import { format } from 'date-fns';
 import { isNil } from 'lodash';
 import { redirect } from 'next/navigation';
+import { ReactNode } from 'react';
 
 // TODO: Show number of pages remaining for the billing period
 
-const LabelValueCell = ({ label, value }: { label: string; value: string | undefined }) => {
+const LabelValueCell = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | ReactNode | undefined;
+}) => {
   if (!value) {
     return null;
   }
@@ -19,7 +26,7 @@ const LabelValueCell = ({ label, value }: { label: string; value: string | undef
     <Box>
       <Flex my="xs" justify="space-between" align="center">
         <Text fw="bold">{label}</Text>
-        <Text>{value}</Text>
+        {typeof value === 'string' ? <Text>{value}</Text> : value}
       </Flex>
       <Divider />
     </Box>
@@ -75,7 +82,15 @@ const AccountPage = async () => {
           )}
         </Box>
       ))}
-      {subscriptions?.length === 0 && <Box>No subscription</Box>}
+      {subscriptions?.length === 0 && (
+        <Button
+          component="a"
+          href={getRouteUrl({ to: '/', fragment: 'plans-and-features' })}
+          size="sm"
+        >
+          View plans
+        </Button>
+      )}
     </Container>
   );
 };

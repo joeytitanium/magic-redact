@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
-
+import classes from './index.module.css';
 // TODO: Add paste from clipboard
 
 export type ImageDropzoneProps = {
@@ -27,10 +27,17 @@ export const ImageDropzone = ({
 }: ImageDropzoneProps) => (
   <Container w={800} fluid {...containerProps}>
     <Stack h="100%" justify="center" align="center">
-      <Card p="calc(2 * var(--mantine-spacing-xl))" mx="lg" radius="lg" w="100%" withBorder>
+      <Card
+        p="calc(2 * var(--mantine-spacing-xl))"
+        mx="lg"
+        radius="lg"
+        w="100%"
+        withBorder
+        className={classes.card}
+      >
         <Dropzone
           onDrop={(files) => setFile(files[0])}
-          maxSize={20 * 1024 ** 2}
+          maxSize={30 * 1024 ** 2}
           accept={[
             'image/png',
             // 'image/gif',
@@ -63,11 +70,11 @@ export const ImageDropzone = ({
             </Dropzone.Idle>
 
             <div>
-              <Text size="xl" fw="bold" ta="center" style={{ textWrap: 'balance' }} inline>
+              <Text size="xl" fw="bold" ta="center" style={{ textWrap: 'balance' }}>
                 Drag image here or click to select a file
               </Text>
               <Text c="dimmed" ta="center" mt="xs">
-                File should not exceed 20mb
+                File should not exceed 30mb
               </Text>
             </div>
           </Stack>

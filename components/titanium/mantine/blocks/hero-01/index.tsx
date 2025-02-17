@@ -64,7 +64,7 @@ export const Hero01 = ({ setFile, onClickSampleImage }: Hero01Props) => (
         <motion.div
           initial={{ opacity: 0.0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
+          transition={{ duration: 0.8, delay: 0.5, ease: 'easeInOut' }}
           viewport={{ once: true }}
         >
           <motion.div whileHover={{ scale: 1.1 }}>
@@ -79,7 +79,7 @@ export const Hero01 = ({ setFile, onClickSampleImage }: Hero01Props) => (
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8, ease: 'easeInOut' }}
+        transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
         viewport={{ once: true }}
       >
         <ImageDropzone onClickSampleImage={onClickSampleImage} setFile={setFile} />

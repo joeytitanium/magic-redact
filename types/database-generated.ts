@@ -30,58 +30,56 @@ export interface Database {
     Tables: {
       documents: {
         Row: {
-          ai_completion_tokens: number | null;
-          ai_cost: number | null;
           ai_error: Json | null;
-          ai_model: string | null;
-          ai_input_tokens: number | null;
-          ai_output_tokens: number | null;
-          ai_total_tokens: number | null;
           ai_input_cost: number | null;
+          ai_input_tokens: number | null;
+          ai_model: string | null;
           ai_output_cost: number | null;
+          ai_output_tokens: number | null;
           ai_total_cost: number | null;
+          ai_total_tokens: number | null;
           created_at: string;
           device_info: Json;
           document_type: string;
-          num_pages: number | null;
           id: string;
           ip_address: string | null;
+          num_pages: number | null;
           ocr_error: Json | null;
           user_id: string | null;
         };
         Insert: {
-          ai_completion_tokens?: number | null;
-          ai_cost?: number | null;
           ai_error?: Json | null;
-          ai_model?: string | null;
-          ai_input_tokens?: number | null;
-          ai_output_tokens?: number | null;
-          ai_total_tokens?: number | null;
           ai_input_cost?: number | null;
+          ai_input_tokens?: number | null;
+          ai_model?: string | null;
           ai_output_cost?: number | null;
+          ai_output_tokens?: number | null;
           ai_total_cost?: number | null;
+          ai_total_tokens?: number | null;
           created_at?: string;
           device_info: Json;
           document_type: string;
-          num_pages?: number | null;
           id?: string;
           ip_address?: string | null;
+          num_pages?: number | null;
           ocr_error?: Json | null;
           user_id?: string | null;
         };
         Update: {
-          ai_completion_tokens?: number | null;
-          ai_cost?: number | null;
           ai_error?: Json | null;
+          ai_input_cost?: number | null;
+          ai_input_tokens?: number | null;
           ai_model?: string | null;
-          ai_prompt_tokens?: number | null;
+          ai_output_cost?: number | null;
+          ai_output_tokens?: number | null;
+          ai_total_cost?: number | null;
           ai_total_tokens?: number | null;
           created_at?: string;
           device_info?: Json;
           document_type?: string;
-          num_pages?: number | null;
           id?: string;
           ip_address?: string | null;
+          num_pages?: number | null;
           ocr_error?: Json | null;
           user_id?: string | null;
         };
@@ -103,17 +101,15 @@ export interface Database {
           name: string;
           provider: string | null;
           stripe_customer_id: string | null;
-          user_id: string;
         };
         Insert: {
           avatar_url?: string | null;
           created_at?: string;
           email: string;
-          id?: string;
+          id: string;
           name: string;
           provider?: string | null;
           stripe_customer_id?: string | null;
-          user_id: string;
         };
         Update: {
           avatar_url?: string | null;
@@ -123,12 +119,11 @@ export interface Database {
           name?: string;
           provider?: string | null;
           stripe_customer_id?: string | null;
-          user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'profiles_user_id_fkey';
-            columns: ['user_id'];
+            foreignKeyName: 'profiles_id_fkey';
+            columns: ['id'];
             referencedRelation: 'users';
             referencedColumns: ['id'];
           },
@@ -136,6 +131,7 @@ export interface Database {
       };
       subscriptions: {
         Row: {
+          brand: string | null;
           cancel_at: string | null;
           cancel_at_period_end: boolean | null;
           canceled_at: string | null;
@@ -144,17 +140,17 @@ export interface Database {
           current_period_start: string;
           ended_at: string | null;
           id: string;
+          last4: string | null;
           metadata: Json | null;
           price_id: string | null;
           quantity: number | null;
-          subscription_status: string | null;
+          status: Database['public']['Enums']['subscription_status'] | null;
           trial_end: string | null;
           trial_start: string | null;
           user_id: string;
-          brand: string | null;
-          last4: string | null;
         };
         Insert: {
+          brand?: string | null;
           cancel_at?: string | null;
           cancel_at_period_end?: boolean | null;
           canceled_at?: string | null;
@@ -163,17 +159,17 @@ export interface Database {
           current_period_start?: string;
           ended_at?: string | null;
           id: string;
+          last4?: string | null;
           metadata?: Json | null;
           price_id?: string | null;
           quantity?: number | null;
-          subscription_status?: string | null;
+          status?: Database['public']['Enums']['subscription_status'] | null;
           trial_end?: string | null;
           trial_start?: string | null;
           user_id: string;
-          brand?: string | null;
-          last4?: string | null;
         };
         Update: {
+          brand?: string | null;
           cancel_at?: string | null;
           cancel_at_period_end?: boolean | null;
           canceled_at?: string | null;
@@ -182,15 +178,14 @@ export interface Database {
           current_period_start?: string;
           ended_at?: string | null;
           id?: string;
+          last4?: string | null;
           metadata?: Json | null;
           price_id?: string | null;
           quantity?: number | null;
-          subscription_status?: string | null;
+          status?: Database['public']['Enums']['subscription_status'] | null;
           trial_end?: string | null;
           trial_start?: string | null;
           user_id?: string;
-          brand?: string | null;
-          last4?: string | null;
         };
         Relationships: [
           {
@@ -209,7 +204,15 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      subscription_status:
+        | 'trialing'
+        | 'active'
+        | 'canceled'
+        | 'incomplete'
+        | 'incomplete_expired'
+        | 'past_due'
+        | 'unpaid'
+        | 'paused';
     };
     CompositeTypes: {
       [_ in never]: never;

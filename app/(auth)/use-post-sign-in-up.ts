@@ -1,5 +1,5 @@
 import { stripeClient } from '@/lib/stripe/client';
-import { createCheckoutSession } from '@/lib/stripe/create-checkout-session';
+import { createCheckoutSession } from '@/lib/stripe/server-actions/create-checkout-session';
 import { getRouteUrl } from '@/routing/get-route-url';
 import { isNil } from 'lodash';
 import { redirect } from 'next/navigation';

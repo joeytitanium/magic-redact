@@ -47,7 +47,7 @@ export const sendDiscordAlert = async ({
   imageUrl,
   context = [],
 }: {
-  username: '/analyze-image' | 'signup';
+  username: '/analyze-image' | 'signup' | 'create-stripe-portal-url';
   title: string;
   description?: string;
   variant: 'success' | 'error' | 'info';

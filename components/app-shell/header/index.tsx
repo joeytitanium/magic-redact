@@ -6,6 +6,7 @@ import { Box, Container, Flex } from '@mantine/core';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 import classes from './index.module.css';
+import { Links } from './links';
 
 export const MobileHeader = () => (
   <Box
@@ -22,6 +23,7 @@ export const MobileHeader = () => (
       <Flex justify="space-between" align="center" h="100%" gap="xs">
         <Logo width={166} height={24} style={{ flexShrink: 0 }} priority />
         <Flex justify="end" align="center" w="100%">
+          <Links />
           <ColorSchemeButton />
         </Flex>
       </Flex>
@@ -48,7 +50,8 @@ export const DesktopHeader = () => (
             <Logo priority />
           </NextLink>
         </Flex>
-        <Flex align="center">
+        <Flex align="center" gap="lg">
+          <Links />
           <ColorSchemeButton />
         </Flex>
       </Flex>

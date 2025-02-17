@@ -1,6 +1,7 @@
 'use server';
 
 import { CONFIG } from '@/config';
+import { stripeServerClient } from '@/lib/stripe/server';
 import { supabaseServerClient } from '@/lib/supabase/server';
 import { getRouteUrl } from '@/routing/get-route-url';
 import { Database } from '@/types/database';
@@ -9,7 +10,6 @@ import { LogDomain, logError } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { isNil } from 'lodash';
 import Stripe from 'stripe';
-import { stripeServerClient } from './server';
 
 const DOMAIN: LogDomain = 'create-checkout-session';
 
@@ -112,6 +112,7 @@ const getStripeCustomerId = async ({
   }
 };
 
+// TODO: Don't throw, return error object
 export const createCheckoutSession = async ({ priceId }: { priceId: string }) => {
   const product = CONFIG.products.find((p) => p.stripePriceId === priceId);
   if (!product) {

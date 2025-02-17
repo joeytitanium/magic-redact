@@ -25,9 +25,9 @@ const ENV_SCHEMA = z.object({
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
 
-  STRIPE_PRICE_ID_PLUS: z.string().min(1),
-  STRIPE_PRICE_ID_PRO: z.string().min(1),
-  STRIPE_PRICE_ID_BUSINESS: z.string().min(1),
+  NEXT_PUBLIC_STRIPE_PRICE_ID_PLUS: z.string().min(1),
+  NEXT_PUBLIC_STRIPE_PRICE_ID_PRO: z.string().min(1),
+  NEXT_PUBLIC_STRIPE_PRICE_ID_BUSINESS: z.string().min(1),
 
   NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID: z.string().min(1),
   SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: z.string().min(1),

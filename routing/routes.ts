@@ -10,6 +10,7 @@ export type Route =
         | 'plans-and-features'
         | 'frequently-asked-questions';
     }
+  | { to: '/account'; params?: never; fragment?: never }
   | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }
   | { to: '/privacy'; params?: never; fragment?: never }
   | { to: '/terms'; params?: never; fragment?: never }

@@ -8,6 +8,7 @@ type LogLevel = 'info' | 'error' | 'warn';
 export type LogDomain =
   | 'api-analyze-image'
   | 'create-checkout-session'
+  | 'create-stripe-portal-url'
   | 'discord-send-notification'
   | 'google-fetch-ocr-results'
   | 'sign-up'

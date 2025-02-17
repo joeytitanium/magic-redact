@@ -1,5 +1,5 @@
 import { CONFIG } from '@/config';
-import { Database, SubscriptionRecord } from '@/types/database';
+import { Database, Subscription } from '@/types/database';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 type DocumentCountForBillingPeriodResponse =
@@ -21,7 +21,7 @@ export const getPagesAlreadyRedactedForBillingPeriod = async ({
 }: {
   supabase: SupabaseClient<Database>;
   userId: string;
-  subscription: SubscriptionRecord;
+  subscription: Subscription;
 }): Promise<DocumentCountForBillingPeriodResponse> => {
   const { data, error } = await supabase
     .from('documents')

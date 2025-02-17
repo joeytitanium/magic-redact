@@ -91,7 +91,7 @@ export const CONFIG: {
   },
   products: [
     {
-      stripePriceId: process.env.STRIPE_PRICE_ID_PLUS,
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PLUS,
       name: 'Plus',
       price: 5,
       description: 'Starter plan',
@@ -100,7 +100,7 @@ export const CONFIG: {
       billingCycleDocumentPageLimit: 50,
     },
     {
-      stripePriceId: process.env.STRIPE_PRICE_ID_PRO,
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO,
       name: 'Pro',
       price: 15,
       description: 'Pro plan',
@@ -109,7 +109,7 @@ export const CONFIG: {
       billingCycleDocumentPageLimit: 200,
     },
     {
-      stripePriceId: process.env.STRIPE_PRICE_ID_BUSINESS,
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BUSINESS,
       name: 'Business',
       price: 50,
       description: 'Business plan',

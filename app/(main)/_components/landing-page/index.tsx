@@ -8,7 +8,7 @@ import { Security } from '@/components/titanium/mantine/blocks/security';
 import { UseCases01 } from '@/components/titanium/mantine/blocks/use-cases-01';
 import { CONFIG } from '@/config';
 import { stripeClient } from '@/lib/stripe/client';
-import { createCheckoutSession } from '@/lib/stripe/create-checkout-session';
+import { createCheckoutSession } from '@/lib/stripe/server-actions/create-checkout-session';
 import { supabaseClient } from '@/lib/supabase/client';
 import { getRouteUrl } from '@/routing/get-route-url';
 import { Container } from '@mantine/core';

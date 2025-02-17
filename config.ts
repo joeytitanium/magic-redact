@@ -41,6 +41,9 @@ export const CONFIG: {
       callbackUrl: string;
     };
   };
+  github: {
+    repoUrl: string;
+  };
   social: {
     x: Social;
     github: Social;
@@ -69,6 +72,9 @@ export const CONFIG: {
   },
   stripe: {
     apiVersion: '2025-01-27.acacia',
+  },
+  github: {
+    repoUrl: 'https://github.com/joeytitanium/magic-redact',
   },
   google: {
     storageBucketName: process.env.GOOGLE_STORAGE_BUCKET_NAME,

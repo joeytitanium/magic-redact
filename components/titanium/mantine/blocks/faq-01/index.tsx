@@ -90,7 +90,7 @@ export const Faq01 = () => (
   <Container
     id="frequently-asked-questions"
     bg="var(--mantine-color-body)"
-    py={{
+    pt={{
       base: 'calc(var(--mantine-spacing-lg) * 4)',
       xs: 'calc(var(--mantine-spacing-lg) * 5)',
       lg: 'calc(var(--mantine-spacing-lg) * 6)',

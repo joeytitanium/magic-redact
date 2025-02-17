@@ -4,6 +4,7 @@ import { Footer01 } from '@/components/titanium/mantine/blocks/footer-01';
 import { Hero01, Hero01Props } from '@/components/titanium/mantine/blocks/hero-01';
 import { HowItWorks01 } from '@/components/titanium/mantine/blocks/how-it-works';
 import { Pricing02 } from '@/components/titanium/mantine/blocks/pricing';
+import { Security } from '@/components/titanium/mantine/blocks/security';
 import { UseCases01 } from '@/components/titanium/mantine/blocks/use-cases-01';
 import { CONFIG } from '@/config';
 import { stripeClient } from '@/lib/stripe/client';
@@ -33,7 +34,7 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
   };
 
   return (
-    <Container fluid>
+    <Container fluid px={0}>
       <Hero01 setFile={setFile} onClickSampleImage={onClickSampleImage} />
       <UseCases01 />
       <HowItWorks01 />
@@ -47,8 +48,9 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
           })),
         ]}
       />
-      <CallToAction01 />
+      <Security />
       <Faq01 />
+      <CallToAction01 />
       <Footer01 />
     </Container>
   );

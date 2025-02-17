@@ -1,6 +1,6 @@
 import { supabaseClient } from '@/lib/supabase/client';
 import { getRouteUrl } from '@/routing/get-route-url';
-import { Anchor } from '@mantine/core';
+import { Anchor, Button, Group } from '@mantine/core';
 import { Session } from '@supabase/supabase-js';
 import { isNil } from 'lodash';
 import NextLink from 'next/link';
@@ -24,9 +24,20 @@ export const Links = () => {
 
   if (isNil(session?.user)) {
     return (
-      <Anchor component={NextLink} href={getRouteUrl({ to: '/sign-in' })} underline="never">
-        Sign-in
-      </Anchor>
+      <Group align="center">
+        <Anchor component={NextLink} href={getRouteUrl({ to: '/sign-in' })} underline="never">
+          Sign-in
+        </Anchor>
+        <Button
+          component="a"
+          variant="light"
+          href={getRouteUrl({ to: '/sign-up' })}
+          size="sm"
+          radius="xl"
+        >
+          Sign-up
+        </Button>
+      </Group>
     );
   }
 

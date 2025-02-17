@@ -39,10 +39,7 @@ export const SignUpPage = ({ priceId }: { priceId?: string }) => {
       <Divider mt="xl" mb="lg" label="Or" />
       <SignupForm
         initialEmailValue=""
-        emailRedirectTo={getRouteUrl(
-          { to: '/', params: { pricing: 'true' } },
-          { absoluteUrl: true }
-        )}
+        emailRedirectTo={getRouteUrl({ to: '/plans' }, { absoluteUrl: true })}
         onSuccess={async ({ user }) => {
           if (!user) return;
           await handleSignInUp();

@@ -2,7 +2,7 @@
 export type Route =
   | {
       to: '/';
-      params?: { pricing?: string };
+      params?: never;
       fragment?:
         | 'editor'
         | 'use-cases'
@@ -10,6 +10,7 @@ export type Route =
         | 'plans-and-features'
         | 'frequently-asked-questions';
     }
+  | { to: '/plans'; params?: never; fragment?: never }
   | { to: '/account'; params?: never; fragment?: never }
   | { to: '/order-success'; params?: { priceId?: string }; fragment?: never }
   | { to: '/privacy'; params?: never; fragment?: never }

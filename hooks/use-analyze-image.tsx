@@ -55,7 +55,7 @@ export const useAnalyzeImage = (
               </Text>
             ),
             labels: { confirm: 'See Plans', cancel: 'Cancel' },
-            onConfirm: () => router.push(getRouteUrl({ to: '/', params: { pricing: 'true' } })),
+            onConfirm: () => router.push(getRouteUrl({ to: '/plans' })),
           });
           return undefined;
         }
@@ -70,7 +70,7 @@ export const useAnalyzeImage = (
               </Text>
             ),
             labels: { confirm: 'See Plans', cancel: 'Cancel' },
-            onConfirm: () => router.push(getRouteUrl({ to: '/', params: { pricing: 'true' } })),
+            onConfirm: () => router.push(getRouteUrl({ to: '/plans' })),
           });
           return undefined;
         }

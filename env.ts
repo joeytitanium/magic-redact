@@ -35,6 +35,8 @@ const ENV_SCHEMA = z.object({
 
   AI_PROMPT: z.string().min(1),
 
+  NEXT_PUBLIC_SITE_BASE_URL: z.string().min(1).url(),
+
   NODE_ENV: z.enum(['development', 'production']).default('development'),
 });
 type Env = z.infer<typeof ENV_SCHEMA>;

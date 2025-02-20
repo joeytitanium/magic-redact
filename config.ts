@@ -1,6 +1,5 @@
 import type { MantineSize } from '@mantine/core';
 import { Product } from './types/product';
-import { isDevelopment } from './utils/is-development';
 
 type Social = {
   url: string;
@@ -61,7 +60,7 @@ export const CONFIG: {
 } = {
   site: {
     version: '0.0.1',
-    url: isDevelopment ? 'http://localhost:3000' : 'https://www.magicredact.com',
+    url: process.env.NEXT_PUBLIC_SITE_BASE_URL,
     name: 'MagicRedact',
     description:
       'Instantly redact sensitive information from PDFs and images for free. No sign-ups, no hidden fees. Just fast, secure, and open-source redaction',

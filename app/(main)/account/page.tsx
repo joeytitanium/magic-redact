@@ -83,11 +83,7 @@ const AccountPage = async () => {
         </Box>
       ))}
       {subscriptions?.length === 0 && (
-        <Button
-          component="a"
-          href={getRouteUrl({ to: '/', fragment: 'plans-and-features' })}
-          size="sm"
-        >
+        <Button component="a" href={getRouteUrl({ to: '/plans' })} size="sm">
           View plans
         </Button>
       )}

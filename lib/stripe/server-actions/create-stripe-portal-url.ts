@@ -1,6 +1,5 @@
 'use server';
 
-import { sendDiscordAlert } from '@/lib/discord/send-discord-notification';
 import { stripeServerClient } from '@/lib/stripe/server';
 import { supabaseServerClient } from '@/lib/supabase/server';
 import { getRouteUrl } from '@/routing/get-route-url';
@@ -37,23 +36,6 @@ export const createStripePortalUrl = async (): Promise<CreateStripePortalUrlResp
 
     const stripeCustomerId = profile.stripe_customer_id;
     if (isNil(stripeCustomerId)) {
-      logError({
-        domain: DOMAIN,
-        message: 'Stripe customer id not found',
-        context: { profileId: profile.id },
-      });
-      await sendDiscordAlert({
-        username: DOMAIN,
-        title: 'Stripe customer id not found',
-        variant: 'error',
-        context: [
-          {
-            name: 'Profile Id',
-            value: profile.id,
-            inline: true,
-          },
-        ],
-      });
       return { error: new Error('Stripe customer id not found') };
     }
 

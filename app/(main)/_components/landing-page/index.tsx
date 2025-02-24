@@ -6,6 +6,7 @@ import { HowItWorks01 } from '@/components/titanium/mantine/blocks/how-it-works'
 import { Pricing02 } from '@/components/titanium/mantine/blocks/pricing';
 import { Security } from '@/components/titanium/mantine/blocks/security';
 import { UseCases01 } from '@/components/titanium/mantine/blocks/use-cases-01';
+import { VideoDemo } from '@/components/titanium/mantine/blocks/video-demo';
 import { CONFIG } from '@/config';
 import { stripeClient } from '@/lib/stripe/client';
 import { createCheckoutSession } from '@/lib/stripe/server-actions/create-checkout-session';
@@ -49,8 +50,9 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
         ]}
       />
       <Security />
-      <Faq01 />
+      <VideoDemo />
       <CallToAction01 />
+      <Faq01 />
       <Footer01 />
     </Container>
   );

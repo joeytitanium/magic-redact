@@ -7,7 +7,7 @@ import NextLink from 'next/link';
 export const CallToAction01 = () => (
   <Container
     bg="var(--mantine-color-body)"
-    py={{
+    pt={{
       base: 'calc(var(--mantine-spacing-lg) * 4)',
       xs: 'calc(var(--mantine-spacing-lg) * 5)',
       lg: 'calc(var(--mantine-spacing-lg) * 6)',

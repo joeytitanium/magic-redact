@@ -1,6 +1,7 @@
 import { CONFIG } from '@/config';
 import { createStripePortalUrl } from '@/lib/stripe/server-actions/create-stripe-portal-url';
-import { supabaseServerClient } from '@/lib/supabase/server';
+import { getPagesAlreadyRedactedForBillingPeriod } from '@/lib/supabase/queries/get-pages-already-redacted-for-billing-period';
+import { supabaseServiceRoleClient } from '@/lib/supabase/service-role';
 import { getRouteUrl } from '@/routing/get-route-url';
 import { SUBSCRIPTION_STATUS_DISPLAY } from '@/types/subscription-status';
 import { Box, Button, Container, Divider, Flex, Group, Text, Title } from '@mantine/core';
@@ -8,8 +9,6 @@ import { format } from 'date-fns';
 import { isNil } from 'lodash';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
-
-// TODO: Show number of pages remaining for the billing period
 
 const LabelValueCell = ({
   label,
@@ -34,19 +33,27 @@ const LabelValueCell = ({
 };
 
 const AccountPage = async () => {
-  const supabase = await supabaseServerClient();
+  const supabase = await supabaseServiceRoleClient();
   const { data: profile } = await supabase.from('profiles').select('*').maybeSingle();
   if (!profile) {
     redirect(getRouteUrl({ to: '/sign-up' }));
   }
 
   const { data: subscriptions } = await supabase.from('subscriptions').select('*');
-
   const { url: stripePortalUrl } = await createStripePortalUrl();
 
+  const subscription = subscriptions?.[0];
   const subscribedProduct = CONFIG.products.find(
-    (product) => product.stripePriceId === subscriptions?.[0]?.price_id
+    (product) => product.stripePriceId === subscription?.price_id
   );
+
+  const { pagesAlreadyRedacted, limit } = !isNil(subscription)
+    ? await getPagesAlreadyRedactedForBillingPeriod({
+        supabase,
+        userId: profile.id,
+        subscription,
+      })
+    : { pagesAlreadyRedacted: undefined, limit: undefined };
 
   return (
     <Container size="sm" my="xl">
@@ -56,7 +63,7 @@ const AccountPage = async () => {
       <Title order={2} mt="xl" mb="sm">
         Subscription
       </Title>
-      {subscriptions?.map((subscription) => (
+      {!isNil(subscription) && (
         <Box key={subscription.id}>
           <LabelValueCell
             label="Status"
@@ -73,6 +80,9 @@ const AccountPage = async () => {
           {!isNil(subscribedProduct) && (
             <LabelValueCell label="Plan" value={subscribedProduct.name} />
           )}
+          {!isNil(pagesAlreadyRedacted) && !isNil(limit) && (
+            <LabelValueCell label="Pages redacted" value={`${pagesAlreadyRedacted} / ${limit}`} />
+          )}
           {!isNil(stripePortalUrl) && (
             <Group justify="end" py="lg">
               <Button component="a" href={stripePortalUrl} target="_blank" size="sm">
@@ -81,7 +91,7 @@ const AccountPage = async () => {
             </Group>
           )}
         </Box>
-      ))}
+      )}
       {subscriptions?.length === 0 && (
         <Button component="a" href={getRouteUrl({ to: '/plans' })} size="sm">
           View plans

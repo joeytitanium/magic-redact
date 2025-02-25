@@ -1,4 +1,5 @@
-import { Banner } from '@/components/banner';
+import { LandingPageSearchParams } from '@/app/(main)/page';
+import { Banner, PRODUCT_HUNT_LAUNCH_DATE } from '@/components/banner';
 import { CallToAction01 } from '@/components/titanium/mantine/blocks/call-to-action';
 import { Faq01 } from '@/components/titanium/mantine/blocks/faq-01';
 import { Footer01 } from '@/components/titanium/mantine/blocks/footer-01';
@@ -17,9 +18,11 @@ import { Container } from '@mantine/core';
 import { isNil } from 'lodash';
 import { useRouter } from 'next/navigation';
 
-type LandingPageProps = Hero01Props;
+type LandingPageProps = Hero01Props & {
+  searchParams: LandingPageSearchParams;
+};
 
-export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) => {
+export const LandingPage = ({ setFile, onClickSampleImage, searchParams }: LandingPageProps) => {
   const router = useRouter();
 
   const onClick = async (priceId: string) => {
@@ -37,7 +40,7 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
 
   return (
     <Container fluid px={0}>
-      <Banner />
+      <Banner today={PRODUCT_HUNT_LAUNCH_DATE} searchParams={searchParams} />
       <Hero01 setFile={setFile} onClickSampleImage={onClickSampleImage} />
       <UseCases01 />
       <HowItWorks01 />

@@ -1,9 +1,9 @@
 import { PRICE_IDS } from '@/types/product';
-import { SearchParams } from '@/types/search-params';
+import { SearchParamsPromise } from '@/types/search-params';
+import { generateMetadata } from '@/utils/metadata';
 import { Suspense } from 'react';
 import { z } from 'zod';
 import { SignUpPage } from './client';
-import { generateMetadata } from '@/utils/metadata';
 
 const SCHEMA = z.object({
   priceId: z.enum(PRICE_IDS).optional(),
@@ -11,7 +11,7 @@ const SCHEMA = z.object({
 
 export const metadata = generateMetadata();
 
-const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
+const Page = async ({ searchParams }: { searchParams: SearchParamsPromise }) => {
   const query = SCHEMA.safeParse(await searchParams);
 
   return (

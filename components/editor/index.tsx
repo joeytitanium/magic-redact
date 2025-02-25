@@ -1,6 +1,7 @@
 'use client';
 
 import { LandingPage } from '@/app/(main)/_components/landing-page';
+import { LandingPageSearchParams } from '@/app/(main)/page';
 import { Desktop } from '@/components/editor/components/desktop';
 import { Mobile } from '@/components/editor/components/mobile';
 import { DesktopMobileProps } from '@/components/editor/types';
@@ -15,7 +16,7 @@ import { notifications } from '@mantine/notifications';
 import { isNil } from 'lodash';
 import { useState } from 'react';
 
-export const Editor = () => {
+export const Editor = ({ searchParams }: { searchParams: LandingPageSearchParams }) => {
   // Demo vars
   const [selectedSampleImage, setSelectedSampleImage] = useState<SampleImage | null>(null);
   const [fauxLoadingSampleImage, setFauxLoadingSampleImage] = useState(false);
@@ -183,7 +184,13 @@ export const Editor = () => {
   };
 
   if (!hasInitiatedEditing) {
-    return <LandingPage setFile={onSetFile} onClickSampleImage={onClickSampleImage} />;
+    return (
+      <LandingPage
+        searchParams={searchParams}
+        setFile={onSetFile}
+        onClickSampleImage={onClickSampleImage}
+      />
+    );
   }
 
   if (!pdfUrl || !pdfFile) {

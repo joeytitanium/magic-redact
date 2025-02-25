@@ -1,3 +1,4 @@
+import { Banner } from '@/components/banner';
 import { CallToAction01 } from '@/components/titanium/mantine/blocks/call-to-action';
 import { Faq01 } from '@/components/titanium/mantine/blocks/faq-01';
 import { Footer01 } from '@/components/titanium/mantine/blocks/footer-01';
@@ -36,6 +37,7 @@ export const LandingPage = ({ setFile, onClickSampleImage }: LandingPageProps) =
 
   return (
     <Container fluid px={0}>
+      <Banner />
       <Hero01 setFile={setFile} onClickSampleImage={onClickSampleImage} />
       <UseCases01 />
       <HowItWorks01 />

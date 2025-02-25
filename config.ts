@@ -67,7 +67,7 @@ export const CONFIG: {
   },
   dailyRequestLimit: 3,
   support: {
-    email: 'joeytitanium@gmail.com',
+    email: 'joey@titanium.dev',
   },
   stripe: {
     apiVersion: '2025-01-27.acacia',

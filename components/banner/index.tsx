@@ -1,7 +1,19 @@
 import { Anchor, Container, Flex } from '@mantine/core';
-import { isAfter, isSameDay } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 
 const LAUNCH_DATE = new Date('2025-03-02');
+
+type DateSegment = 'before' | 'today';
+const METADATA: Record<DateSegment, { copy: string; url: string }> = {
+  before: {
+    copy: "We're launching on ProductHunt soon! 🚀 Get notified and support us on launch day.",
+    url: 'https://www.producthunt.com/products/magicredact',
+  },
+  today: {
+    copy: "We're live on ProductHunt! 🚀 Please support us by voting for us.",
+    url: 'https://www.producthunt.com/posts/magicredact',
+  },
+};
 
 export const Banner = ({ today = new Date() }: { today?: Date }) => {
   const isAfterLaunch = isAfter(today, LAUNCH_DATE);
@@ -9,12 +21,8 @@ export const Banner = ({ today = new Date() }: { today?: Date }) => {
     return null;
   }
 
-  const bannerCopy = (() => {
-    if (isSameDay(today, LAUNCH_DATE)) {
-      return "We're live on ProductHunt! 🚀 Please support us by voting for us.";
-    }
-    return "We're launching on ProductHunt soon! 🚀 Get notified and support us on launch day.";
-  })();
+  const isBeforeLaunch = isBefore(today, LAUNCH_DATE);
+  const metadata = METADATA[isBeforeLaunch ? 'before' : 'today'];
 
   return (
     <Container bg="blue" py={8} fluid>
@@ -23,11 +31,11 @@ export const Banner = ({ today = new Date() }: { today?: Date }) => {
           c="white"
           ta="center"
           fw={600}
-          href="https://www.producthunt.com/products/magicredact"
+          href={metadata.url}
           target="_blank"
           underline="never"
         >
-          {bannerCopy}
+          {metadata.copy}
         </Anchor>
       </Flex>
     </Container>

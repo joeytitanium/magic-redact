@@ -1,9 +1,10 @@
 import { LandingPageSearchParams } from '@/app/(main)/page';
 import { Anchor, Container, Flex } from '@mantine/core';
-import { isAfter, isBefore } from 'date-fns';
+import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { ReactNode } from 'react';
 
 export const PRODUCT_HUNT_LAUNCH_DATE = new Date('2025-03-02');
+export const UNEED_LAUNCH_DATE = new Date('2025-02-28');
 
 type DateSegment = 'before' | 'today';
 const METADATA: Record<DateSegment, (ref?: string) => { copy: ReactNode; url: string }> = {
@@ -31,6 +32,25 @@ export const Banner = ({
   today?: Date;
   searchParams: LandingPageSearchParams;
 }) => {
+  if (isSameDay(today, UNEED_LAUNCH_DATE)) {
+    return (
+      <Container bg="blue" py={8} fluid>
+        <Flex align="center" justify="center" h="100%">
+          <Anchor
+            c="white"
+            ta="center"
+            fw={600}
+            href="https://www.uneed.best/tool/magicredact"
+            target="_blank"
+            underline="never"
+          >
+            We're live on Uneed! 🚀 Please support us by voting for us.
+          </Anchor>
+        </Flex>
+      </Container>
+    );
+  }
+
   const isAfterLaunch = isAfter(today, PRODUCT_HUNT_LAUNCH_DATE);
   if (isAfterLaunch) {
     return null;

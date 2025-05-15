@@ -6,7 +6,7 @@ import { recentDocumentCountByIpAddress } from '@/lib/supabase/queries/recent-do
 import { Database } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { createApiResponse } from '@/utils/api-response';
-import { logApiError, LogDomain } from '@/utils/logger';
+import { logApiError, logDebugMessage, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { isNil } from 'lodash';
 import { NextResponse } from 'next/server';
@@ -38,6 +38,7 @@ export const validatePageQuota = async ({
       supabase,
       ipAddress,
     });
+
     if (error) {
       await sendDiscordAlert({
         username: '/analyze-image',
@@ -66,6 +67,17 @@ export const validatePageQuota = async ({
     }
 
     const numPagesRemaining = CONFIG.dailyRequestLimit - requestedNumPages - pagesRemainingToday;
+    logDebugMessage({
+      domain,
+      message: 'pagesRemainingToday',
+      context: {
+        ipAddress,
+        pagesRemainingToday,
+        numPagesRemaining,
+        dailyRequestLimit: CONFIG.dailyRequestLimit,
+        requestedNumPages,
+      },
+    });
     if (numPagesRemaining < 0) {
       return {
         errorResponse: createApiResponse({

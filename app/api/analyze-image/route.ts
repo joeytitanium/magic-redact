@@ -159,6 +159,12 @@ export async function POST(request: Request) {
   };
 
   if (isNil(deviceInfo.ipAddress)) {
+    await sendDiscordAlert({
+      username: '/analyze-image',
+      title: 'IP address missing',
+      deviceInfo,
+      variant: 'error',
+    });
     return createApiResponse({
       code: '400-bad-request',
       publicFacingMessage: 'IP address missing.',

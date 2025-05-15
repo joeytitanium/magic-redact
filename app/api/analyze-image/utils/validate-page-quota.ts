@@ -33,6 +33,14 @@ export const validatePageQuota = async ({
   domain: LogDomain;
   request: Request;
 }): Promise<DetermineNumPagesRemainingResponse> => {
+  logMessage({
+    domain,
+    message: 'userId',
+    context: {
+      ipAddress,
+      userId,
+    },
+  });
   if (isNil(userId)) {
     const { count: pagesRemainingToday, error } = await recentDocumentCountByIpAddress({
       supabase,

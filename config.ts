@@ -65,7 +65,7 @@ export const CONFIG: {
     description:
       'Instantly redact sensitive information from PDFs and images for free. No sign-ups, no hidden fees. Just fast, secure, and open-source redaction',
   },
-  dailyRequestLimit: 3,
+  dailyRequestLimit: 2,
   support: {
     email: 'joey@titanium.dev',
   },

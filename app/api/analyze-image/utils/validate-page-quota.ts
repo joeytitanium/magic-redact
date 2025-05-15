@@ -6,7 +6,7 @@ import { recentDocumentCountByIpAddress } from '@/lib/supabase/queries/recent-do
 import { Database } from '@/types/database';
 import { DeviceInfo } from '@/types/device-info';
 import { createApiResponse } from '@/utils/api-response';
-import { logApiError, LogDomain, logMessage } from '@/utils/logger';
+import { logApiError, LogDomain } from '@/utils/logger';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { isNil } from 'lodash';
 import { NextResponse } from 'next/server';
@@ -33,14 +33,6 @@ export const validatePageQuota = async ({
   domain: LogDomain;
   request: Request;
 }): Promise<DetermineNumPagesRemainingResponse> => {
-  logMessage({
-    domain,
-    message: 'userId',
-    context: {
-      ipAddress,
-      userId,
-    },
-  });
   if (isNil(userId)) {
     const { count: pagesRemainingToday, error } = await recentDocumentCountByIpAddress({
       supabase,
@@ -75,17 +67,6 @@ export const validatePageQuota = async ({
     }
 
     const numPagesRemaining = CONFIG.dailyRequestLimit - requestedNumPages - pagesRemainingToday;
-    logMessage({
-      domain,
-      message: 'pagesRemainingToday',
-      context: {
-        ipAddress,
-        pagesRemainingToday,
-        numPagesRemaining,
-        dailyRequestLimit: CONFIG.dailyRequestLimit,
-        requestedNumPages,
-      },
-    });
     if (numPagesRemaining < 0) {
       return {
         errorResponse: createApiResponse({
@@ -119,7 +100,14 @@ export const validatePageQuota = async ({
       errorResponse: createApiResponse({ code: '400-bad-request' }),
     };
   }
-
+  if (subscription.cancel_at_period_end) {
+    return {
+      errorResponse: createApiResponse({
+        code: '429-too-many-requests',
+        publicFacingMessage: 'Subscription has expired. Please renew your subscription.',
+      }),
+    };
+  }
   const { pagesAlreadyRedacted, limit, error } = await getPagesAlreadyRedactedForBillingPeriod({
     supabase,
     userId,

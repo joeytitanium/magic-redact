@@ -131,7 +131,7 @@ export const validatePageQuota = async ({
 
   const numPagesRemaining = limit - pagesAlreadyRedacted - requestedNumPages;
 
-  if (numPagesRemaining < 0) {
+  if (numPagesRemaining <= 0) {
     await sendDiscordAlert({
       username: '/analyze-image',
       title: 'Customer subscription limit reached',
